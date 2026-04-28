@@ -1,7 +1,10 @@
 import {
   benchmarkPrompts,
   benchmarkSpecs,
+  defaultModel,
   type ElementName,
+  elementOrder,
+  type ModelName,
 } from "@4elements/benchmarks";
 import { type RenderStats, SceneRenderer } from "@4elements/renderer";
 import { DownloadIcon } from "@phosphor-icons/react";
@@ -16,13 +19,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import "./styles.css";
 
-const elementOrder: ElementName[] = ["Fire", "Air", "Earth", "Water"];
-const modelOptions = [
+const modelOptions: ReadonlyArray<{ label: string; value: ModelName }> = [
   { label: "Opus 4.7", value: "opus-4.7" },
   { label: "GPT 5.5", value: "gpt-5.5" },
 ] as const;
-
-type ModelName = (typeof modelOptions)[number]["value"];
 
 function isElementName(value: string): value is ElementName {
   return elementOrder.includes(value as ElementName);
@@ -32,7 +32,7 @@ function isModelName(value: string): value is ModelName {
   return modelOptions.some((model) => model.value === value);
 }
 
-function getInitialElement() {
+function getInitialElement(): ElementName {
   if (typeof window === "undefined") {
     return "Fire";
   }
@@ -46,13 +46,15 @@ function App() {
     clearOnDefault: false,
   });
   const [modelQuery, setModelQuery] = useQueryState("model", {
-    defaultValue: "gpt-5.5",
+    defaultValue: defaultModel,
     clearOnDefault: false,
   });
   const selectedElement = isElementName(elementQuery) ? elementQuery : "Fire";
-  const selectedModel = isModelName(modelQuery) ? modelQuery : "gpt-5.5";
-  const [activeElement, setActiveElement] = useState(() => getInitialElement());
-  const spec = benchmarkSpecs[activeElement];
+  const selectedModel = isModelName(modelQuery) ? modelQuery : defaultModel;
+  const [activeElement, setActiveElement] = useState<ElementName>(() =>
+    getInitialElement()
+  );
+  const spec = benchmarkSpecs[selectedModel][activeElement];
   const [stats, setStats] = useState<RenderStats>({
     fps: 0,
     objects: 0,

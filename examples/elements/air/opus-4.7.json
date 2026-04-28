@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "1.0",
+  "metadata": {
+    "id": "opus-4.7-air",
+    "name": "Threshold Breeze",
+    "element": "Air",
+    "prompt": "Create an interactive 3D air scene: a pale curtain and loose leaves moving in visible wind beside an open window, with soft dust trails showing the airflow.",
+    "seed": 313,
+    "description": "Dawn light through an open window, a coherent diagonal wind moving curtain, leaves, and layered dust shafts."
+  },
+  "camera": { "position": [4.7, 2.4, 5.6], "target": [0, 1.4, 0], "fov": 41 },
+  "environment": {
+    "background": "#1a2a2c",
+    "fogColor": "#1f2f30",
+    "fogNear": 7,
+    "fogFar": 17
+  },
+  "lights": [
+    {
+      "id": "ambient",
+      "type": "ambient",
+      "color": "#cae9ea",
+      "intensity": 1.1
+    },
+    {
+      "id": "window-sun",
+      "type": "directional",
+      "color": "#fff0c2",
+      "intensity": 3.0,
+      "position": [-3.2, 4.2, 4.5]
+    },
+    {
+      "id": "cool-fill",
+      "type": "point",
+      "color": "#7fb6d6",
+      "intensity": 1.4,
+      "position": [3.0, 1.6, 1.8]
+    },
+    {
+      "id": "rim",
+      "type": "directional",
+      "color": "#ffd2b3",
+      "intensity": 0.9,
+      "position": [-0.5, 3.0, -3.0]
+    }
+  ],
+  "objects": [
+    {
+      "id": "floor",
+      "type": "floor",
+      "width": 10,
+      "depth": 9,
+      "material": { "color": "#2f3132", "roughness": 0.55, "metalness": 0.15 }
+    },
+    {
+      "id": "back-wall",
+      "type": "wall",
+      "position": [0, 2.0, -1.55],
+      "width": 6.4,
+      "height": 4.6,
+      "material": { "color": "#dfd9ca", "roughness": 0.78 }
+    },
+    {
+      "id": "window",
+      "type": "window",
+      "position": [-1.05, 1.85, -1.46],
+      "width": 1.85,
+      "height": 2.6,
+      "frameColor": "#fffaee"
+    },
+    {
+      "id": "curtain",
+      "type": "curtain",
+      "position": [-0.05, 1.92, -1.07],
+      "rotation": [0, -0.22, 0],
+      "width": 2.45,
+      "height": 3.1,
+      "segments": 56,
+      "topAnchorPoints": 11,
+      "fabricColor": "#f7eed8",
+      "opacity": 0.55,
+      "windStrength": 1.55,
+      "windDirection": [1, 0.08, 0.25],
+      "gustFrequency": 1.4,
+      "turbulence": 1.25,
+      "damping": 0.16,
+      "seed": 23
+    },
+    {
+      "id": "wind-trails-high",
+      "type": "windField",
+      "position": [-0.7, 1.5, -0.6],
+      "count": 32,
+      "width": 5.4,
+      "height": 3.0,
+      "color": "#c9eee2",
+      "strength": 1.4,
+      "seed": 29
+    },
+    {
+      "id": "wind-trails-low",
+      "type": "windField",
+      "position": [-0.5, 0.7, 0.2],
+      "count": 18,
+      "width": 4.8,
+      "height": 1.6,
+      "color": "#cee6f0",
+      "strength": 0.7,
+      "seed": 31
+    },
+    {
+      "id": "leaves",
+      "type": "leafField",
+      "position": [-0.3, 1.1, -0.15],
+      "count": 80,
+      "spread": [5.4, 2.6, 2.6],
+      "colorPalette": ["#a9b96a", "#d49a3e", "#7a9c5e", "#c2774b"],
+      "windStrength": 1.55,
+      "seed": 37
+    },
+    {
+      "id": "dust-warm",
+      "type": "particleField",
+      "position": [-1.0, 1.55, -0.1],
+      "count": 240,
+      "spread": [4.8, 2.8, 1.8],
+      "size": 0.018,
+      "colorPalette": ["#fff6dd", "#ffe6b3"],
+      "drift": [0.7, 0.05, 0.06],
+      "opacity": 0.55,
+      "speed": 0.85,
+      "seed": 41
+    },
+    {
+      "id": "dust-cool",
+      "type": "particleField",
+      "position": [0.4, 0.8, 0.5],
+      "count": 140,
+      "spread": [4.5, 2.3, 2.6],
+      "size": 0.014,
+      "colorPalette": ["#cfeae6", "#dceff0"],
+      "drift": [0.55, 0.02, -0.04],
+      "opacity": 0.32,
+      "speed": 0.55,
+      "seed": 47
+    }
+  ],
+  "effects": [{ "type": "bloomHint", "strength": 0.5 }]
+}
