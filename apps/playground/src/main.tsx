@@ -155,7 +155,6 @@ function App() {
             <Badge variant={parsed.spec ? "success" : "destructive"}>
               {parsed.spec ? "Valid schema" : "Invalid schema"}
             </Badge>
-            <Badge variant="secondary">{stats.fps.toFixed(0)} FPS</Badge>
           </div>
           <div className="metrics">
             <span>{stats.objects} objects</span>
@@ -179,6 +178,9 @@ function App() {
         aria-label="Interactive 3D scene viewport"
         className="scene-stage"
       >
+        <Badge className="fps-overlay" variant="secondary">
+          {stats.fps.toFixed(0)} FPS
+        </Badge>
         {parsed.spec ? (
           <SceneRenderer onStats={setStats} spec={parsed.spec} />
         ) : (
