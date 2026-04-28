@@ -13,12 +13,23 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import "./styles.css";
 
 const elementOrder: ElementName[] = ["Fire", "Air", "Earth", "Water"];
+const modelOptions = [
+  { label: "Opus 4.7", value: "opus-4.7" },
+  { label: "GPT 5.5", value: "gpt-5.5" },
+] as const;
+
+type ModelName = (typeof modelOptions)[number]["value"];
 
 function isElementName(value: string): value is ElementName {
   return elementOrder.includes(value as ElementName);
+}
+
+function isModelName(value: string): value is ModelName {
+  return modelOptions.some((model) => model.value === value);
 }
 
 function getInitialElement() {
@@ -34,7 +45,12 @@ function App() {
     defaultValue: "Fire",
     clearOnDefault: false,
   });
+  const [modelQuery, setModelQuery] = useQueryState("model", {
+    defaultValue: "gpt-5.5",
+    clearOnDefault: false,
+  });
   const selectedElement = isElementName(elementQuery) ? elementQuery : "Fire";
+  const selectedModel = isModelName(modelQuery) ? modelQuery : "gpt-5.5";
   const [activeElement, setActiveElement] = useState(() => getInitialElement());
   const spec = benchmarkSpecs[activeElement];
   const [stats, setStats] = useState<RenderStats>({
@@ -50,6 +66,12 @@ function App() {
   const loadElement = (element: ElementName) => {
     setElementQuery(element);
     setActiveElement(element);
+  };
+
+  const loadModel = (model: string) => {
+    if (isModelName(model)) {
+      setModelQuery(model);
+    }
   };
 
   const exportScreenshot = () => {
@@ -98,6 +120,30 @@ function App() {
           <p className="text-muted-foreground text-sm">
             {benchmarkPrompts[selectedElement]}
           </p>
+        </section>
+
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-semibold text-sm">Model</h2>
+          </div>
+          <ToggleGroup
+            aria-label="Model selector"
+            className="grid w-full grid-cols-2"
+            onValueChange={loadModel}
+            type="single"
+            value={selectedModel}
+            variant="outline"
+          >
+            {modelOptions.map((model) => (
+              <ToggleGroupItem
+                className="min-w-0"
+                key={model.value}
+                value={model.value}
+              >
+                {model.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
         </section>
 
         <section className="flex flex-col gap-3">

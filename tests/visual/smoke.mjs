@@ -17,6 +17,13 @@ try {
     const page = await browser.newPage({ viewport });
     await page.goto(targetUrl, { waitUntil: "networkidle" });
     await page.waitForSelector("canvas");
+    await page.getByRole("radio", { name: "Opus 4.7" }).click();
+    const selectedModel = new URL(page.url()).searchParams.get("model");
+    if (selectedModel !== "opus-4.7") {
+      throw new Error(
+        `${viewport.name}: expected URL model=opus-4.7, got ${selectedModel}`
+      );
+    }
 
     for (const element of elements) {
       await page.getByRole("button", { name: element }).click();

@@ -2,14 +2,14 @@
 
 4 Elements is a local-first playground for benchmarking AI-generated interactive 3D elemental scenes. It renders structured scene specs through a deterministic React Three Fiber renderer so Fire, Air, Earth, and Water scenes can be replayed, inspected, and compared consistently.
 
-The current app is a Vite React playground with shadcn UI, Tailwind CSS, Three.js, React Three Fiber, Drei, Zod, and URL-controlled element tabs powered by `nuqs`.
+The current app is a Vite React playground with shadcn UI, Tailwind CSS, Three.js, React Three Fiber, Drei, Zod, and URL-controlled element/model controls powered by `nuqs`.
 
 ## Features
 
 - Four built-in benchmark scenes: Fire, Air, Earth, and Water.
 - Deterministic schema-driven renderer for repeatable 3D output.
 - Interactive full-screen playground with shadcn UI controls.
-- Search-param routing for the selected element, for example `?element=Fire`.
+- Search-param routing for the selected element and model, for example `?element=Fire&model=gpt-5.5`.
 - Live scene stats for object count, triangle count, and FPS.
 - Canvas screenshot export.
 - Visual smoke tests for desktop and mobile viewports.
@@ -42,7 +42,7 @@ http://localhost:5173/
 Fire is the default scene. You can deep-link directly to another element:
 
 ```txt
-http://localhost:5173/?element=Water
+http://localhost:5173/?element=Water&model=opus-4.7
 ```
 
 ## Scripts
@@ -91,13 +91,13 @@ examples/elements/water/reference.json
 
 The playground uses shadcn components and semantic Tailwind tokens for UI styling. Element colors inside scene specs are benchmark content, while app chrome should stay on shadcn tokens such as `bg-background`, `text-muted-foreground`, `border-border`, and component variants.
 
-The selected element is stored in the URL with the simplest `nuqs` `useQueryState` flow:
+The selected element and model are stored in the URL with the simplest `nuqs` `useQueryState` flow:
 
 ```txt
-?element=Fire
-?element=Air
-?element=Earth
-?element=Water
+?element=Fire&model=gpt-5.5
+?element=Air&model=opus-4.7
+?element=Earth&model=gpt-5.5
+?element=Water&model=opus-4.7
 ```
 
 ## Verification
