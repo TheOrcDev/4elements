@@ -9,18 +9,88 @@
     "description": "A deterministic flame scene for particles, glow, upward motion, and warm lighting."
   },
   "camera": { "position": [4.1, 2.7, 5.2], "target": [0, 0.9, 0], "fov": 43 },
-  "environment": { "background": "#100c0b", "fogColor": "#1f1210", "fogNear": 5, "fogFar": 12 },
+  "environment": {
+    "background": "#100c0b",
+    "fogColor": "#1f1210",
+    "fogNear": 5,
+    "fogFar": 12
+  },
   "lights": [
-    { "id": "ambient", "type": "ambient", "color": "#5b4b42", "intensity": 0.7 },
-    { "id": "key", "type": "point", "color": "#ff9f43", "intensity": 8, "position": [0, 1.2, 0.3] },
-    { "id": "rim", "type": "directional", "color": "#ffc078", "intensity": 1.2, "position": [-3, 4, 4] }
+    {
+      "id": "ambient",
+      "type": "ambient",
+      "color": "#5b4b42",
+      "intensity": 0.7
+    },
+    {
+      "id": "key",
+      "type": "point",
+      "color": "#ff9f43",
+      "intensity": 8,
+      "position": [0, 1.2, 0.3]
+    },
+    {
+      "id": "rim",
+      "type": "directional",
+      "color": "#ffc078",
+      "intensity": 1.2,
+      "position": [-3, 4, 4]
+    }
   ],
   "objects": [
-    { "id": "floor", "type": "floor", "width": 9, "depth": 9, "material": { "color": "#161412", "roughness": 0.9 } },
-    { "id": "altar", "type": "rock", "position": [0, 0.18, 0], "scale": [2.1, 0.38, 1.65], "radius": 0.8, "material": { "color": "#2a2725", "roughness": 0.86 } },
-    { "id": "flame", "type": "flame", "position": [0, 0.75, 0], "height": 2.2, "radius": 0.58, "colorCore": "#fff2a6", "colorMid": "#ff8b28", "colorOuter": "#c72e1e", "flickerSpeed": 2.8, "lightIntensity": 9 },
-    { "id": "embers", "type": "particleField", "position": [0, 0.82, 0], "count": 170, "spread": [1.4, 2.9, 1.4], "size": 0.045, "colorPalette": ["#fff0a3", "#ffb347", "#ff5b24"], "drift": [0.05, 1.1, -0.03], "opacity": 0.86, "speed": 1.35, "seed": 23 },
-    { "id": "smoke", "type": "smoke", "position": [0.08, 1.2, -0.04], "count": 42, "height": 3.1, "radius": 0.85, "opacity": 0.17, "seed": 45 }
+    {
+      "id": "floor",
+      "type": "floor",
+      "width": 9,
+      "depth": 9,
+      "material": { "color": "#161412", "roughness": 0.9 }
+    },
+    {
+      "id": "altar",
+      "type": "rock",
+      "position": [0, 0.18, 0],
+      "scale": [2.1, 0.38, 1.65],
+      "radius": 0.8,
+      "material": { "color": "#2a2725", "roughness": 0.86 }
+    },
+    {
+      "id": "flame",
+      "type": "flame",
+      "position": [0, 0.75, 0],
+      "height": 2.2,
+      "radius": 0.58,
+      "colorCore": "#fff2a6",
+      "colorMid": "#ff8b28",
+      "colorOuter": "#c72e1e",
+      "flickerSpeed": 2.8,
+      "lightIntensity": 9
+    },
+    {
+      "id": "embers",
+      "type": "particleField",
+      "position": [0, 0.82, 0],
+      "count": 170,
+      "spread": [1.4, 2.9, 1.4],
+      "size": 0.045,
+      "colorPalette": ["#fff0a3", "#ffb347", "#ff5b24"],
+      "drift": [0.05, 1.1, -0.03],
+      "opacity": 0.86,
+      "speed": 1.35,
+      "seed": 23
+    },
+    {
+      "id": "smoke",
+      "type": "smoke",
+      "position": [0.08, 1.2, -0.04],
+      "count": 42,
+      "height": 3.1,
+      "radius": 0.85,
+      "opacity": 0.17,
+      "seed": 45
+    }
   ],
-  "effects": [{ "type": "bloomHint", "strength": 1.4 }, { "type": "heatDistortionHint", "strength": 0.7 }]
+  "effects": [
+    { "type": "bloomHint", "strength": 1.4 },
+    { "type": "heatDistortionHint", "strength": 0.7 }
+  ]
 }

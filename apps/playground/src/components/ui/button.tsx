@@ -1,22 +1,31 @@
-import * as React from "react";
+import type { ComponentPropsWithRef } from "react";
 import { cn } from "../../lib/utils";
 
 type ButtonVariant = "default" | "secondary" | "outline" | "ghost";
 type ButtonSize = "default" | "sm" | "icon";
 
-export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: ButtonVariant;
+export interface ButtonProps extends ComponentPropsWithRef<"button"> {
   size?: ButtonSize;
-};
+  variant?: ButtonVariant;
+}
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "default", size = "default", ...props }, ref) => (
+export function Button({
+  className,
+  ref,
+  variant = "default",
+  size = "default",
+  ...props
+}: ButtonProps) {
+  return (
     <button
+      className={cn(
+        "ui-button",
+        `ui-button--${variant}`,
+        `ui-button--${size}`,
+        className
+      )}
       ref={ref}
-      className={cn("ui-button", `ui-button--${variant}`, `ui-button--${size}`, className)}
       {...props}
     />
-  )
-);
-
-Button.displayName = "Button";
+  );
+}

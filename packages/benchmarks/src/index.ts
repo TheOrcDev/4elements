@@ -1,16 +1,14 @@
-import { sceneSpecSchema, type SceneSpec } from "@elementbench/scene-schema";
+import { type SceneSpec, sceneSpecSchema } from "@elementbench/scene-schema";
 
 export type ElementName = "Fire" | "Air" | "Earth" | "Water";
 
 export const benchmarkPrompts: Record<ElementName, string> = {
-  Fire:
-    "Create an interactive 3D fire scene: a small ritual flame burning above dark stone, with glowing embers, warm light, rising sparks, subtle smoke, and animated flicker.",
-  Air:
-    "Create an interactive 3D air scene: a pale curtain and loose leaves moving in visible wind beside an open window, with soft dust trails showing the airflow.",
+  Fire: "Create an interactive 3D fire scene: a small ritual flame burning above dark stone, with glowing embers, warm light, rising sparks, subtle smoke, and animated flicker.",
+  Air: "Create an interactive 3D air scene: a pale curtain and loose leaves moving in visible wind beside an open window, with soft dust trails showing the airflow.",
   Earth:
     "Create an interactive 3D earth scene: layered terrain with rocks, soil, moss, and a slow fracture revealing glowing minerals beneath the surface.",
   Water:
-    "Create an interactive 3D water scene: a clear pool with animated ripples, reflective highlights, floating droplets, foam at the edges, and soft blue-green caustic light."
+    "Create an interactive 3D water scene: a clear pool with animated ripples, reflective highlights, floating droplets, foam at the edges, and soft blue-green caustic light.",
 };
 
 const fireSpec = {
@@ -21,23 +19,36 @@ const fireSpec = {
     element: "Fire",
     prompt: benchmarkPrompts.Fire,
     seed: 11,
-    description: "A deterministic flame scene for particles, glow, upward motion, and warm lighting."
+    description:
+      "A deterministic flame scene for particles, glow, upward motion, and warm lighting.",
   },
   camera: {
     position: [4.1, 2.7, 5.2],
     target: [0, 0.9, 0],
-    fov: 43
+    fov: 43,
   },
   environment: {
     background: "#100c0b",
     fogColor: "#1f1210",
     fogNear: 5,
-    fogFar: 12
+    fogFar: 12,
   },
   lights: [
     { id: "ambient", type: "ambient", color: "#5b4b42", intensity: 0.7 },
-    { id: "key", type: "point", color: "#ff9f43", intensity: 8, position: [0, 1.2, 0.3] },
-    { id: "rim", type: "directional", color: "#ffc078", intensity: 1.2, position: [-3, 4, 4] }
+    {
+      id: "key",
+      type: "point",
+      color: "#ff9f43",
+      intensity: 8,
+      position: [0, 1.2, 0.3],
+    },
+    {
+      id: "rim",
+      type: "directional",
+      color: "#ffc078",
+      intensity: 1.2,
+      position: [-3, 4, 4],
+    },
   ],
   objects: [
     {
@@ -45,7 +56,7 @@ const fireSpec = {
       type: "floor",
       width: 9,
       depth: 9,
-      material: { color: "#161412", roughness: 0.9 }
+      material: { color: "#161412", roughness: 0.9 },
     },
     {
       id: "altar",
@@ -53,7 +64,7 @@ const fireSpec = {
       position: [0, 0.18, 0],
       scale: [2.1, 0.38, 1.65],
       radius: 0.8,
-      material: { color: "#2a2725", roughness: 0.86 }
+      material: { color: "#2a2725", roughness: 0.86 },
     },
     {
       id: "flame",
@@ -65,7 +76,7 @@ const fireSpec = {
       colorMid: "#ff8b28",
       colorOuter: "#c72e1e",
       flickerSpeed: 2.8,
-      lightIntensity: 9
+      lightIntensity: 9,
     },
     {
       id: "embers",
@@ -78,7 +89,7 @@ const fireSpec = {
       drift: [0.05, 1.1, -0.03],
       opacity: 0.86,
       speed: 1.35,
-      seed: 23
+      seed: 23,
     },
     {
       id: "smoke",
@@ -88,10 +99,13 @@ const fireSpec = {
       height: 3.1,
       radius: 0.85,
       opacity: 0.17,
-      seed: 45
-    }
+      seed: 45,
+    },
   ],
-  effects: [{ type: "bloomHint", strength: 1.4 }, { type: "heatDistortionHint", strength: 0.7 }]
+  effects: [
+    { type: "bloomHint", strength: 1.4 },
+    { type: "heatDistortionHint", strength: 0.7 },
+  ],
 };
 
 const airSpec = {
@@ -102,23 +116,36 @@ const airSpec = {
     element: "Air",
     prompt: benchmarkPrompts.Air,
     seed: 7,
-    description: "A deterministic wind scene with curtain deformation, leaves, and dust trails."
+    description:
+      "A deterministic wind scene with curtain deformation, leaves, and dust trails.",
   },
   camera: {
     position: [4.5, 2.6, 5.4],
     target: [0, 1.2, 0],
-    fov: 42
+    fov: 42,
   },
   environment: {
     background: "#15201f",
     fogColor: "#1f2a28",
     fogNear: 7,
-    fogFar: 16
+    fogFar: 16,
   },
   lights: [
     { id: "ambient", type: "ambient", color: "#d6f2ed", intensity: 1.05 },
-    { id: "window-light", type: "directional", color: "#fff0c7", intensity: 2.6, position: [-2.5, 3.8, 4.2] },
-    { id: "cool-fill", type: "point", color: "#8fd6cf", intensity: 1.3, position: [2.5, 1.5, 1.5] }
+    {
+      id: "window-light",
+      type: "directional",
+      color: "#fff0c7",
+      intensity: 2.6,
+      position: [-2.5, 3.8, 4.2],
+    },
+    {
+      id: "cool-fill",
+      type: "point",
+      color: "#8fd6cf",
+      intensity: 1.3,
+      position: [2.5, 1.5, 1.5],
+    },
   ],
   objects: [
     {
@@ -126,7 +153,7 @@ const airSpec = {
       type: "floor",
       width: 9,
       depth: 8,
-      material: { color: "#2d2a22", roughness: 0.88 }
+      material: { color: "#2d2a22", roughness: 0.88 },
     },
     {
       id: "back-wall",
@@ -134,7 +161,7 @@ const airSpec = {
       position: [0, 1.9, -1.45],
       width: 5.8,
       height: 4.2,
-      material: { color: "#ddd6c6", roughness: 0.72 }
+      material: { color: "#ddd6c6", roughness: 0.72 },
     },
     {
       id: "window",
@@ -142,7 +169,7 @@ const airSpec = {
       position: [-1.2, 1.7, -1.36],
       width: 1.65,
       height: 2.45,
-      frameColor: "#fff4df"
+      frameColor: "#fff4df",
     },
     {
       id: "curtain",
@@ -160,7 +187,7 @@ const airSpec = {
       gustFrequency: 1.25,
       turbulence: 1.1,
       damping: 0.18,
-      seed: 19
+      seed: 19,
     },
     {
       id: "wind-trails",
@@ -171,7 +198,7 @@ const airSpec = {
       height: 2.8,
       color: "#cfefe7",
       strength: 1.25,
-      seed: 22
+      seed: 22,
     },
     {
       id: "leaves",
@@ -181,7 +208,7 @@ const airSpec = {
       spread: [4.9, 2.4, 2.4],
       colorPalette: ["#b7c66a", "#d8a84f", "#6f9b67"],
       windStrength: 1.45,
-      seed: 31
+      seed: 31,
     },
     {
       id: "dust",
@@ -194,10 +221,10 @@ const airSpec = {
       drift: [0.62, 0.04, 0.05],
       opacity: 0.5,
       speed: 0.75,
-      seed: 27
-    }
+      seed: 27,
+    },
   ],
-  effects: [{ type: "bloomHint", strength: 0.35 }]
+  effects: [{ type: "bloomHint", strength: 0.35 }],
 };
 
 const earthSpec = {
@@ -208,23 +235,36 @@ const earthSpec = {
     element: "Earth",
     prompt: benchmarkPrompts.Earth,
     seed: 13,
-    description: "Layered terrain, mass, rocks, moss color, and a glowing mineral fracture."
+    description:
+      "Layered terrain, mass, rocks, moss color, and a glowing mineral fracture.",
   },
   camera: {
     position: [4.6, 3.2, 5.1],
     target: [0, 0.42, 0],
-    fov: 45
+    fov: 45,
   },
   environment: {
     background: "#151714",
     fogColor: "#22261e",
     fogNear: 7,
-    fogFar: 15
+    fogFar: 15,
   },
   lights: [
     { id: "ambient", type: "ambient", color: "#b7c19d", intensity: 0.75 },
-    { id: "sun", type: "directional", color: "#f0d08a", intensity: 2.2, position: [3, 5, 2] },
-    { id: "mineral-glow", type: "point", color: "#72e0b4", intensity: 4.5, position: [0.1, 0.35, 0.25] }
+    {
+      id: "sun",
+      type: "directional",
+      color: "#f0d08a",
+      intensity: 2.2,
+      position: [3, 5, 2],
+    },
+    {
+      id: "mineral-glow",
+      type: "point",
+      color: "#72e0b4",
+      intensity: 4.5,
+      position: [0.1, 0.35, 0.25],
+    },
   ],
   objects: [
     {
@@ -235,7 +275,7 @@ const earthSpec = {
       segments: 58,
       heightScale: 0.72,
       seed: 52,
-      material: { color: "#4e4935", roughness: 0.94 }
+      material: { color: "#4e4935", roughness: 0.94 },
     },
     {
       id: "moss-plane",
@@ -244,7 +284,7 @@ const earthSpec = {
       rotation: [-1.5708, 0, 0],
       width: 2.4,
       height: 1.8,
-      material: { color: "#5f7b43", roughness: 0.96, opacity: 0.72 }
+      material: { color: "#5f7b43", roughness: 0.96, opacity: 0.72 },
     },
     {
       id: "main-crack",
@@ -254,7 +294,7 @@ const earthSpec = {
       length: 3.8,
       branches: 7,
       glowColor: "#75e6b4",
-      seed: 67
+      seed: 67,
     },
     {
       id: "rock-a",
@@ -263,7 +303,7 @@ const earthSpec = {
       scale: [1.1, 0.88, 0.95],
       radius: 0.72,
       seed: 12,
-      material: { color: "#5a5549", roughness: 0.91 }
+      material: { color: "#5a5549", roughness: 0.91 },
     },
     {
       id: "rock-b",
@@ -272,7 +312,7 @@ const earthSpec = {
       scale: [0.8, 0.58, 1.1],
       radius: 0.66,
       seed: 16,
-      material: { color: "#393831", roughness: 0.95 }
+      material: { color: "#393831", roughness: 0.95 },
     },
     {
       id: "rock-c",
@@ -281,7 +321,7 @@ const earthSpec = {
       scale: [0.58, 0.48, 0.62],
       radius: 0.54,
       seed: 18,
-      material: { color: "#6a644f", roughness: 0.9 }
+      material: { color: "#6a644f", roughness: 0.9 },
     },
     {
       id: "mineral-dust",
@@ -294,10 +334,10 @@ const earthSpec = {
       drift: [0.03, 0.17, 0.02],
       opacity: 0.68,
       speed: 0.45,
-      seed: 29
-    }
+      seed: 29,
+    },
   ],
-  effects: [{ type: "bloomHint", strength: 0.65 }]
+  effects: [{ type: "bloomHint", strength: 0.65 }],
 };
 
 const waterSpec = {
@@ -308,23 +348,36 @@ const waterSpec = {
     element: "Water",
     prompt: benchmarkPrompts.Water,
     seed: 17,
-    description: "Transparent water, animated ripples, foam, droplets, and soft caustic light."
+    description:
+      "Transparent water, animated ripples, foam, droplets, and soft caustic light.",
   },
   camera: {
     position: [4.1, 3.1, 5.4],
     target: [0, 0.22, 0],
-    fov: 43
+    fov: 43,
   },
   environment: {
     background: "#0c1718",
     fogColor: "#123032",
     fogNear: 8,
-    fogFar: 17
+    fogFar: 17,
   },
   lights: [
     { id: "ambient", type: "ambient", color: "#b7f3e7", intensity: 0.9 },
-    { id: "sun", type: "directional", color: "#fff7ca", intensity: 2.4, position: [2.5, 5, 3] },
-    { id: "caustic", type: "point", color: "#6ae4d7", intensity: 3.8, position: [-1, 1.2, 1.2] }
+    {
+      id: "sun",
+      type: "directional",
+      color: "#fff7ca",
+      intensity: 2.4,
+      position: [2.5, 5, 3],
+    },
+    {
+      id: "caustic",
+      type: "point",
+      color: "#6ae4d7",
+      intensity: 3.8,
+      position: [-1, 1.2, 1.2],
+    },
   ],
   objects: [
     {
@@ -332,7 +385,7 @@ const waterSpec = {
       type: "floor",
       width: 8,
       depth: 8,
-      material: { color: "#253532", roughness: 0.82 }
+      material: { color: "#253532", roughness: 0.82 },
     },
     {
       id: "water",
@@ -345,7 +398,7 @@ const waterSpec = {
       opacity: 0.56,
       waveStrength: 0.18,
       waveSpeed: 1.25,
-      material: { roughness: 0.12, metalness: 0.05 }
+      material: { roughness: 0.12, metalness: 0.05 },
     },
     {
       id: "ring-a",
@@ -354,7 +407,7 @@ const waterSpec = {
       radius: 0.75,
       thickness: 0.012,
       color: "#d9fff8",
-      speed: 0.65
+      speed: 0.65,
     },
     {
       id: "ring-b",
@@ -363,7 +416,7 @@ const waterSpec = {
       radius: 1.1,
       thickness: 0.014,
       color: "#9debe2",
-      speed: 0.9
+      speed: 0.9,
     },
     {
       id: "foam",
@@ -372,7 +425,7 @@ const waterSpec = {
       count: 54,
       radius: 3.02,
       color: "#edf8ef",
-      seed: 38
+      seed: 38,
     },
     {
       id: "droplets",
@@ -385,15 +438,18 @@ const waterSpec = {
       drift: [0.02, 0.22, -0.01],
       opacity: 0.72,
       speed: 0.62,
-      seed: 74
-    }
+      seed: 74,
+    },
   ],
-  effects: [{ type: "causticsHint", strength: 1.1 }, { type: "bloomHint", strength: 0.25 }]
+  effects: [
+    { type: "causticsHint", strength: 1.1 },
+    { type: "bloomHint", strength: 0.25 },
+  ],
 };
 
 export const benchmarkSpecs: Record<ElementName, SceneSpec> = {
   Fire: sceneSpecSchema.parse(fireSpec),
   Air: sceneSpecSchema.parse(airSpec),
   Earth: sceneSpecSchema.parse(earthSpec),
-  Water: sceneSpecSchema.parse(waterSpec)
+  Water: sceneSpecSchema.parse(waterSpec),
 };

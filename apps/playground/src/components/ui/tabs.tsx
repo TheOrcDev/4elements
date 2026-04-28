@@ -1,14 +1,21 @@
-import * as React from "react";
+import {
+  type ComponentPropsWithRef,
+  createContext,
+  type HTMLAttributes,
+  useContext,
+} from "react";
 import { cn } from "../../lib/utils";
 
-type TabsContextValue = {
-  value: string;
+interface TabsContextValue {
   onValueChange: (value: string) => void;
-};
+  value: string;
+}
 
-const TabsContext = React.createContext<TabsContextValue | null>(null);
+const TabsContext = createContext<TabsContextValue | null>(null);
 
-export type TabsProps = React.HTMLAttributes<HTMLDivElement> & TabsContextValue;
+export interface TabsProps
+  extends HTMLAttributes<HTMLDivElement>,
+    TabsContextValue {}
 
 export function Tabs({ value, onValueChange, className, ...props }: TabsProps) {
   return (
@@ -18,33 +25,38 @@ export function Tabs({ value, onValueChange, className, ...props }: TabsProps) {
   );
 }
 
-export function TabsList({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function TabsList({
+  className,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("ui-tabs-list", className)} {...props} />;
 }
 
-export type TabsTriggerProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+export interface TabsTriggerProps extends ComponentPropsWithRef<"button"> {
   value: string;
-};
+}
 
-export const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
-  ({ value, className, onClick, ...props }, ref) => {
-    const context = React.useContext(TabsContext);
-    const isActive = context?.value === value;
+export function TabsTrigger({
+  value,
+  className,
+  onClick,
+  ref,
+  ...props
+}: TabsTriggerProps) {
+  const context = useContext(TabsContext);
+  const isActive = context?.value === value;
 
-    return (
-      <button
-        ref={ref}
-        type="button"
-        data-state={isActive ? "active" : "inactive"}
-        className={cn("ui-tabs-trigger", className)}
-        onClick={(event) => {
-          context?.onValueChange(value);
-          onClick?.(event);
-        }}
-        {...props}
-      />
-    );
-  }
-);
-
-TabsTrigger.displayName = "TabsTrigger";
+  return (
+    <button
+      className={cn("ui-tabs-trigger", className)}
+      data-state={isActive ? "active" : "inactive"}
+      onClick={(event) => {
+        context?.onValueChange(value);
+        onClick?.(event);
+      }}
+      ref={ref}
+      type="button"
+      {...props}
+    />
+  );
+}

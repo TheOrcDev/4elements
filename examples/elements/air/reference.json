@@ -9,20 +9,110 @@
     "description": "A deterministic wind scene with curtain deformation, leaves, and dust trails."
   },
   "camera": { "position": [4.5, 2.6, 5.4], "target": [0, 1.2, 0], "fov": 42 },
-  "environment": { "background": "#15201f", "fogColor": "#1f2a28", "fogNear": 7, "fogFar": 16 },
+  "environment": {
+    "background": "#15201f",
+    "fogColor": "#1f2a28",
+    "fogNear": 7,
+    "fogFar": 16
+  },
   "lights": [
-    { "id": "ambient", "type": "ambient", "color": "#d6f2ed", "intensity": 1.05 },
-    { "id": "window-light", "type": "directional", "color": "#fff0c7", "intensity": 2.6, "position": [-2.5, 3.8, 4.2] },
-    { "id": "cool-fill", "type": "point", "color": "#8fd6cf", "intensity": 1.3, "position": [2.5, 1.5, 1.5] }
+    {
+      "id": "ambient",
+      "type": "ambient",
+      "color": "#d6f2ed",
+      "intensity": 1.05
+    },
+    {
+      "id": "window-light",
+      "type": "directional",
+      "color": "#fff0c7",
+      "intensity": 2.6,
+      "position": [-2.5, 3.8, 4.2]
+    },
+    {
+      "id": "cool-fill",
+      "type": "point",
+      "color": "#8fd6cf",
+      "intensity": 1.3,
+      "position": [2.5, 1.5, 1.5]
+    }
   ],
   "objects": [
-    { "id": "floor", "type": "floor", "width": 9, "depth": 8, "material": { "color": "#2d2a22", "roughness": 0.88 } },
-    { "id": "back-wall", "type": "wall", "position": [0, 1.9, -1.45], "width": 5.8, "height": 4.2, "material": { "color": "#ddd6c6", "roughness": 0.72 } },
-    { "id": "window", "type": "window", "position": [-1.2, 1.7, -1.36], "width": 1.65, "height": 2.45, "frameColor": "#fff4df" },
-    { "id": "curtain", "type": "curtain", "position": [0.05, 1.77, -1.03], "rotation": [0, -0.18, 0], "width": 2.2, "height": 2.95, "segments": 44, "topAnchorPoints": 9, "fabricColor": "#f5ead6", "opacity": 0.62, "windStrength": 1.35, "windDirection": [1, 0.06, 0.2], "gustFrequency": 1.25, "turbulence": 1.1, "damping": 0.18, "seed": 19 },
-    { "id": "wind-trails", "type": "windField", "position": [-1.35, 1.25, -0.68], "count": 24, "width": 4.8, "height": 2.8, "color": "#cfefe7", "strength": 1.25, "seed": 22 },
-    { "id": "leaves", "type": "leafField", "position": [-0.6, 1, -0.35], "count": 64, "spread": [4.9, 2.4, 2.4], "colorPalette": ["#b7c66a", "#d8a84f", "#6f9b67"], "windStrength": 1.45, "seed": 31 },
-    { "id": "dust", "type": "particleField", "position": [-0.8, 1.25, -0.25], "count": 220, "spread": [4.7, 2.7, 2], "size": 0.018, "colorPalette": ["#fff4db", "#cfefe7"], "drift": [0.62, 0.04, 0.05], "opacity": 0.5, "speed": 0.75, "seed": 27 }
+    {
+      "id": "floor",
+      "type": "floor",
+      "width": 9,
+      "depth": 8,
+      "material": { "color": "#2d2a22", "roughness": 0.88 }
+    },
+    {
+      "id": "back-wall",
+      "type": "wall",
+      "position": [0, 1.9, -1.45],
+      "width": 5.8,
+      "height": 4.2,
+      "material": { "color": "#ddd6c6", "roughness": 0.72 }
+    },
+    {
+      "id": "window",
+      "type": "window",
+      "position": [-1.2, 1.7, -1.36],
+      "width": 1.65,
+      "height": 2.45,
+      "frameColor": "#fff4df"
+    },
+    {
+      "id": "curtain",
+      "type": "curtain",
+      "position": [0.05, 1.77, -1.03],
+      "rotation": [0, -0.18, 0],
+      "width": 2.2,
+      "height": 2.95,
+      "segments": 44,
+      "topAnchorPoints": 9,
+      "fabricColor": "#f5ead6",
+      "opacity": 0.62,
+      "windStrength": 1.35,
+      "windDirection": [1, 0.06, 0.2],
+      "gustFrequency": 1.25,
+      "turbulence": 1.1,
+      "damping": 0.18,
+      "seed": 19
+    },
+    {
+      "id": "wind-trails",
+      "type": "windField",
+      "position": [-1.35, 1.25, -0.68],
+      "count": 24,
+      "width": 4.8,
+      "height": 2.8,
+      "color": "#cfefe7",
+      "strength": 1.25,
+      "seed": 22
+    },
+    {
+      "id": "leaves",
+      "type": "leafField",
+      "position": [-0.6, 1, -0.35],
+      "count": 64,
+      "spread": [4.9, 2.4, 2.4],
+      "colorPalette": ["#b7c66a", "#d8a84f", "#6f9b67"],
+      "windStrength": 1.45,
+      "seed": 31
+    },
+    {
+      "id": "dust",
+      "type": "particleField",
+      "position": [-0.8, 1.25, -0.25],
+      "count": 220,
+      "spread": [4.7, 2.7, 2],
+      "size": 0.018,
+      "colorPalette": ["#fff4db", "#cfefe7"],
+      "drift": [0.62, 0.04, 0.05],
+      "opacity": 0.5,
+      "speed": 0.75,
+      "seed": 27
+    }
   ],
   "effects": [{ "type": "bloomHint", "strength": 0.35 }]
 }

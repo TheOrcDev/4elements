@@ -1,7 +1,9 @@
 import { z } from "zod";
 
 const vector3Schema = z.tuple([z.number(), z.number(), z.number()]);
-const colorSchema = z.string().regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, "Use a hex color.");
+const colorSchema = z
+  .string()
+  .regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, "Use a hex color.");
 
 const materialSchema = z
   .object({
@@ -11,7 +13,7 @@ const materialSchema = z
     opacity: z.number().min(0).max(1).optional(),
     roughness: z.number().min(0).max(1).optional(),
     metalness: z.number().min(0).max(1).optional(),
-    transmission: z.number().min(0).max(1).optional()
+    transmission: z.number().min(0).max(1).optional(),
   })
   .strict();
 
@@ -28,11 +30,11 @@ const animationSchema = z
       "wave",
       "ripple",
       "erosion",
-      "crumble"
+      "crumble",
     ]),
     speed: z.number().optional(),
     strength: z.number().optional(),
-    axis: z.enum(["x", "y", "z"]).optional()
+    axis: z.enum(["x", "y", "z"]).optional(),
   })
   .strict();
 
@@ -42,13 +44,13 @@ const objectBaseSchema = z.object({
   rotation: vector3Schema.default([0, 0, 0]),
   scale: vector3Schema.default([1, 1, 1]),
   material: materialSchema.optional(),
-  animations: z.array(animationSchema).default([])
+  animations: z.array(animationSchema).default([]),
 });
 
 const boxSchema = objectBaseSchema
   .extend({
     type: z.literal("box"),
-    size: vector3Schema.default([1, 1, 1])
+    size: vector3Schema.default([1, 1, 1]),
   })
   .strict();
 
@@ -56,7 +58,7 @@ const sphereSchema = objectBaseSchema
   .extend({
     type: z.literal("sphere"),
     radius: z.number().positive().default(1),
-    segments: z.number().int().min(8).max(96).default(32)
+    segments: z.number().int().min(8).max(96).default(32),
   })
   .strict();
 
@@ -64,7 +66,7 @@ const planeSchema = objectBaseSchema
   .extend({
     type: z.literal("plane"),
     width: z.number().positive().default(8),
-    height: z.number().positive().default(8)
+    height: z.number().positive().default(8),
   })
   .strict();
 
@@ -72,7 +74,7 @@ const textSchema = objectBaseSchema
   .extend({
     type: z.literal("text"),
     text: z.string().default("ElementBench"),
-    fontSize: z.number().positive().default(0.35)
+    fontSize: z.number().positive().default(0.35),
   })
   .strict();
 
@@ -80,7 +82,7 @@ const floorSchema = objectBaseSchema
   .extend({
     type: z.literal("floor"),
     width: z.number().positive().default(12),
-    depth: z.number().positive().default(12)
+    depth: z.number().positive().default(12),
   })
   .strict();
 
@@ -88,7 +90,7 @@ const wallSchema = objectBaseSchema
   .extend({
     type: z.literal("wall"),
     width: z.number().positive().default(6),
-    height: z.number().positive().default(4)
+    height: z.number().positive().default(4),
   })
   .strict();
 
@@ -97,7 +99,7 @@ const windowSchema = objectBaseSchema
     type: z.literal("window"),
     width: z.number().positive().default(2),
     height: z.number().positive().default(3),
-    frameColor: colorSchema.default("#d8cdb8")
+    frameColor: colorSchema.default("#d8cdb8"),
   })
   .strict();
 
@@ -115,7 +117,7 @@ const curtainSchema = objectBaseSchema
     gustFrequency: z.number().min(0).max(10).default(1.2),
     turbulence: z.number().min(0).max(5).default(0.7),
     damping: z.number().min(0).max(1).default(0.25),
-    seed: z.number().int().default(1)
+    seed: z.number().int().default(1),
   })
   .strict();
 
@@ -129,7 +131,7 @@ const particleFieldSchema = objectBaseSchema
     drift: vector3Schema.default([0, 0.2, 0]),
     opacity: z.number().min(0).max(1).default(0.55),
     speed: z.number().min(0).max(8).default(1),
-    seed: z.number().int().default(1)
+    seed: z.number().int().default(1),
   })
   .strict();
 
@@ -142,7 +144,7 @@ const flameSchema = objectBaseSchema
     colorMid: colorSchema.default("#ff8c2b"),
     colorOuter: colorSchema.default("#cc2f1b"),
     flickerSpeed: z.number().min(0).max(10).default(2.5),
-    lightIntensity: z.number().min(0).max(30).default(8)
+    lightIntensity: z.number().min(0).max(30).default(8),
   })
   .strict();
 
@@ -153,7 +155,7 @@ const smokeSchema = objectBaseSchema
     height: z.number().positive().default(3),
     radius: z.number().positive().default(1.1),
     opacity: z.number().min(0).max(1).default(0.22),
-    seed: z.number().int().default(1)
+    seed: z.number().int().default(1),
   })
   .strict();
 
@@ -165,7 +167,7 @@ const windFieldSchema = objectBaseSchema
     height: z.number().positive().default(3),
     color: colorSchema.default("#cfeee6"),
     strength: z.number().min(0).max(5).default(1),
-    seed: z.number().int().default(1)
+    seed: z.number().int().default(1),
   })
   .strict();
 
@@ -176,7 +178,7 @@ const terrainSchema = objectBaseSchema
     depth: z.number().positive().default(8),
     segments: z.number().int().min(4).max(128).default(48),
     heightScale: z.number().min(0).max(5).default(0.8),
-    seed: z.number().int().default(1)
+    seed: z.number().int().default(1),
   })
   .strict();
 
@@ -185,7 +187,7 @@ const rockSchema = objectBaseSchema
     type: z.literal("rock"),
     radius: z.number().positive().default(0.55),
     detail: z.number().int().min(0).max(2).default(0),
-    seed: z.number().int().default(1)
+    seed: z.number().int().default(1),
   })
   .strict();
 
@@ -195,7 +197,7 @@ const crackSchema = objectBaseSchema
     length: z.number().positive().default(3),
     branches: z.number().int().min(0).max(12).default(4),
     glowColor: colorSchema.default("#f1b35b"),
-    seed: z.number().int().default(1)
+    seed: z.number().int().default(1),
   })
   .strict();
 
@@ -208,7 +210,7 @@ const waterSurfaceSchema = objectBaseSchema
     color: colorSchema.default("#4fb7bc"),
     opacity: z.number().min(0).max(1).default(0.58),
     waveStrength: z.number().min(0).max(2).default(0.18),
-    waveSpeed: z.number().min(0).max(8).default(1.1)
+    waveSpeed: z.number().min(0).max(8).default(1.1),
   })
   .strict();
 
@@ -218,7 +220,7 @@ const waveRingSchema = objectBaseSchema
     radius: z.number().positive().default(1),
     thickness: z.number().positive().default(0.018),
     color: colorSchema.default("#d9fff8"),
-    speed: z.number().min(0).max(8).default(1)
+    speed: z.number().min(0).max(8).default(1),
   })
   .strict();
 
@@ -228,7 +230,7 @@ const foamSchema = objectBaseSchema
     count: z.number().int().min(1).max(120).default(32),
     radius: z.number().positive().default(3.1),
     color: colorSchema.default("#edf8ef"),
-    seed: z.number().int().default(1)
+    seed: z.number().int().default(1),
   })
   .strict();
 
@@ -239,7 +241,7 @@ const leafFieldSchema = objectBaseSchema
     spread: vector3Schema.default([4, 2.5, 2]),
     colorPalette: z.array(colorSchema).min(1).default(["#a9b55b", "#d8a84f"]),
     windStrength: z.number().min(0).max(5).default(1),
-    seed: z.number().int().default(1)
+    seed: z.number().int().default(1),
   })
   .strict();
 
@@ -262,7 +264,7 @@ export const sceneObjectSchema = z.discriminatedUnion("type", [
   waterSurfaceSchema,
   waveRingSchema,
   foamSchema,
-  leafFieldSchema
+  leafFieldSchema,
 ]);
 
 export const lightSchema = z
@@ -272,7 +274,7 @@ export const lightSchema = z
     color: colorSchema.default("#ffffff"),
     intensity: z.number().min(0).max(50).default(1),
     position: vector3Schema.default([0, 4, 4]),
-    target: vector3Schema.optional()
+    target: vector3Schema.optional(),
   })
   .strict();
 
@@ -286,14 +288,14 @@ export const sceneSpecSchema = z
         element: z.enum(["Fire", "Air", "Earth", "Water"]),
         prompt: z.string().min(1),
         seed: z.number().int().default(1),
-        description: z.string().optional()
+        description: z.string().optional(),
       })
       .strict(),
     camera: z
       .object({
         position: vector3Schema.default([4, 3, 6]),
         target: vector3Schema.default([0, 0.8, 0]),
-        fov: z.number().min(20).max(90).default(45)
+        fov: z.number().min(20).max(90).default(45),
       })
       .strict(),
     environment: z
@@ -301,7 +303,7 @@ export const sceneSpecSchema = z
         background: colorSchema.default("#101111"),
         fogColor: colorSchema.optional(),
         fogNear: z.number().positive().optional(),
-        fogFar: z.number().positive().optional()
+        fogFar: z.number().positive().optional(),
       })
       .strict(),
     lights: z.array(lightSchema).default([]),
@@ -311,11 +313,11 @@ export const sceneSpecSchema = z
         z
           .object({
             type: z.enum(["bloomHint", "causticsHint", "heatDistortionHint"]),
-            strength: z.number().min(0).max(5).default(1)
+            strength: z.number().min(0).max(5).default(1),
           })
           .strict()
       )
-      .default([])
+      .default([]),
   })
   .strict();
 

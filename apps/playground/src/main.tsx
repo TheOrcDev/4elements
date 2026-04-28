@@ -1,11 +1,15 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
+import {
+  benchmarkPrompts,
+  benchmarkSpecs,
+  type ElementName,
+} from "@elementbench/benchmarks";
+import { type RenderStats, SceneRenderer } from "@elementbench/renderer";
+import { type SceneSpec, sceneSpecSchema } from "@elementbench/scene-schema";
 import { Download, RotateCcw } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { NuqsAdapter } from "nuqs/adapters/react";
-import { SceneRenderer, type RenderStats } from "@elementbench/renderer";
-import { benchmarkSpecs, benchmarkPrompts, type ElementName } from "@elementbench/benchmarks";
-import { sceneSpecSchema, type SceneSpec } from "@elementbench/scene-schema";
+import { StrictMode, useEffect, useMemo, useState } from "react";
+import { createRoot } from "react-dom/client";
 import { Badge } from "./components/ui/badge";
 import { Button } from "./components/ui/button";
 import { Separator } from "./components/ui/separator";
@@ -20,7 +24,9 @@ function isElementName(value: string): value is ElementName {
 }
 
 function getInitialElement() {
-  if (typeof window === "undefined") return "Fire";
+  if (typeof window === "undefined") {
+    return "Fire";
+  }
   const element = new URLSearchParams(window.location.search).get("element");
   return element && isElementName(element) ? element : "Fire";
 }
@@ -33,15 +39,17 @@ function parseSceneSpec(text: string) {
       return {
         spec: null,
         error: result.error.issues
-          .map((issue) => `${issue.path.join(".") || "scene"}: ${issue.message}`)
-          .join("\n")
+          .map(
+            (issue) => `${issue.path.join(".") || "scene"}: ${issue.message}`
+          )
+          .join("\n"),
       };
     }
     return { spec: result.data, error: "" };
   } catch (error) {
     return {
       spec: null,
-      error: error instanceof Error ? error.message : "Invalid JSON"
+      error: error instanceof Error ? error.message : "Invalid JSON",
     };
   }
 }
@@ -53,23 +61,25 @@ function formatSpec(spec: SceneSpec) {
 function App() {
   const [elementQuery, setElementQuery] = useQueryState("element", {
     defaultValue: "Fire",
-    clearOnDefault: false
+    clearOnDefault: false,
   });
   const selectedElement = isElementName(elementQuery) ? elementQuery : "Fire";
-  const [specText, setSpecText] = React.useState(() => formatSpec(benchmarkSpecs[getInitialElement()]));
-  const [stats, setStats] = React.useState<RenderStats>({
+  const [specText, setSpecText] = useState(() =>
+    formatSpec(benchmarkSpecs[getInitialElement()])
+  );
+  const [stats, setStats] = useState<RenderStats>({
     fps: 0,
     triangles: 0,
-    objects: 0
+    objects: 0,
   });
-  const parsed = React.useMemo(() => parseSceneSpec(specText), [specText]);
+  const parsed = useMemo(() => parseSceneSpec(specText), [specText]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSpecText(formatSpec(benchmarkSpecs[selectedElement]));
   }, [selectedElement]);
 
   const loadElement = (element: ElementName) => {
-    void setElementQuery(element);
+    setElementQuery(element);
     setSpecText(formatSpec(benchmarkSpecs[element]));
   };
 
@@ -78,8 +88,12 @@ function App() {
   };
 
   const exportScreenshot = () => {
-    const canvas = document.querySelector<HTMLCanvasElement>(".scene-stage canvas");
-    if (!canvas) return;
+    const canvas = document.querySelector<HTMLCanvasElement>(
+      ".scene-stage canvas"
+    );
+    if (!canvas) {
+      return;
+    }
     const link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
     link.download = `elementbench-${selectedElement.toLowerCase()}-${Date.now()}.png`;
@@ -100,16 +114,16 @@ function App() {
           <div className="section-heading">
             <h2>Benchmark</h2>
           </div>
-          <Tabs value={selectedElement} onValueChange={(value) => loadElement(value as ElementName)}>
+          <Tabs
+            onValueChange={(value) => loadElement(value as ElementName)}
+            value={selectedElement}
+          >
             <TabsList aria-label="Element selector">
-            {elementOrder.map((element) => (
-              <TabsTrigger
-                key={element}
-                value={element}
-              >
-                {element}
-              </TabsTrigger>
-            ))}
+              {elementOrder.map((element) => (
+                <TabsTrigger key={element} value={element}>
+                  {element}
+                </TabsTrigger>
+              ))}
             </TabsList>
           </Tabs>
           <p className="prompt">{benchmarkPrompts[selectedElement]}</p>
@@ -118,15 +132,21 @@ function App() {
         <section className="sidebar-section editor-section">
           <div className="section-heading">
             <h2>Scene JSON</h2>
-            <Button variant="ghost" size="icon" onClick={resetCurrent} type="button" title="Reset sample">
+            <Button
+              onClick={resetCurrent}
+              size="icon"
+              title="Reset sample"
+              type="button"
+              variant="ghost"
+            >
               <RotateCcw aria-hidden="true" size={16} />
             </Button>
           </div>
           <Textarea
+            aria-label="Scene JSON editor"
+            onChange={(event) => setSpecText(event.target.value)}
             spellCheck={false}
             value={specText}
-            onChange={(event) => setSpecText(event.target.value)}
-            aria-label="Scene JSON editor"
           />
         </section>
 
@@ -144,15 +164,23 @@ function App() {
           {parsed.error ? <pre className="errors">{parsed.error}</pre> : null}
         </section>
 
-        <Button className="export-button" onClick={exportScreenshot} disabled={!parsed.spec} type="button">
+        <Button
+          className="export-button"
+          disabled={!parsed.spec}
+          onClick={exportScreenshot}
+          type="button"
+        >
           <Download aria-hidden="true" size={17} />
           Export screenshot
         </Button>
       </aside>
 
-      <section className="scene-stage" aria-label="Interactive 3D scene viewport">
+      <section
+        aria-label="Interactive 3D scene viewport"
+        className="scene-stage"
+      >
         {parsed.spec ? (
-          <SceneRenderer spec={parsed.spec} onStats={setStats} />
+          <SceneRenderer onStats={setStats} spec={parsed.spec} />
         ) : (
           <div className="empty-state">
             <h2>Scene paused</h2>
@@ -164,10 +192,16 @@ function App() {
   );
 }
 
-createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+  throw new Error("Root element not found.");
+}
+
+createRoot(rootElement).render(
+  <StrictMode>
     <NuqsAdapter>
       <App />
     </NuqsAdapter>
-  </React.StrictMode>
+  </StrictMode>
 );
