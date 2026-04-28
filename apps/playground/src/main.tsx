@@ -24,6 +24,7 @@ const REPO = "TheOrcDev/4elements";
 
 const modelOptions: ReadonlyArray<{ label: string; value: ModelName }> = [
   { label: "Opus 4.7", value: "opus-4.7" },
+  { label: "Sonnet 4.6", value: "sonnet-4.6" },
   { label: "GPT 5.5", value: "gpt-5.5" },
 ] as const;
 
@@ -136,7 +137,7 @@ function App() {
           </div>
           <ToggleGroup
             aria-label="Model selector"
-            className="grid w-full grid-cols-2"
+            className="grid w-full grid-cols-3"
             onValueChange={loadModel}
             type="single"
             value={selectedModel}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0",
+  "metadata": {
+    "id": "sonnet-4.6-air",
+    "name": "Air (Sonnet 4.6 — pending)",
+    "element": "Air",
+    "prompt": "Create an interactive 3D air scene: a pale curtain and loose leaves moving in visible wind beside an open window, with soft dust trails showing the airflow.",
+    "seed": 1,
+    "description": "Placeholder scene. Generate this scene with Sonnet 4.6 and replace this entry."
+  },
+  "camera": { "position": [4, 3, 6], "target": [0, 1, 0], "fov": 45 },
+  "environment": {
+    "background": "#101111",
+    "fogColor": "#15171a",
+    "fogNear": 8,
+    "fogFar": 18
+  },
+  "lights": [
+    {
+      "id": "ambient",
+      "type": "ambient",
+      "color": "#cdd2d8",
+      "intensity": 0.85
+    },
+    {
+      "id": "key",
+      "type": "directional",
+      "color": "#ffffff",
+      "intensity": 1.6,
+      "position": [3, 4, 3]
+    }
+  ],
+  "objects": [
+    {
+      "id": "floor",
+      "type": "floor",
+      "width": 10,
+      "depth": 10,
+      "material": { "color": "#1a1a1a", "roughness": 0.85 }
+    },
+    {
+      "id": "label",
+      "type": "text",
+      "position": [0, 1.2, 0],
+      "text": "Sonnet 4.6 — pending",
+      "fontSize": 0.36,
+      "material": { "color": "#f4f0e8" }
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "position": [0, 0.78, 0],
+      "text": "Generate Air with Sonnet 4.6",
+      "fontSize": 0.18,
+      "material": { "color": "#9aa1a8" }
+    }
+  ],
+  "effects": []
+}

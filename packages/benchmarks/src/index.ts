@@ -1,7 +1,7 @@
 import { type SceneSpec, sceneSpecSchema } from "@4elements/scene-schema";
 
 export type ElementName = "Fire" | "Air" | "Earth" | "Water";
-export type ModelName = "gpt-5.5" | "opus-4.7";
+export type ModelName = "gpt-5.5" | "opus-4.7" | "sonnet-4.6";
 
 export const defaultModel: ModelName = "gpt-5.5";
 export const elementOrder: readonly ElementName[] = [
@@ -1150,6 +1150,400 @@ const opusWaterSpec = {
   ],
 };
 
+// ---------------------------------------------------------------------------
+// Sonnet 4.6 specs — placeholder stubs. Replace each entry with a generated
+// scene spec to populate the Sonnet 4.6 column.
+// ---------------------------------------------------------------------------
+
+const sonnetFireSpec = {
+  schemaVersion: "1.0",
+  metadata: {
+    id: "sonnet-4.6-fire",
+    name: "Ritual Flame",
+    element: "Fire",
+    prompt:
+      "Create an interactive 3D fire scene: a small ritual flame burning above dark stone, with glowing embers, warm light, rising sparks, subtle smoke, and animated flicker.",
+    seed: 467,
+    description:
+      "A single ritual flame burns in absolute darkness above a stone altar — amber light carves one circle of warmth, everything beyond it dissolves into shadow.",
+  },
+  camera: {
+    position: [1.8, 0.9, 3.8] as [number, number, number],
+    target: [-0.2, 0.5, 0.0] as [number, number, number],
+    fov: 52,
+  },
+  environment: {
+    background: "#0d0905",
+    fogColor: "#1a1008",
+    fogNear: 3.0,
+    fogFar: 12.0,
+  },
+  lights: [
+    { id: "ambient", type: "ambient", color: "#1a0e08", intensity: 0.18 },
+    {
+      id: "flame-point",
+      type: "point",
+      color: "#ff6010",
+      intensity: 9.0,
+      position: [0.0, 0.7, 0.0] as [number, number, number],
+    },
+    {
+      id: "back-fill",
+      type: "directional",
+      color: "#0a1028",
+      intensity: 0.35,
+      position: [-3.0, 4.0, -2.0] as [number, number, number],
+      target: [0.0, 0.0, 0.0] as [number, number, number],
+    },
+  ],
+  objects: [
+    {
+      id: "stone-floor",
+      type: "floor",
+      width: 6.0,
+      depth: 6.0,
+      material: { color: "#1a1208", roughness: 0.95, metalness: 0.0 },
+    },
+    {
+      id: "altar",
+      type: "box",
+      position: [0.0, 0.15, 0.0] as [number, number, number],
+      size: [0.6, 0.3, 0.6] as [number, number, number],
+      material: { color: "#2a1f14", roughness: 0.9, metalness: 0.05 },
+    },
+    {
+      id: "ritual-flame",
+      type: "flame",
+      position: [0.0, 0.3, 0.0] as [number, number, number],
+      height: 0.9,
+      radius: 0.18,
+      colorCore: "#fff5c0",
+      colorMid: "#e85010",
+      colorOuter: "#8b2000",
+      flickerSpeed: 2.5,
+      lightIntensity: 6.0,
+      animations: [{ type: "flameFlicker", speed: 2.5, strength: 0.6 }],
+    },
+    {
+      id: "smoke-wisp",
+      type: "smoke",
+      position: [0.0, 1.0, 0.0] as [number, number, number],
+      count: 25,
+      height: 1.8,
+      radius: 0.22,
+      opacity: 0.12,
+      seed: 42,
+      animations: [{ type: "smokeRise", speed: 0.4, strength: 0.3 }],
+    },
+    {
+      id: "embers",
+      type: "particleField",
+      position: [0.0, 0.5, 0.0] as [number, number, number],
+      count: 60,
+      spread: [0.3, 1.5, 0.3] as [number, number, number],
+      size: 0.025,
+      colorPalette: ["#ff8030", "#ffc060", "#ff4010"],
+      drift: [0.05, 0.8, 0.02] as [number, number, number],
+      opacity: 0.85,
+      speed: 1.2,
+      seed: 77,
+      animations: [{ type: "particleDrift", speed: 1.2, strength: 0.5 }],
+    },
+  ],
+  effects: [
+    { type: "bloomHint", strength: 2.5 },
+    { type: "heatDistortionHint", strength: 1.2 },
+  ],
+};
+
+const sonnetAirSpec = {
+  schemaVersion: "1.0",
+  metadata: {
+    id: "sonnet-4.6-air",
+    name: "Still Room, Moving Air",
+    element: "Air",
+    prompt:
+      "Create an interactive 3D air scene: a pale curtain and loose leaves moving in visible wind beside an open window, with soft dust trails showing the airflow.",
+    seed: 182,
+    description:
+      "One pale curtain billows from an off-center window — loose amber leaves trace the invisible wind path through an otherwise still interior, the empty room as much subject as the motion.",
+  },
+  camera: {
+    position: [2.2, 1.5, -3.2] as [number, number, number],
+    target: [-0.3, 1.1, 0.8] as [number, number, number],
+    fov: 58,
+  },
+  environment: {
+    background: "#c0d8f0",
+    fogColor: "#b8cce0",
+    fogNear: 6.0,
+    fogFar: 18.0,
+  },
+  lights: [
+    { id: "ambient", type: "ambient", color: "#c8a060", intensity: 0.45 },
+    {
+      id: "window-light",
+      type: "directional",
+      color: "#d4e8ff",
+      intensity: 2.0,
+      position: [-1.0, 3.0, 6.0] as [number, number, number],
+      target: [0.0, 0.0, 0.0] as [number, number, number],
+    },
+    {
+      id: "room-fill",
+      type: "point",
+      color: "#d06020",
+      intensity: 0.6,
+      position: [3.0, 2.0, -2.0] as [number, number, number],
+    },
+  ],
+  objects: [
+    {
+      id: "room-wall",
+      type: "wall",
+      position: [0.0, 1.5, 2.0] as [number, number, number],
+      width: 7.0,
+      height: 3.0,
+      material: { color: "#d8caba", roughness: 0.82 },
+    },
+    {
+      id: "room-floor",
+      type: "floor",
+      width: 8.0,
+      depth: 8.0,
+      material: { color: "#b8a888", roughness: 0.72 },
+    },
+    {
+      id: "window-frame",
+      type: "window",
+      position: [-0.5, 1.9, 1.95] as [number, number, number],
+      width: 1.4,
+      height: 2.0,
+      frameColor: "#8c7248",
+    },
+    {
+      id: "main-curtain",
+      type: "curtain",
+      position: [-0.4, 2.85, 1.75] as [number, number, number],
+      width: 1.6,
+      height: 2.2,
+      segments: 24,
+      topAnchorPoints: 8,
+      fabricColor: "#f0e8d8",
+      opacity: 0.88,
+      windStrength: 1.4,
+      windDirection: [0.7, 0.05, 0.3] as [number, number, number],
+      gustFrequency: 0.8,
+      turbulence: 0.9,
+      damping: 0.4,
+      seed: 33,
+    },
+    {
+      id: "leaves",
+      type: "leafField",
+      position: [0.0, 1.0, 0.5] as [number, number, number],
+      count: 45,
+      spread: [3.5, 1.8, 2.5] as [number, number, number],
+      colorPalette: ["#c08840", "#9a6828", "#d4a050", "#8b6030"],
+      windStrength: 1.2,
+      seed: 88,
+    },
+    {
+      id: "dust-trails",
+      type: "windField",
+      position: [0.0, 1.2, 0.8] as [number, number, number],
+      count: 30,
+      width: 4.0,
+      height: 2.5,
+      color: "#d8c8a8",
+      strength: 0.9,
+      seed: 55,
+    },
+  ],
+  effects: [{ type: "bloomHint", strength: 0.5 }],
+};
+
+const sonnetEarthSpec = {
+  schemaVersion: "1.0",
+  metadata: {
+    id: "sonnet-4.6-earth",
+    name: "Fractured Ground",
+    element: "Earth",
+    prompt:
+      "Create an interactive 3D earth scene: layered terrain with rocks, soil, moss, and a slow fracture revealing glowing minerals beneath the surface.",
+    seed: 841,
+    description:
+      "A fractured terracotta landscape in low afternoon light — one luminous crack splits the ground diagonally, two rocks anchor the composition, the mineral glow the only counterpoint to dry stone silence.",
+  },
+  camera: {
+    position: [-2.2, 1.4, 3.2] as [number, number, number],
+    target: [0.5, -0.1, -0.5] as [number, number, number],
+    fov: 54,
+  },
+  environment: {
+    background: "#120a04",
+    fogColor: "#1e1208",
+    fogNear: 4.0,
+    fogFar: 14.0,
+  },
+  lights: [
+    { id: "ambient", type: "ambient", color: "#180e06", intensity: 0.15 },
+    {
+      id: "sunlight",
+      type: "directional",
+      color: "#d4864c",
+      intensity: 1.6,
+      position: [3.0, 5.0, 2.0] as [number, number, number],
+      target: [0.0, 0.0, 0.0] as [number, number, number],
+    },
+    {
+      id: "crack-glow",
+      type: "point",
+      color: "#e09010",
+      intensity: 4.0,
+      position: [0.0, 0.1, 0.0] as [number, number, number],
+    },
+  ],
+  objects: [
+    {
+      id: "earth-surface",
+      type: "terrain",
+      position: [0.0, -0.2, 0.0] as [number, number, number],
+      width: 8.0,
+      depth: 8.0,
+      segments: 48,
+      heightScale: 0.35,
+      seed: 19,
+      material: { color: "#6a3c1c", roughness: 0.95, metalness: 0.0 },
+    },
+    {
+      id: "main-crack",
+      type: "crack",
+      position: [0.0, 0.02, 0.0] as [number, number, number],
+      rotation: [0.0, 0.52, 0.0] as [number, number, number],
+      length: 4.5,
+      branches: 4,
+      glowColor: "#e89010",
+      seed: 23,
+      material: { emissive: "#e89010", emissiveIntensity: 3.5 },
+      animations: [{ type: "erosion", speed: 0.3, strength: 0.4 }],
+    },
+    {
+      id: "rock-main",
+      type: "rock",
+      position: [-1.8, 0.1, 1.0] as [number, number, number],
+      radius: 0.75,
+      detail: 2,
+      seed: 7,
+      material: { color: "#4a3020", roughness: 0.92, metalness: 0.02 },
+    },
+    {
+      id: "rock-accent",
+      type: "rock",
+      position: [2.2, 0.05, -1.5] as [number, number, number],
+      radius: 0.45,
+      detail: 1,
+      seed: 14,
+      material: { color: "#5a3a22", roughness: 0.88, metalness: 0.0 },
+    },
+  ],
+  effects: [{ type: "bloomHint", strength: 1.8 }],
+};
+
+const sonnetWaterSpec = {
+  schemaVersion: "1.0",
+  metadata: {
+    id: "sonnet-4.6-water",
+    name: "Still Pool",
+    element: "Water",
+    prompt:
+      "Create an interactive 3D water scene: a clear pool with animated ripples, reflective highlights, floating droplets, foam at the edges, and soft blue-green caustic light.",
+    seed: 314,
+    description:
+      "A dark teal pool at near-perfect rest — one expanding ring marks where something broke the surface, foam pressed to the near edge, caustic light threading up through the depths.",
+  },
+  camera: {
+    position: [3.2, 4.8, 4.2] as [number, number, number],
+    target: [-0.3, 0.0, -0.3] as [number, number, number],
+    fov: 48,
+  },
+  environment: {
+    background: "#061218",
+    fogColor: "#0a2030",
+    fogNear: 5.0,
+    fogFar: 20.0,
+  },
+  lights: [
+    { id: "ambient", type: "ambient", color: "#05121a", intensity: 0.2 },
+    {
+      id: "sky-light",
+      type: "directional",
+      color: "#b0ddf0",
+      intensity: 1.8,
+      position: [2.0, 6.0, 4.0] as [number, number, number],
+      target: [0.0, 0.0, 0.0] as [number, number, number],
+    },
+    {
+      id: "caustic-fill",
+      type: "point",
+      color: "#0ab8b8",
+      intensity: 3.0,
+      position: [0.0, -0.5, 0.0] as [number, number, number],
+    },
+  ],
+  objects: [
+    {
+      id: "pool-surface",
+      type: "waterSurface",
+      position: [0.0, 0.0, 0.0] as [number, number, number],
+      width: 7.0,
+      depth: 7.0,
+      segments: 72,
+      color: "#0a2d36",
+      opacity: 0.92,
+      waveStrength: 0.22,
+      waveSpeed: 1.4,
+      material: { roughness: 0.06, metalness: 0.25, transmission: 0.45 },
+      animations: [{ type: "ripple", speed: 1.4, strength: 0.22 }],
+    },
+    {
+      id: "main-ring",
+      type: "waveRing",
+      position: [-0.4, 0.02, 0.3] as [number, number, number],
+      radius: 0.8,
+      thickness: 0.06,
+      color: "#8adcec",
+      speed: 2.0,
+    },
+    {
+      id: "edge-foam",
+      type: "foam",
+      position: [0.0, 0.04, 2.8] as [number, number, number],
+      count: 80,
+      radius: 2.4,
+      color: "#ddf2f0",
+      seed: 61,
+    },
+    {
+      id: "droplets",
+      type: "particleField",
+      position: [0.0, 0.2, 0.0] as [number, number, number],
+      count: 35,
+      spread: [3.5, 0.6, 3.5] as [number, number, number],
+      size: 0.04,
+      colorPalette: ["#a0e0f0"],
+      drift: [0.02, 0.05, 0.01] as [number, number, number],
+      opacity: 0.6,
+      speed: 0.4,
+      seed: 99,
+    },
+  ],
+  effects: [
+    { type: "bloomHint", strength: 1.0 },
+    { type: "causticsHint", strength: 2.5 },
+  ],
+};
+
 export const benchmarkSpecs: Record<
   ModelName,
   Record<ElementName, SceneSpec>
@@ -1165,6 +1559,12 @@ export const benchmarkSpecs: Record<
     Air: sceneSpecSchema.parse(opusAirSpec),
     Earth: sceneSpecSchema.parse(opusEarthSpec),
     Water: sceneSpecSchema.parse(opusWaterSpec),
+  },
+  "sonnet-4.6": {
+    Fire: sceneSpecSchema.parse(sonnetFireSpec),
+    Air: sceneSpecSchema.parse(sonnetAirSpec),
+    Earth: sceneSpecSchema.parse(sonnetEarthSpec),
+    Water: sceneSpecSchema.parse(sonnetWaterSpec),
   },
 };
 
