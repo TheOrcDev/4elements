@@ -12,12 +12,15 @@ import { useQueryState } from "nuqs";
 import { NuqsAdapter } from "nuqs/adapters/react";
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { GithubStars } from "@/components/github-stars";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import "./styles.css";
+
+const REPO = "TheOrcDev/4elements";
 
 const modelOptions: ReadonlyArray<{ label: string; value: ModelName }> = [
   { label: "Opus 4.7", value: "opus-4.7" },
@@ -92,13 +95,16 @@ function App() {
   return (
     <main className="grid min-h-dvh w-full grid-cols-1 bg-background text-foreground md:grid-cols-[minmax(320px,390px)_minmax(0,1fr)]">
       <aside className="flex h-auto min-h-[42dvh] flex-col gap-5 overflow-auto border-border border-b bg-card p-6 text-card-foreground md:h-dvh md:border-r md:border-b-0">
-        <header className="flex flex-col gap-1">
-          <span className="font-bold text-muted-foreground text-xs uppercase tracking-normal">
-            4 Elements
-          </span>
-          <h1 className="max-w-48 font-heading font-semibold text-3xl leading-none tracking-normal">
-            3D scene benchmark
-          </h1>
+        <header className="flex items-start justify-between gap-3">
+          <div className="flex flex-col gap-1">
+            <span className="font-bold text-muted-foreground text-xs uppercase tracking-normal">
+              4 Elements
+            </span>
+            <h1 className="max-w-48 font-heading font-semibold text-3xl leading-none tracking-normal">
+              3D scene benchmark
+            </h1>
+          </div>
+          <GithubStars repo={REPO} />
         </header>
 
         <Separator />
