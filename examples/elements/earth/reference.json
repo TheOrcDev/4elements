@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "metadata": {
+    "id": "reference-earth",
+    "name": "Fractured Terrain Reference",
+    "element": "Earth",
+    "prompt": "Create an interactive 3D earth scene: layered terrain with rocks, soil, moss, and a slow fracture revealing glowing minerals beneath the surface.",
+    "seed": 13,
+    "description": "Layered terrain, mass, rocks, moss color, and a glowing mineral fracture."
+  },
+  "camera": { "position": [4.6, 3.2, 5.1], "target": [0, 0.42, 0], "fov": 45 },
+  "environment": { "background": "#151714", "fogColor": "#22261e", "fogNear": 7, "fogFar": 15 },
+  "lights": [
+    { "id": "ambient", "type": "ambient", "color": "#b7c19d", "intensity": 0.75 },
+    { "id": "sun", "type": "directional", "color": "#f0d08a", "intensity": 2.2, "position": [3, 5, 2] },
+    { "id": "mineral-glow", "type": "point", "color": "#72e0b4", "intensity": 4.5, "position": [0.1, 0.35, 0.25] }
+  ],
+  "objects": [
+    { "id": "terrain", "type": "terrain", "width": 7.8, "depth": 7.5, "segments": 58, "heightScale": 0.72, "seed": 52, "material": { "color": "#4e4935", "roughness": 0.94 } },
+    { "id": "moss-plane", "type": "plane", "position": [-1.1, 0.18, -0.8], "rotation": [-1.5708, 0, 0], "width": 2.4, "height": 1.8, "material": { "color": "#5f7b43", "roughness": 0.96, "opacity": 0.72 } },
+    { "id": "main-crack", "type": "crack", "position": [0, 0.42, 0], "rotation": [-1.5708, 0.22, 0], "length": 3.8, "branches": 7, "glowColor": "#75e6b4", "seed": 67 },
+    { "id": "rock-a", "type": "rock", "position": [-1.9, 0.55, 0.8], "scale": [1.1, 0.88, 0.95], "radius": 0.72, "seed": 12, "material": { "color": "#5a5549", "roughness": 0.91 } },
+    { "id": "rock-b", "type": "rock", "position": [1.55, 0.47, -0.95], "scale": [0.8, 0.58, 1.1], "radius": 0.66, "seed": 16, "material": { "color": "#393831", "roughness": 0.95 } },
+    { "id": "rock-c", "type": "rock", "position": [1.25, 0.42, 1.55], "scale": [0.58, 0.48, 0.62], "radius": 0.54, "seed": 18, "material": { "color": "#6a644f", "roughness": 0.9 } },
+    { "id": "mineral-dust", "type": "particleField", "position": [0.25, 0.55, 0], "count": 120, "spread": [2.8, 0.9, 1], "size": 0.032, "colorPalette": ["#75e6b4", "#f1d377", "#c9ffe8"], "drift": [0.03, 0.17, 0.02], "opacity": 0.68, "speed": 0.45, "seed": 29 }
+  ],
+  "effects": [{ "type": "bloomHint", "strength": 0.65 }]
+}

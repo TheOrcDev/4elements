@@ -1,0 +1,23 @@
+{
+  "name": "@elementbench/renderer",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx"
+  },
+  "dependencies": {
+    "@elementbench/scene-schema": "workspace:*",
+    "@react-three/drei": "^10.0.0",
+    "@react-three/fiber": "^9.0.0",
+    "react": "^19.0.0",
+    "three": "^0.176.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.176.0"
+  },
+  "peerDependencies": {
+    "react-dom": ">=18"
+  }
+}
