@@ -47,6 +47,10 @@ try {
       if (!validation.includes("Valid schema")) {
         throw new Error(`${viewport.name} ${element}: ${validation}`);
       }
+      const currentElement = new URL(page.url()).searchParams.get("element");
+      if (currentElement !== element) {
+        throw new Error(`${viewport.name} ${element}: expected URL element=${element}, got ${currentElement}`);
+      }
       if (pixels.nonBlank < Math.max(8, pixels.samples * 0.03)) {
         throw new Error(`${viewport.name} ${element}: canvas appears blank ${JSON.stringify(pixels)}`);
       }

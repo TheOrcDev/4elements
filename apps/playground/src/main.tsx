@@ -1,6 +1,8 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Download, RotateCcw } from "lucide-react";
+import { useQueryState } from "nuqs";
+import { NuqsAdapter } from "nuqs/adapters/react";
 import { SceneRenderer, type RenderStats } from "@elementbench/renderer";
 import { benchmarkSpecs, benchmarkPrompts, type ElementName } from "@elementbench/benchmarks";
 import { sceneSpecSchema, type SceneSpec } from "@elementbench/scene-schema";
@@ -12,6 +14,16 @@ import { Textarea } from "./components/ui/textarea";
 import "./styles.css";
 
 const elementOrder: ElementName[] = ["Fire", "Air", "Earth", "Water"];
+
+function isElementName(value: string): value is ElementName {
+  return elementOrder.includes(value as ElementName);
+}
+
+function getInitialElement() {
+  if (typeof window === "undefined") return "Fire";
+  const element = new URLSearchParams(window.location.search).get("element");
+  return element && isElementName(element) ? element : "Fire";
+}
 
 function parseSceneSpec(text: string) {
   try {
@@ -39,8 +51,12 @@ function formatSpec(spec: SceneSpec) {
 }
 
 function App() {
-  const [selectedElement, setSelectedElement] = React.useState<ElementName>("Air");
-  const [specText, setSpecText] = React.useState(() => formatSpec(benchmarkSpecs.Air));
+  const [elementQuery, setElementQuery] = useQueryState("element", {
+    defaultValue: "Fire",
+    clearOnDefault: false
+  });
+  const selectedElement = isElementName(elementQuery) ? elementQuery : "Fire";
+  const [specText, setSpecText] = React.useState(() => formatSpec(benchmarkSpecs[getInitialElement()]));
   const [stats, setStats] = React.useState<RenderStats>({
     fps: 0,
     triangles: 0,
@@ -48,8 +64,12 @@ function App() {
   });
   const parsed = React.useMemo(() => parseSceneSpec(specText), [specText]);
 
+  React.useEffect(() => {
+    setSpecText(formatSpec(benchmarkSpecs[selectedElement]));
+  }, [selectedElement]);
+
   const loadElement = (element: ElementName) => {
-    setSelectedElement(element);
+    void setElementQuery(element);
     setSpecText(formatSpec(benchmarkSpecs[element]));
   };
 
@@ -146,6 +166,8 @@ function App() {
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <NuqsAdapter>
+      <App />
+    </NuqsAdapter>
   </React.StrictMode>
 );
