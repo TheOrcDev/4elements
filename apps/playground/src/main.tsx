@@ -2,9 +2,9 @@ import {
   benchmarkPrompts,
   benchmarkSpecs,
   type ElementName,
-} from "@elementbench/benchmarks";
-import { type RenderStats, SceneRenderer } from "@elementbench/renderer";
-import { Download } from "lucide-react";
+} from "@4elements/benchmarks";
+import { type RenderStats, SceneRenderer } from "@4elements/renderer";
+import { DownloadIcon } from "@phosphor-icons/react";
 import { useQueryState } from "nuqs";
 import { NuqsAdapter } from "nuqs/adapters/react";
 import { StrictMode, useEffect, useState } from "react";
@@ -61,7 +61,7 @@ function App() {
     }
     const link = document.createElement("a");
     link.href = canvas.toDataURL("image/png");
-    link.download = `elementbench-${selectedElement.toLowerCase()}-${Date.now()}.png`;
+    link.download = `4-elements-${selectedElement.toLowerCase()}-${Date.now()}.png`;
     link.click();
   };
 
@@ -110,22 +110,21 @@ function App() {
           </div>
         </section>
 
-        <Button
-          className="w-full"
-          onClick={exportScreenshot}
-          type="button"
-        >
-          <Download aria-hidden="true" data-icon="inline-start" />
+        <Button className="w-full" onClick={exportScreenshot} type="button">
+          <DownloadIcon aria-hidden="true" data-icon="inline-start" />
           Export screenshot
         </Button>
       </aside>
 
       <section
         aria-label="Interactive 3D scene viewport"
-        className="relative min-h-[58dvh] min-w-0 bg-background md:min-h-dvh"
+        className="relative h-[58dvh] min-w-0 bg-background md:h-dvh"
         data-scene-stage
       >
-        <Badge className="absolute top-4 right-4 z-10 shadow-sm" variant="secondary">
+        <Badge
+          className="absolute top-4 right-4 z-10 shadow-sm"
+          variant="secondary"
+        >
           {stats.fps.toFixed(0)} FPS
         </Badge>
         <SceneRenderer onStats={setStats} spec={spec} />

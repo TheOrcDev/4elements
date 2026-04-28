@@ -73,7 +73,7 @@ const planeSchema = objectBaseSchema
 const textSchema = objectBaseSchema
   .extend({
     type: z.literal("text"),
-    text: z.string().default("ElementBench"),
+    text: z.string().default("4 Elements"),
     fontSize: z.number().positive().default(0.35),
   })
   .strict();

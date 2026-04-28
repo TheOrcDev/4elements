@@ -1,5 +1,5 @@
 {
-  "name": "@elementbench/playground",
+  "name": "@4elements/playground",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,9 +10,9 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@elementbench/benchmarks": "workspace:*",
-    "@elementbench/renderer": "workspace:*",
-    "@elementbench/scene-schema": "workspace:*",
+    "@4elements/benchmarks": "workspace:*",
+    "@4elements/renderer": "workspace:*",
+    "@4elements/scene-schema": "workspace:*",
     "@fontsource-variable/geist": "^5.2.8",
     "@fontsource-variable/noto-sans": "^5.2.10",
     "@phosphor-icons/react": "^2.1.10",
@@ -20,7 +20,6 @@
     "@react-three/fiber": "^9.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.475.0",
     "nuqs": "^2.8.9",
     "radix-ui": "^1.4.3",
     "react": "^19.0.0",

@@ -1,5 +1,5 @@
 {
-  "name": "@elementbench/renderer",
+  "name": "@4elements/renderer",
   "version": "0.1.0",
   "type": "module",
   "main": "./src/index.tsx",
@@ -8,7 +8,7 @@
     ".": "./src/index.tsx"
   },
   "dependencies": {
-    "@elementbench/scene-schema": "workspace:*",
+    "@4elements/scene-schema": "workspace:*",
     "@react-three/drei": "^10.0.0",
     "@react-three/fiber": "^9.0.0",
     "react": "^19.0.0",

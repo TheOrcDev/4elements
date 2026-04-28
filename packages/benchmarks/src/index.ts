@@ -1,4 +1,4 @@
-import { type SceneSpec, sceneSpecSchema } from "@elementbench/scene-schema";
+import { type SceneSpec, sceneSpecSchema } from "@4elements/scene-schema";
 
 export type ElementName = "Fire" | "Air" | "Earth" | "Water";
 

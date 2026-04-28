@@ -8,13 +8,13 @@
     "typescript": "^5.8.3",
     "ultracite": "7.6.2"
   },
-  "name": "elementbench",
+  "name": "4elements",
   "scripts": {
-    "dev": "pnpm --filter @elementbench/playground dev",
-    "build": "pnpm --filter @elementbench/playground build",
-    "preview": "pnpm --filter @elementbench/playground preview",
+    "dev": "pnpm --filter @4elements/playground dev",
+    "build": "pnpm --filter @4elements/playground build",
+    "preview": "pnpm --filter @4elements/playground preview",
     "test:visual": "node tests/visual/smoke.mjs",
-    "typecheck": "pnpm --filter @elementbench/playground typecheck",
+    "typecheck": "pnpm --filter @4elements/playground typecheck",
     "check": "ultracite check",
     "fix": "ultracite fix"
   },

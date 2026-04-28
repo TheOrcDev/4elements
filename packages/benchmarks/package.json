@@ -1,5 +1,5 @@
 {
-  "name": "@elementbench/benchmarks",
+  "name": "@4elements/benchmarks",
   "version": "0.1.0",
   "type": "module",
   "main": "./src/index.ts",
@@ -8,6 +8,6 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@elementbench/scene-schema": "workspace:*"
+    "@4elements/scene-schema": "workspace:*"
   }
 }

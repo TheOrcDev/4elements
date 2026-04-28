@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
 
-const targetUrl = process.env.ELEMENTBENCH_URL ?? "http://localhost:5173/";
+const targetUrl = process.env.FOUR_ELEMENTS_URL ?? "http://localhost:5173/";
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },
   { name: "mobile", width: 390, height: 844 },

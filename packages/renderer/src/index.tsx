@@ -4,7 +4,7 @@ import type {
   SceneObject,
   SceneSpec,
   Vector3Tuple,
-} from "@elementbench/scene-schema";
+} from "@4elements/scene-schema";
 import { OrbitControls, Text } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { type ReactNode, useEffect, useMemo, useRef } from "react";

@@ -61,8 +61,8 @@ export function TabsTrigger({
         "min-w-0 rounded-xs px-2 font-semibold text-muted-foreground text-sm outline-none transition-colors hover:text-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 data-[state=active]:bg-background data-[state=active]:text-foreground",
         className
       )}
-      data-state={isActive ? "active" : "inactive"}
       data-slot="tabs-trigger"
+      data-state={isActive ? "active" : "inactive"}
       onClick={(event) => {
         context?.onValueChange(value);
         onClick?.(event);
