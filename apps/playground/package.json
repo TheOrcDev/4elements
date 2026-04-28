@@ -1,6 +1,7 @@
 {
   "name": "@4elements/playground",
   "version": "0.1.0",
+  "description": "Vite React playground for the 4 Elements AI 3D scene benchmark.",
   "private": true,
   "type": "module",
   "scripts": {

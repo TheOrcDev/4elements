@@ -21,6 +21,22 @@
   "version": "0.1.0",
   "private": true,
   "description": "Local-first benchmark playground for AI-generated interactive 3D elemental scenes.",
+  "keywords": [
+    "3d",
+    "ai",
+    "benchmark",
+    "react-three-fiber",
+    "threejs",
+    "vite"
+  ],
+  "homepage": "https://github.com/TheOrcDev/4elements#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/TheOrcDev/4elements.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TheOrcDev/4elements/issues"
+  },
   "license": "MIT",
   "packageManager": "pnpm@10.33.0"
 }

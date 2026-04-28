@@ -1,6 +1,7 @@
 {
   "name": "@4elements/renderer",
   "version": "0.1.0",
+  "description": "React Three Fiber renderer for 4 Elements scene specs.",
   "type": "module",
   "main": "./src/index.tsx",
   "types": "./src/index.tsx",

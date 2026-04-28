@@ -98,12 +98,12 @@ function App() {
       <aside className="flex h-auto min-h-[42dvh] flex-col gap-5 overflow-auto border-border border-b bg-card p-6 text-card-foreground md:h-dvh md:border-r md:border-b-0">
         <header className="flex items-start justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <span className="font-bold text-muted-foreground text-xs uppercase tracking-normal">
+            <h1 className="font-heading font-semibold text-3xl leading-none tracking-normal">
               4 Elements
-            </span>
-            <h1 className="max-w-48 font-heading font-semibold text-3xl leading-none tracking-normal">
-              3D scene benchmark
             </h1>
+            <span className="font-bold text-muted-foreground text-xs uppercase tracking-normal">
+              3D scene benchmark
+            </span>
           </div>
           <GithubStars repo={REPO} />
         </header>

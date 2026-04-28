@@ -1,6 +1,7 @@
 {
   "name": "@4elements/benchmarks",
   "version": "0.1.0",
+  "description": "Canonical prompts and reference scene specs for 4 Elements.",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
