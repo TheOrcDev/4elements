@@ -121,11 +121,10 @@ h2 {
   color: var(--muted-foreground);
 }
 
-.validation-section {
+.metrics-section {
   gap: 12px;
 }
 
-.status-row,
 .metrics {
   display: flex;
   gap: 12px;
@@ -136,19 +135,6 @@ h2 {
 .metrics {
   font-size: 0.86rem;
   color: var(--muted-foreground);
-}
-
-.errors {
-  max-height: 150px;
-  padding: 10px;
-  margin: 0;
-  overflow: auto;
-  font-size: 0.78rem;
-  color: #ffd8cf;
-  white-space: pre-wrap;
-  background: #21100f;
-  border: 1px solid rgba(236, 143, 125, 0.25);
-  border-radius: var(--radius);
 }
 
 .export-button {

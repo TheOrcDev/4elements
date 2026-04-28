@@ -4,11 +4,10 @@ import {
   type ElementName,
 } from "@elementbench/benchmarks";
 import { type RenderStats, SceneRenderer } from "@elementbench/renderer";
-import { sceneSpecSchema } from "@elementbench/scene-schema";
 import { Download } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { NuqsAdapter } from "nuqs/adapters/react";
-import { StrictMode, useEffect, useMemo, useState } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Badge } from "./components/ui/badge";
 import { Button } from "./components/ui/button";
@@ -38,14 +37,6 @@ function App() {
   const selectedElement = isElementName(elementQuery) ? elementQuery : "Fire";
   const [activeElement, setActiveElement] = useState(() => getInitialElement());
   const spec = benchmarkSpecs[activeElement];
-  const validation = useMemo(() => sceneSpecSchema.safeParse(spec), [spec]);
-  const validationError = validation.success
-    ? ""
-    : validation.error.issues
-        .map((issue) => `${issue.path.join(".") || "scene"}: ${issue.message}`)
-        .join("\n");
-  const parsedSpec = validation.success ? validation.data : null;
-  const isValid = Boolean(parsedSpec);
   const [stats, setStats] = useState<RenderStats>({
     fps: 0,
     objects: 0,
@@ -78,7 +69,7 @@ function App() {
     <main className="app">
       <aside className="control-panel">
         <header className="sidebar-header">
-          <span className="eyebrow">ElementBench</span>
+          <span className="eyebrow">4 Elements</span>
           <h1>3D scene benchmark</h1>
         </header>
 
@@ -103,24 +94,15 @@ function App() {
           <p className="prompt">{benchmarkPrompts[selectedElement]}</p>
         </section>
 
-        <section className="sidebar-section validation-section">
-          <div className="status-row">
-            <Badge variant={isValid ? "success" : "destructive"}>
-              {isValid ? "Valid schema" : "Invalid schema"}
-            </Badge>
-          </div>
+        <section className="sidebar-section metrics-section">
           <div className="metrics">
             <span>{stats.objects} objects</span>
             <span>{stats.triangles.toLocaleString()} triangles</span>
           </div>
-          {validationError ? (
-            <pre className="errors">{validationError}</pre>
-          ) : null}
         </section>
 
         <Button
           className="export-button"
-          disabled={!parsedSpec}
           onClick={exportScreenshot}
           type="button"
         >
@@ -136,14 +118,7 @@ function App() {
         <Badge className="fps-overlay" variant="secondary">
           {stats.fps.toFixed(0)} FPS
         </Badge>
-        {parsedSpec ? (
-          <SceneRenderer onStats={setStats} spec={parsedSpec} />
-        ) : (
-          <div className="empty-state">
-            <h2>Scene paused</h2>
-            <p>Fix the JSON validation issue to render the scene.</p>
-          </div>
-        )}
+        <SceneRenderer onStats={setStats} spec={spec} />
       </section>
     </main>
   );
