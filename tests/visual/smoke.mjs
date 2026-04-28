@@ -2,6 +2,8 @@ import fs from "node:fs/promises";
 import { chromium } from "playwright";
 
 const targetUrl = process.env.FOUR_ELEMENTS_URL ?? "http://localhost:5173/";
+const gptUrl = new URL(targetUrl);
+gptUrl.searchParams.set("model", "gpt-5.5");
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },
   { name: "mobile", width: 390, height: 844 },
@@ -15,13 +17,12 @@ const browser = await chromium.launch({ headless: true });
 try {
   for (const viewport of viewports) {
     const page = await browser.newPage({ viewport });
-    await page.goto(targetUrl, { waitUntil: "networkidle" });
+    await page.goto(gptUrl.toString(), { waitUntil: "networkidle" });
     await page.waitForSelector("canvas");
-    await page.getByRole("radio", { name: "Opus 4.7" }).click();
     const selectedModel = new URL(page.url()).searchParams.get("model");
-    if (selectedModel !== "opus-4.7") {
+    if (selectedModel !== "gpt-5.5") {
       throw new Error(
-        `${viewport.name}: expected URL model=opus-4.7, got ${selectedModel}`
+        `${viewport.name}: expected URL model=gpt-5.5, got ${selectedModel}`
       );
     }
 
