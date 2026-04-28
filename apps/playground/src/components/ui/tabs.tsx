@@ -4,7 +4,7 @@ import {
   type HTMLAttributes,
   useContext,
 } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 interface TabsContextValue {
   onValueChange: (value: string) => void;
@@ -20,7 +20,7 @@ export interface TabsProps
 export function Tabs({ value, onValueChange, className, ...props }: TabsProps) {
   return (
     <TabsContext.Provider value={{ value, onValueChange }}>
-      <div className={cn("ui-tabs", className)} {...props} />
+      <div className={cn("w-full", className)} data-slot="tabs" {...props} />
     </TabsContext.Provider>
   );
 }
@@ -29,7 +29,16 @@ export function TabsList({
   className,
   ...props
 }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("ui-tabs-list", className)} {...props} />;
+  return (
+    <div
+      className={cn(
+        "grid min-h-10 w-full grid-cols-4 gap-1 rounded-sm border bg-muted p-1",
+        className
+      )}
+      data-slot="tabs-list"
+      {...props}
+    />
+  );
 }
 
 export interface TabsTriggerProps extends ComponentPropsWithRef<"button"> {
@@ -48,8 +57,12 @@ export function TabsTrigger({
 
   return (
     <button
-      className={cn("ui-tabs-trigger", className)}
+      className={cn(
+        "min-w-0 rounded-xs px-2 font-semibold text-muted-foreground text-sm outline-none transition-colors hover:text-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 data-[state=active]:bg-background data-[state=active]:text-foreground",
+        className
+      )}
       data-state={isActive ? "active" : "inactive"}
+      data-slot="tabs-trigger"
       onClick={(event) => {
         context?.onValueChange(value);
         onClick?.(event);

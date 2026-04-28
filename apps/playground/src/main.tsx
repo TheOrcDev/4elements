@@ -9,10 +9,10 @@ import { useQueryState } from "nuqs";
 import { NuqsAdapter } from "nuqs/adapters/react";
 import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Badge } from "./components/ui/badge";
-import { Button } from "./components/ui/button";
-import { Separator } from "./components/ui/separator";
-import { Tabs, TabsList, TabsTrigger } from "./components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import "./styles.css";
 
 const elementOrder: ElementName[] = ["Fire", "Air", "Earth", "Water"];
@@ -54,7 +54,7 @@ function App() {
 
   const exportScreenshot = () => {
     const canvas = document.querySelector<HTMLCanvasElement>(
-      ".scene-stage canvas"
+      "[data-scene-stage] canvas"
     );
     if (!canvas) {
       return;
@@ -66,18 +66,22 @@ function App() {
   };
 
   return (
-    <main className="app">
-      <aside className="control-panel">
-        <header className="sidebar-header">
-          <span className="eyebrow">4 Elements</span>
-          <h1>3D scene benchmark</h1>
+    <main className="grid min-h-dvh w-full grid-cols-1 bg-background text-foreground md:grid-cols-[minmax(320px,390px)_minmax(0,1fr)]">
+      <aside className="flex h-auto min-h-[42dvh] flex-col gap-5 overflow-auto border-border border-b bg-card p-6 text-card-foreground md:h-dvh md:border-r md:border-b-0">
+        <header className="flex flex-col gap-1">
+          <span className="font-bold text-muted-foreground text-xs uppercase tracking-normal">
+            4 Elements
+          </span>
+          <h1 className="max-w-48 font-heading font-semibold text-3xl leading-none tracking-normal">
+            3D scene benchmark
+          </h1>
         </header>
 
         <Separator />
 
-        <section className="sidebar-section">
-          <div className="section-heading">
-            <h2>Benchmark</h2>
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-semibold text-sm">Benchmark</h2>
           </div>
           <Tabs
             onValueChange={(value) => loadElement(value as ElementName)}
@@ -91,31 +95,37 @@ function App() {
               ))}
             </TabsList>
           </Tabs>
-          <p className="prompt">{benchmarkPrompts[selectedElement]}</p>
+          <p className="text-muted-foreground text-sm">
+            {benchmarkPrompts[selectedElement]}
+          </p>
         </section>
 
-        <section className="sidebar-section metrics-section">
-          <div className="metrics">
+        <section className="flex flex-col gap-3">
+          <div
+            className="flex items-center justify-between gap-3 text-muted-foreground text-sm"
+            data-metrics
+          >
             <span>{stats.objects} objects</span>
             <span>{stats.triangles.toLocaleString()} triangles</span>
           </div>
         </section>
 
         <Button
-          className="export-button"
+          className="w-full"
           onClick={exportScreenshot}
           type="button"
         >
-          <Download aria-hidden="true" size={17} />
+          <Download aria-hidden="true" data-icon="inline-start" />
           Export screenshot
         </Button>
       </aside>
 
       <section
         aria-label="Interactive 3D scene viewport"
-        className="scene-stage"
+        className="relative min-h-[58dvh] min-w-0 bg-background md:min-h-dvh"
+        data-scene-stage
       >
-        <Badge className="fps-overlay" variant="secondary">
+        <Badge className="absolute top-4 right-4 z-10 shadow-sm" variant="secondary">
           {stats.fps.toFixed(0)} FPS
         </Badge>
         <SceneRenderer onStats={setStats} spec={spec} />

@@ -21,7 +21,7 @@ try {
     for (const element of elements) {
       await page.getByRole("button", { name: element }).click();
       await page.waitForTimeout(1100);
-      const validation = await page.locator(".status-row").innerText();
+      const metrics = await page.locator("[data-metrics]").innerText();
       const pixels = await page.evaluate(() => {
         const canvas = document.querySelector("canvas");
         if (!canvas) {
@@ -60,8 +60,8 @@ try {
         };
       });
 
-      if (!validation.includes("Valid schema")) {
-        throw new Error(`${viewport.name} ${element}: ${validation}`);
+      if (!(metrics.includes("objects") && metrics.includes("triangles"))) {
+        throw new Error(`${viewport.name} ${element}: ${metrics}`);
       }
       const currentElement = new URL(page.url()).searchParams.get("element");
       if (currentElement !== element) {
@@ -80,7 +80,7 @@ try {
         fullPage: true,
       });
       console.log(
-        `${viewport.name} ${element}: ${validation.replace(/\n/g, " | ")} canvas ${pixels.width}x${pixels.height}, nonblank ${pixels.nonBlank}/${pixels.samples}`
+        `${viewport.name} ${element}: ${metrics.replace(/\n/g, " | ")} canvas ${pixels.width}x${pixels.height}, nonblank ${pixels.nonBlank}/${pixels.samples}`
       );
     }
 
