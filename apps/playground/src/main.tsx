@@ -4,8 +4,8 @@ import {
   type ElementName,
 } from "@elementbench/benchmarks";
 import { type RenderStats, SceneRenderer } from "@elementbench/renderer";
-import { type SceneSpec, sceneSpecSchema } from "@elementbench/scene-schema";
-import { Download, RotateCcw } from "lucide-react";
+import { sceneSpecSchema } from "@elementbench/scene-schema";
+import { Download } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { NuqsAdapter } from "nuqs/adapters/react";
 import { StrictMode, useEffect, useMemo, useState } from "react";
@@ -14,7 +14,6 @@ import { Badge } from "./components/ui/badge";
 import { Button } from "./components/ui/button";
 import { Separator } from "./components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "./components/ui/tabs";
-import { Textarea } from "./components/ui/textarea";
 import "./styles.css";
 
 const elementOrder: ElementName[] = ["Fire", "Air", "Earth", "Water"];
@@ -31,60 +30,35 @@ function getInitialElement() {
   return element && isElementName(element) ? element : "Fire";
 }
 
-function parseSceneSpec(text: string) {
-  try {
-    const parsed = JSON.parse(text);
-    const result = sceneSpecSchema.safeParse(parsed);
-    if (!result.success) {
-      return {
-        spec: null,
-        error: result.error.issues
-          .map(
-            (issue) => `${issue.path.join(".") || "scene"}: ${issue.message}`
-          )
-          .join("\n"),
-      };
-    }
-    return { spec: result.data, error: "" };
-  } catch (error) {
-    return {
-      spec: null,
-      error: error instanceof Error ? error.message : "Invalid JSON",
-    };
-  }
-}
-
-function formatSpec(spec: SceneSpec) {
-  return JSON.stringify(spec, null, 2);
-}
-
 function App() {
   const [elementQuery, setElementQuery] = useQueryState("element", {
     defaultValue: "Fire",
     clearOnDefault: false,
   });
   const selectedElement = isElementName(elementQuery) ? elementQuery : "Fire";
-  const [specText, setSpecText] = useState(() =>
-    formatSpec(benchmarkSpecs[getInitialElement()])
-  );
+  const [activeElement, setActiveElement] = useState(() => getInitialElement());
+  const spec = benchmarkSpecs[activeElement];
+  const validation = useMemo(() => sceneSpecSchema.safeParse(spec), [spec]);
+  const validationError = validation.success
+    ? ""
+    : validation.error.issues
+        .map((issue) => `${issue.path.join(".") || "scene"}: ${issue.message}`)
+        .join("\n");
+  const parsedSpec = validation.success ? validation.data : null;
+  const isValid = Boolean(parsedSpec);
   const [stats, setStats] = useState<RenderStats>({
     fps: 0,
-    triangles: 0,
     objects: 0,
+    triangles: 0,
   });
-  const parsed = useMemo(() => parseSceneSpec(specText), [specText]);
 
   useEffect(() => {
-    setSpecText(formatSpec(benchmarkSpecs[selectedElement]));
+    setActiveElement(selectedElement);
   }, [selectedElement]);
 
   const loadElement = (element: ElementName) => {
     setElementQuery(element);
-    setSpecText(formatSpec(benchmarkSpecs[element]));
-  };
-
-  const resetCurrent = () => {
-    setSpecText(formatSpec(benchmarkSpecs[selectedElement]));
+    setActiveElement(element);
   };
 
   const exportScreenshot = () => {
@@ -129,43 +103,24 @@ function App() {
           <p className="prompt">{benchmarkPrompts[selectedElement]}</p>
         </section>
 
-        <section className="sidebar-section editor-section">
-          <div className="section-heading">
-            <h2>Scene JSON</h2>
-            <Button
-              onClick={resetCurrent}
-              size="icon"
-              title="Reset sample"
-              type="button"
-              variant="ghost"
-            >
-              <RotateCcw aria-hidden="true" size={16} />
-            </Button>
-          </div>
-          <Textarea
-            aria-label="Scene JSON editor"
-            onChange={(event) => setSpecText(event.target.value)}
-            spellCheck={false}
-            value={specText}
-          />
-        </section>
-
         <section className="sidebar-section validation-section">
           <div className="status-row">
-            <Badge variant={parsed.spec ? "success" : "destructive"}>
-              {parsed.spec ? "Valid schema" : "Invalid schema"}
+            <Badge variant={isValid ? "success" : "destructive"}>
+              {isValid ? "Valid schema" : "Invalid schema"}
             </Badge>
           </div>
           <div className="metrics">
             <span>{stats.objects} objects</span>
             <span>{stats.triangles.toLocaleString()} triangles</span>
           </div>
-          {parsed.error ? <pre className="errors">{parsed.error}</pre> : null}
+          {validationError ? (
+            <pre className="errors">{validationError}</pre>
+          ) : null}
         </section>
 
         <Button
           className="export-button"
-          disabled={!parsed.spec}
+          disabled={!parsedSpec}
           onClick={exportScreenshot}
           type="button"
         >
@@ -181,8 +136,8 @@ function App() {
         <Badge className="fps-overlay" variant="secondary">
           {stats.fps.toFixed(0)} FPS
         </Badge>
-        {parsed.spec ? (
-          <SceneRenderer onStats={setStats} spec={parsed.spec} />
+        {parsedSpec ? (
+          <SceneRenderer onStats={setStats} spec={parsedSpec} />
         ) : (
           <div className="empty-state">
             <h2>Scene paused</h2>

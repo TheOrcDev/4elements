@@ -41,8 +41,7 @@ body,
   margin: 0;
 }
 
-button,
-textarea {
+button {
   font: inherit;
 }
 
@@ -120,11 +119,6 @@ h2 {
 .prompt {
   font-size: 0.9rem;
   color: var(--muted-foreground);
-}
-
-.editor-section {
-  flex: 1;
-  min-height: 380px;
 }
 
 .validation-section {
@@ -210,8 +204,7 @@ h2 {
 }
 
 .ui-button:focus-visible,
-.ui-tabs-trigger:focus-visible,
-.ui-textarea:focus-visible {
+.ui-tabs-trigger:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
@@ -265,21 +258,6 @@ h2 {
   width: 34px;
   height: 34px;
   padding: 0;
-}
-
-.ui-textarea {
-  width: 100%;
-  height: 100%;
-  min-height: 340px;
-  padding: 13px;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  font-size: 0.78rem;
-  line-height: 1.55;
-  color: #f8f1df;
-  resize: vertical;
-  background: #0d0f0e;
-  border: 1px solid var(--input);
-  border-radius: var(--radius);
 }
 
 .ui-tabs {
