@@ -112,3 +112,7 @@ pnpm test:visual
 ```
 
 The visual smoke test opens each element on desktop and mobile, confirms the URL tab state, checks that metrics render, verifies the canvas is nonblank, and writes screenshots to `tests/visual`.
+
+## Resources
+
+- [Base UI](https://base-ui.com/) — unstyled, accessible React component primitives.

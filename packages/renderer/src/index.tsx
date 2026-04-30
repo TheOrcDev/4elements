@@ -93,14 +93,19 @@ function CameraRig({ spec }: { spec: SceneSpec }) {
 function SceneStats({ onStats }: { onStats?: (stats: RenderStats) => void }) {
   const { scene } = useThree();
   const frameCount = useRef(0);
-  const elapsed = useRef(0);
-  useFrame((_, delta) => {
+  const sampleStartedAt = useRef<number | null>(null);
+  useFrame(() => {
     if (!onStats) {
       return;
     }
+    const now = performance.now();
+    if (sampleStartedAt.current === null) {
+      sampleStartedAt.current = now;
+      return;
+    }
     frameCount.current += 1;
-    elapsed.current += delta;
-    if (elapsed.current < 0.6) {
+    const elapsedMs = now - sampleStartedAt.current;
+    if (elapsedMs < 500) {
       return;
     }
     let triangles = 0;
@@ -117,12 +122,12 @@ function SceneStats({ onStats }: { onStats?: (stats: RenderStats) => void }) {
       }
     });
     onStats({
-      fps: frameCount.current / elapsed.current,
+      fps: (frameCount.current * 1000) / elapsedMs,
       triangles: Math.round(triangles),
       objects,
     });
     frameCount.current = 0;
-    elapsed.current = 0;
+    sampleStartedAt.current = now;
   });
   return null;
 }
