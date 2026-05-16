@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "1.0",
+  "metadata": {
+    "id": "grok-4.3-water",
+    "name": "Obsidian Mirror",
+    "element": "Water",
+    "prompt": "Create an interactive 3D water scene: a clear pool with animated ripples, reflective highlights, floating droplets, foam at the edges, and soft blue-green caustic light.",
+    "seed": 641,
+    "description": "A perfectly circular cistern of black volcanic glass holds ink-dark water that mirrors the sky; a single slow ripple expands from the center while a thread of bone-white foam clings to the rim and pale mist lifts."
+  },
+  "camera": {
+    "position": [2.85, 0.95, 3.65],
+    "target": [0.05, 0.18, -0.15],
+    "fov": 48
+  },
+  "environment": {
+    "background": "#070a0f",
+    "fogColor": "#0c1118",
+    "fogNear": 5.5,
+    "fogFar": 13
+  },
+  "lights": [
+    {
+      "id": "night-haze",
+      "type": "ambient",
+      "color": "#4a5563",
+      "intensity": 0.42
+    },
+    {
+      "id": "moon-rim",
+      "type": "directional",
+      "color": "#d8e4f2",
+      "intensity": 2.15,
+      "position": [-2.4, 6.2, -3.8]
+    },
+    {
+      "id": "caustic-pool",
+      "type": "point",
+      "color": "#4fd1c5",
+      "intensity": 3.9,
+      "position": [0.0, 0.35, 0.0]
+    }
+  ],
+  "objects": [
+    {
+      "id": "wet-rim",
+      "type": "floor",
+      "width": 9.0,
+      "depth": 9.0,
+      "material": { "color": "#181c20", "roughness": 0.65, "metalness": 0.35 }
+    },
+    {
+      "id": "basalt-lip-a",
+      "type": "rock",
+      "position": [-1.85, 0.22, -0.35],
+      "scale": [1.4, 0.55, 0.9],
+      "radius": 0.7,
+      "detail": 1,
+      "seed": 218,
+      "material": { "color": "#1f2429", "roughness": 0.7 }
+    },
+    {
+      "id": "basalt-lip-b",
+      "type": "rock",
+      "position": [1.65, 0.18, 1.05],
+      "scale": [1.1, 0.48, 1.25],
+      "radius": 0.62,
+      "detail": 0,
+      "seed": 224,
+      "material": { "color": "#1c2126", "roughness": 0.72 }
+    },
+    {
+      "id": "basalt-lip-c",
+      "type": "rock",
+      "position": [0.35, 0.25, -2.05],
+      "scale": [0.95, 0.52, 0.8],
+      "radius": 0.55,
+      "detail": 1,
+      "seed": 229,
+      "material": { "color": "#20262b", "roughness": 0.68 }
+    },
+    {
+      "id": "ink-basin",
+      "type": "waterSurface",
+      "position": [0, 0.12, 0],
+      "width": 5.6,
+      "depth": 5.6,
+      "segments": 72,
+      "color": "#0a0f12",
+      "opacity": 0.92,
+      "waveStrength": 0.09,
+      "waveSpeed": 0.65,
+      "material": { "roughness": 0.08, "metalness": 0.65, "transmission": 0.55 }
+    },
+    {
+      "id": "center-ring",
+      "type": "waveRing",
+      "position": [0, 0.135, 0],
+      "radius": 1.45,
+      "thickness": 0.019,
+      "color": "#a8e5e0",
+      "speed": 0.28
+    },
+    {
+      "id": "rim-foam",
+      "type": "foam",
+      "position": [0, 0.14, 0],
+      "count": 52,
+      "radius": 2.65,
+      "color": "#e8f0f2",
+      "seed": 241
+    },
+    {
+      "id": "surface-mist",
+      "type": "particleField",
+      "position": [0.0, 0.28, 0.0],
+      "count": 95,
+      "spread": [4.2, 0.9, 4.0],
+      "size": 0.012,
+      "colorPalette": ["#d0e8f0", "#b8d4e0"],
+      "drift": [0.03, 0.18, -0.02],
+      "opacity": 0.38,
+      "speed": 0.42,
+      "seed": 253
+    },
+    {
+      "id": "floating-petal",
+      "type": "particleField",
+      "position": [0.35, 0.155, -0.6],
+      "count": 18,
+      "spread": [1.8, 0.15, 1.6],
+      "size": 0.038,
+      "colorPalette": ["#e8d9c8", "#d4c4a8"],
+      "drift": [0.08, 0.02, 0.12],
+      "opacity": 0.65,
+      "speed": 0.18,
+      "seed": 261
+    }
+  ],
+  "effects": [
+    { "type": "causticsHint", "strength": 1.85 },
+    { "type": "bloomHint", "strength": 0.95 }
+  ]
+}

@@ -26,6 +26,7 @@ const modelOptions: ReadonlyArray<{ label: string; value: ModelName }> = [
   { label: "Opus 4.7", value: "opus-4.7" },
   { label: "Sonnet 4.6", value: "sonnet-4.6" },
   { label: "GPT 5.5", value: "gpt-5.5" },
+  { label: "Grok 4.3", value: "grok-4.3" },
 ] as const;
 
 function isElementName(value: string): value is ElementName {
@@ -137,7 +138,7 @@ function App() {
           </div>
           <ToggleGroup
             aria-label="Model selector"
-            className="grid w-full grid-cols-3"
+            className="grid w-full grid-cols-2 gap-2"
             onValueChange={loadModel}
             type="single"
             value={selectedModel}

@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "1.0",
+  "metadata": {
+    "id": "grok-4.3-earth",
+    "name": "Sulfur Crown",
+    "element": "Earth",
+    "prompt": "Create an interactive 3D earth scene: layered terrain with rocks, soil, moss, and a slow fracture revealing glowing minerals beneath the surface.",
+    "seed": 589,
+    "description": "A broad ironstone dome is split by a luminous sulfur-yellow and turquoise meander that branches like roots; flat lichen-crusted plates catch the glow while fine mineral vapor lifts from the seam."
+  },
+  "camera": {
+    "position": [5.2, 3.85, 4.15],
+    "target": [0.15, 0.65, -0.2],
+    "fov": 42
+  },
+  "environment": {
+    "background": "#0c0d0f",
+    "fogColor": "#16181c",
+    "fogNear": 7,
+    "fogFar": 16
+  },
+  "lights": [
+    {
+      "id": "moor-haze",
+      "type": "ambient",
+      "color": "#5a5f68",
+      "intensity": 0.48
+    },
+    {
+      "id": "low-rust",
+      "type": "directional",
+      "color": "#c89e6b",
+      "intensity": 1.35,
+      "position": [-3.8, 4.6, 2.9]
+    },
+    {
+      "id": "sulfur-glow",
+      "type": "point",
+      "color": "#f4c94a",
+      "intensity": 5.8,
+      "position": [0.1, 0.75, -0.05]
+    },
+    {
+      "id": "teal-vein",
+      "type": "point",
+      "color": "#2ad4b8",
+      "intensity": 2.7,
+      "position": [-0.65, 0.35, 0.85]
+    }
+  ],
+  "objects": [
+    {
+      "id": "iron-dome",
+      "type": "terrain",
+      "width": 9.4,
+      "depth": 8.6,
+      "segments": 58,
+      "heightScale": 0.48,
+      "seed": 134,
+      "material": { "color": "#2a2722", "roughness": 0.95 }
+    },
+    {
+      "id": "plate-north",
+      "type": "rock",
+      "position": [-1.35, 0.48, -1.85],
+      "scale": [1.65, 0.42, 1.25],
+      "radius": 0.78,
+      "detail": 1,
+      "seed": 147,
+      "material": { "color": "#38342d", "roughness": 0.9, "emissive": "#1f2a22", "emissiveIntensity": 0.25 }
+    },
+    {
+      "id": "plate-east",
+      "type": "rock",
+      "position": [2.05, 0.35, 0.55],
+      "scale": [1.1, 0.38, 1.55],
+      "radius": 0.65,
+      "detail": 0,
+      "seed": 153,
+      "material": { "color": "#312d28", "roughness": 0.92 }
+    },
+    {
+      "id": "sharp-sentinel",
+      "type": "rock",
+      "position": [-2.15, 0.72, 1.35],
+      "scale": [0.55, 1.15, 0.6],
+      "radius": 0.42,
+      "detail": 2,
+      "seed": 161,
+      "material": { "color": "#25221f", "roughness": 0.88 }
+    },
+    {
+      "id": "low-lichen",
+      "type": "rock",
+      "position": [1.25, 0.28, -1.65],
+      "scale": [0.85, 0.32, 0.95],
+      "radius": 0.5,
+      "detail": 1,
+      "seed": 167,
+      "material": { "color": "#2f362b", "roughness": 0.93 }
+    },
+    {
+      "id": "meander-seam",
+      "type": "crack",
+      "position": [0.05, 0.82, -0.1],
+      "rotation": [-1.5708, -0.18, 0.65],
+      "length": 3.8,
+      "branches": 7,
+      "glowColor": "#f4c94a",
+      "seed": 179
+    },
+    {
+      "id": "mineral-vapor",
+      "type": "particleField",
+      "position": [0.0, 0.9, 0.05],
+      "count": 165,
+      "spread": [2.8, 1.6, 2.4],
+      "size": 0.022,
+      "colorPalette": ["#f4e38a", "#5fe8c8", "#c9d88a"],
+      "drift": [0.08, 0.65, -0.04],
+      "opacity": 0.72,
+      "speed": 0.55,
+      "seed": 191
+    }
+  ],
+  "effects": [
+    { "type": "bloomHint", "strength": 1.25 }
+  ]
+}

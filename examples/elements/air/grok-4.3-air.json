@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "1.0",
+  "metadata": {
+    "id": "grok-4.3-air",
+    "name": "Indigo Threshold",
+    "element": "Air",
+    "prompt": "Create an interactive 3D air scene: a pale curtain and loose leaves moving in visible wind beside an open window, with soft dust trails showing the airflow.",
+    "seed": 472,
+    "description": "A heavy indigo linen curtain surges inward through a deep stone doorway, snagging crisp oak leaves on its torn hem while cool twilight dust spirals across the threshold."
+  },
+  "camera": {
+    "position": [-1.65, 2.15, 5.35],
+    "target": [-0.35, 1.55, -0.85],
+    "fov": 39
+  },
+  "environment": {
+    "background": "#0f1118",
+    "fogColor": "#1a1d28",
+    "fogNear": 6.5,
+    "fogFar": 15
+  },
+  "lights": [
+    {
+      "id": "twilight-haze",
+      "type": "ambient",
+      "color": "#6a7085",
+      "intensity": 0.55
+    },
+    {
+      "id": "door-beam",
+      "type": "directional",
+      "color": "#c8d4f0",
+      "intensity": 2.9,
+      "position": [-4.2, 5.1, 3.8]
+    },
+    {
+      "id": "cool-fill",
+      "type": "point",
+      "color": "#7e9ab8",
+      "intensity": 1.15,
+      "position": [1.8, 1.35, 0.6]
+    }
+  ],
+  "objects": [
+    {
+      "id": "flagstone-floor",
+      "type": "floor",
+      "width": 8.2,
+      "depth": 7.8,
+      "material": { "color": "#2a2d35", "roughness": 0.88 }
+    },
+    {
+      "id": "thick-plaster",
+      "type": "wall",
+      "position": [-0.15, 2.05, -1.85],
+      "width": 5.8,
+      "height": 4.4,
+      "material": { "color": "#c5c8d1", "roughness": 0.82 }
+    },
+    {
+      "id": "deep-frame",
+      "type": "window",
+      "position": [-0.85, 1.95, -1.72],
+      "width": 2.15,
+      "height": 3.35,
+      "frameColor": "#3a3f4a"
+    },
+    {
+      "id": "indigo-linen",
+      "type": "curtain",
+      "position": [-0.25, 2.0, -1.15],
+      "rotation": [0, 0.38, 0],
+      "width": 2.65,
+      "height": 3.4,
+      "segments": 52,
+      "topAnchorPoints": 9,
+      "fabricColor": "#2f2a4a",
+      "opacity": 0.78,
+      "windStrength": 2.35,
+      "windDirection": [0.92, 0.15, 0.38],
+      "gustFrequency": 1.85,
+      "turbulence": 1.15,
+      "damping": 0.18,
+      "seed": 88
+    },
+    {
+      "id": "snagged-oak",
+      "type": "leafField",
+      "position": [0.15, 1.25, -0.65],
+      "count": 68,
+      "spread": [3.8, 2.4, 2.9],
+      "colorPalette": ["#3f4a35", "#5c4632", "#6b5a3f", "#2e3a2a"],
+      "windStrength": 1.95,
+      "seed": 97
+    },
+    {
+      "id": "threshold-dust",
+      "type": "particleField",
+      "position": [-0.4, 1.45, -0.35],
+      "count": 215,
+      "spread": [3.6, 2.1, 2.4],
+      "size": 0.015,
+      "colorPalette": ["#c8d4e8", "#a8b4c9", "#d0d8e8"],
+      "drift": [0.65, 0.08, 0.22],
+      "opacity": 0.48,
+      "speed": 0.95,
+      "seed": 109
+    },
+    {
+      "id": "old-bench",
+      "type": "box",
+      "position": [1.85, 0.42, 0.35],
+      "size": [1.35, 0.82, 0.48],
+      "material": { "color": "#3c3830", "roughness": 0.75, "metalness": 0.08 }
+    }
+  ],
+  "effects": [
+    { "type": "bloomHint", "strength": 0.65 }
+  ]
+}
