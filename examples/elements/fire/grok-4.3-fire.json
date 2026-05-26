@@ -107,7 +107,12 @@
       "radius": 0.68,
       "detail": 0,
       "seed": 267,
-      "material": { "color": "#1f1916", "roughness": 0.85, "emissive": "#4a2a18", "emissiveIntensity": 0.6 }
+      "material": {
+        "color": "#1f1916",
+        "roughness": 0.85,
+        "emissive": "#4a2a18",
+        "emissiveIntensity": 0.6
+      }
     },
     {
       "id": "inner-fissure",

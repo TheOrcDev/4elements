@@ -67,7 +67,12 @@
       "radius": 0.78,
       "detail": 1,
       "seed": 147,
-      "material": { "color": "#38342d", "roughness": 0.9, "emissive": "#1f2a22", "emissiveIntensity": 0.25 }
+      "material": {
+        "color": "#38342d",
+        "roughness": 0.9,
+        "emissive": "#1f2a22",
+        "emissiveIntensity": 0.25
+      }
     },
     {
       "id": "plate-east",
@@ -123,7 +128,5 @@
       "seed": 191
     }
   ],
-  "effects": [
-    { "type": "bloomHint", "strength": 1.25 }
-  ]
+  "effects": [{ "type": "bloomHint", "strength": 1.25 }]
 }

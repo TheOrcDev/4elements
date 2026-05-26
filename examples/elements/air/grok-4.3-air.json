@@ -114,7 +114,5 @@
       "material": { "color": "#3c3830", "roughness": 0.75, "metalness": 0.08 }
     }
   ],
-  "effects": [
-    { "type": "bloomHint", "strength": 0.65 }
-  ]
+  "effects": [{ "type": "bloomHint", "strength": 0.65 }]
 }
