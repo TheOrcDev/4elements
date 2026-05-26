@@ -2,201 +2,215 @@
   "schemaVersion": "1.0",
   "metadata": {
     "id": "grok-4.3-fire",
-    "name": "Obsidian Throat",
+    "name": "Chasm Heart",
     "element": "Fire",
     "prompt": "Create an interactive 3D fire scene: a small ritual flame burning above dark stone, with glowing embers, warm light, rising sparks, subtle smoke, and animated flicker.",
-    "seed": 331,
-    "description": "A split crown of blackened basalt reveals a living artery of flame; embers spiral from the wound while a veil of smoke climbs into the starless dark."
+    "seed": 847,
+    "description": "A narrow basalt chasm splits the ground, with intense fire burning deep below and multiple flame vents licking up the sheer walls. Embers spiral upward in a tight column while heavy smoke coils against the rock."
   },
   "camera": {
-    "position": [-3.05, 2.55, 4.75],
-    "target": [0.08, 0.9, 0.1],
-    "fov": 47
+    "position": [-2.8, 3.1, 5.9],
+    "target": [0.15, 0.65, -0.4],
+    "fov": 46
   },
   "environment": {
-    "background": "#0b0709",
-    "fogColor": "#150c0e",
-    "fogNear": 5.2,
-    "fogFar": 14.5
+    "background": "#0a0806",
+    "fogColor": "#120f0c",
+    "fogNear": 4.5,
+    "fogFar": 15.5
   },
   "lights": [
     {
-      "id": "deep-ambient",
+      "id": "night-ambient",
       "type": "ambient",
-      "color": "#28181c",
-      "intensity": 0.41
+      "color": "#2a211a",
+      "intensity": 0.28
     },
     {
-      "id": "throat-core",
+      "id": "chasm-core",
       "type": "point",
-      "color": "#ffbb4a",
-      "intensity": 11.2,
-      "position": [0.05, 1.08, 0.02]
+      "color": "#ff9a3d",
+      "intensity": 14.5,
+      "position": [0.1, -0.8, 0.3]
     },
     {
-      "id": "basin-glow",
+      "id": "wall-glow-left",
       "type": "point",
-      "color": "#ff5f28",
-      "intensity": 2.4,
-      "position": [0.15, 0.42, -0.1]
+      "color": "#ff6a1f",
+      "intensity": 5.2,
+      "position": [-1.65, 1.4, -0.9]
     },
     {
-      "id": "stone-rim",
-      "type": "directional",
-      "color": "#665a72",
-      "intensity": 0.62,
-      "position": [2.8, 5.2, -3.5]
+      "id": "wall-glow-right",
+      "type": "point",
+      "color": "#ff6a1f",
+      "intensity": 4.8,
+      "position": [1.9, 1.55, 0.6]
     }
   ],
   "objects": [
     {
-      "id": "obsidian-crust",
-      "type": "terrain",
-      "width": 8.8,
-      "depth": 8.8,
-      "segments": 42,
-      "heightScale": 0.22,
-      "seed": 87,
-      "material": { "color": "#181310", "roughness": 0.96 }
-    },
-    {
-      "id": "north-sentinel",
-      "type": "rock",
-      "position": [-0.12, 0.26, -1.48],
-      "scale": [0.82, 0.58, 0.71],
-      "radius": 0.51,
-      "detail": 1,
-      "seed": 241,
-      "material": { "color": "#25201b", "roughness": 0.93 }
-    },
-    {
-      "id": "east-sentinel",
-      "type": "rock",
-      "position": [1.48, 0.24, 0.38],
-      "scale": [0.64, 0.72, 0.55],
-      "radius": 0.47,
-      "detail": 1,
-      "seed": 247,
-      "material": { "color": "#1f1a16", "roughness": 0.94 }
-    },
-    {
-      "id": "south-sentinel",
-      "type": "rock",
-      "position": [-0.32, 0.29, 1.52],
-      "scale": [0.71, 0.61, 0.68],
-      "radius": 0.49,
-      "detail": 0,
-      "seed": 253,
-      "material": { "color": "#231e19", "roughness": 0.92 }
-    },
-    {
-      "id": "west-sentinel",
-      "type": "rock",
-      "position": [-1.52, 0.23, -0.42],
-      "scale": [0.59, 0.67, 0.52],
-      "radius": 0.44,
-      "detail": 1,
-      "seed": 259,
-      "material": { "color": "#1d1815", "roughness": 0.95 }
-    },
-    {
-      "id": "chalice-basin",
-      "type": "rock",
-      "position": [0.02, 0.17, 0.0],
-      "scale": [1.45, 0.29, 1.3],
-      "radius": 0.68,
-      "detail": 0,
-      "seed": 267,
+      "id": "basalt-floor",
+      "type": "floor",
+      "width": 11,
+      "depth": 11,
+      "position": [0, -0.05, 0],
       "material": {
-        "color": "#1f1916",
-        "roughness": 0.85,
-        "emissive": "#4a2a18",
-        "emissiveIntensity": 0.6
+        "color": "#1c1814",
+        "roughness": 0.95
       }
     },
     {
-      "id": "inner-fissure",
+      "id": "left-wall",
+      "type": "wall",
+      "width": 4.2,
+      "height": 5.5,
+      "position": [-2.35, 2.6, -0.8],
+      "rotation": [0, 0.38, 0],
+      "material": {
+        "color": "#25211d",
+        "roughness": 0.92
+      }
+    },
+    {
+      "id": "right-wall",
+      "type": "wall",
+      "width": 4.2,
+      "height": 5.5,
+      "position": [2.55, 2.6, 0.4],
+      "rotation": [0, -0.31, 0],
+      "material": {
+        "color": "#25211d",
+        "roughness": 0.92
+      }
+    },
+    {
+      "id": "main-chasm",
       "type": "crack",
-      "position": [0.0, 0.32, 0.0],
-      "rotation": [-1.5708, 0.22, -0.4],
-      "length": 1.75,
+      "position": [0.05, 0.12, -0.15],
+      "rotation": [-1.58, 0.09, 0],
+      "length": 5.8,
       "branches": 5,
-      "glowColor": "#ff9c48",
-      "seed": 269
+      "glowColor": "#ff7a2e",
+      "seed": 847
     },
     {
-      "id": "fire-blade",
+      "id": "deep-flame",
       "type": "flame",
-      "position": [0, 0.68, 0],
-      "height": 2.05,
-      "radius": 0.38,
-      "colorCore": "#fff0c2",
-      "colorMid": "#ff7c3a",
-      "colorOuter": "#a21f2e",
-      "flickerSpeed": 4.1,
-      "lightIntensity": 9.5
-    },
-    {
-      "id": "ember-orbit",
-      "type": "particleField",
-      "position": [0.0, 0.48, 0.0],
-      "count": 88,
-      "spread": [2.05, 0.55, 1.95],
-      "size": 0.041,
-      "colorPalette": ["#f8c36a", "#ff8a3d", "#d84a22"],
-      "drift": [0.015, 0.22, -0.008],
-      "opacity": 0.91,
-      "speed": 0.48,
-      "seed": 277
-    },
-    {
-      "id": "spark-ascend",
-      "type": "particleField",
-      "position": [0.0, 0.95, 0.0],
-      "count": 155,
-      "spread": [0.95, 3.1, 0.95],
-      "size": 0.024,
-      "colorPalette": ["#fff7d4", "#ffb85a", "#ff6f28"],
-      "drift": [0.03, 1.85, 0.02],
-      "opacity": 0.79,
-      "speed": 2.35,
-      "seed": 289
-    },
-    {
-      "id": "cinder-drift",
-      "type": "particleField",
-      "position": [0.1, 1.2, -0.05],
-      "count": 72,
-      "spread": [2.4, 1.8, 2.1],
-      "size": 0.033,
-      "colorPalette": ["#6b4638", "#4a2f26", "#e88a4a"],
-      "drift": [0.12, 0.15, -0.09],
-      "opacity": 0.58,
-      "speed": 0.75,
-      "seed": 301
-    },
-    {
-      "id": "smoke-braid",
-      "type": "smoke",
-      "position": [0.0, 1.82, 0.08],
-      "count": 29,
-      "height": 2.95,
+      "position": [0.08, 0.35, 0.05],
+      "height": 2.85,
       "radius": 0.72,
-      "opacity": 0.115,
-      "seed": 313
+      "colorCore": "#fff4c2",
+      "colorMid": "#ff8f35",
+      "colorOuter": "#c13a18",
+      "flickerSpeed": 3.1,
+      "lightIntensity": 13
     },
     {
-      "id": "heat-collar",
-      "type": "waveRing",
-      "position": [0.0, 0.51, 0.0],
-      "radius": 0.92,
-      "thickness": 0.015,
-      "color": "#ff8f42",
-      "speed": 0.68
+      "id": "left-vent",
+      "type": "flame",
+      "position": [-0.85, 1.15, -0.55],
+      "height": 1.65,
+      "radius": 0.38,
+      "colorCore": "#fff0a8",
+      "colorMid": "#ff7c28",
+      "colorOuter": "#b83312",
+      "flickerSpeed": 4.4,
+      "lightIntensity": 6.5
+    },
+    {
+      "id": "right-vent",
+      "type": "flame",
+      "position": [0.95, 1.25, 0.65],
+      "height": 1.4,
+      "radius": 0.32,
+      "colorCore": "#ffeb9c",
+      "colorMid": "#ff8125",
+      "colorOuter": "#b02e0f",
+      "flickerSpeed": 3.8,
+      "lightIntensity": 5.8
+    },
+    {
+      "id": "rising-embers",
+      "type": "particleField",
+      "position": [0.1, 0.6, 0.1],
+      "count": 185,
+      "spread": [1.6, 4.8, 1.4],
+      "size": 0.038,
+      "colorPalette": ["#fff3a0", "#ff9f40", "#ff5c1f"],
+      "drift": [0.02, 2.1, -0.04],
+      "opacity": 0.9,
+      "speed": 1.65,
+      "seed": 851
+    },
+    {
+      "id": "high-sparks",
+      "type": "particleField",
+      "position": [0.05, 2.1, 0],
+      "count": 92,
+      "spread": [1.1, 3.2, 1.0],
+      "size": 0.024,
+      "colorPalette": ["#fff8d0", "#ffcc66"],
+      "drift": [-0.03, 2.8, 0.05],
+      "opacity": 0.78,
+      "speed": 2.35,
+      "seed": 859
+    },
+    {
+      "id": "heavy-smoke",
+      "type": "smoke",
+      "position": [0.12, 2.45, -0.1],
+      "count": 38,
+      "height": 4.8,
+      "radius": 1.35,
+      "opacity": 0.19,
+      "seed": 863
+    },
+    {
+      "id": "side-smoke",
+      "type": "smoke",
+      "position": [-0.55, 1.9, -0.85],
+      "count": 21,
+      "height": 3.4,
+      "radius": 0.85,
+      "opacity": 0.14,
+      "seed": 867
+    },
+    {
+      "id": "overhang-rock",
+      "type": "rock",
+      "position": [-1.35, 2.85, -1.25],
+      "scale": [1.15, 0.65, 0.95],
+      "radius": 0.9,
+      "detail": 1,
+      "seed": 871,
+      "material": {
+        "color": "#2f2923",
+        "roughness": 0.88
+      }
+    },
+    {
+      "id": "rim-boulder",
+      "type": "rock",
+      "position": [1.75, 0.85, 1.1],
+      "scale": [0.85, 0.72, 1.05],
+      "radius": 0.78,
+      "detail": 0,
+      "seed": 877,
+      "material": {
+        "color": "#28241f",
+        "roughness": 0.9
+      }
     }
   ],
   "effects": [
-    { "type": "bloomHint", "strength": 1.55 },
-    { "type": "heatDistortionHint", "strength": 0.82 }
+    {
+      "type": "bloomHint",
+      "strength": 1.35
+    },
+    {
+      "type": "heatDistortionHint",
+      "strength": 0.95
+    }
   ]
 }

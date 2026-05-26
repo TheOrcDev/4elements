@@ -2,131 +2,166 @@
   "schemaVersion": "1.0",
   "metadata": {
     "id": "grok-4.3-earth",
-    "name": "Sulfur Crown",
+    "name": "Folded Strata",
     "element": "Earth",
     "prompt": "Create an interactive 3D earth scene: layered terrain with rocks, soil, moss, and a slow fracture revealing glowing minerals beneath the surface.",
-    "seed": 589,
-    "description": "A broad ironstone dome is split by a luminous sulfur-yellow and turquoise meander that branches like roots; flat lichen-crusted plates catch the glow while fine mineral vapor lifts from the seam."
+    "seed": 1038,
+    "description": "An ancient hillside of folded sedimentary rock has split along a diagonal fault. Bright mineral veins glow within the fresh fracture while broken boulders rest where they tumbled down the slope."
   },
   "camera": {
-    "position": [5.2, 3.85, 4.15],
-    "target": [0.15, 0.65, -0.2],
-    "fov": 42
+    "position": [4.1, 4.25, 5.85],
+    "target": [0.35, 0.95, -0.55],
+    "fov": 44
   },
   "environment": {
-    "background": "#0c0d0f",
-    "fogColor": "#16181c",
-    "fogNear": 7,
-    "fogFar": 16
+    "background": "#0f120e",
+    "fogColor": "#1f241d",
+    "fogNear": 6.5,
+    "fogFar": 17
   },
   "lights": [
     {
-      "id": "moor-haze",
+      "id": "overcast-ambient",
       "type": "ambient",
-      "color": "#5a5f68",
-      "intensity": 0.48
+      "color": "#8a9580",
+      "intensity": 0.72
     },
     {
-      "id": "low-rust",
+      "id": "sun-high",
       "type": "directional",
-      "color": "#c89e6b",
-      "intensity": 1.35,
-      "position": [-3.8, 4.6, 2.9]
+      "color": "#f0e2b0",
+      "intensity": 2.15,
+      "position": [3.8, 8.5, 2.4]
     },
     {
-      "id": "sulfur-glow",
+      "id": "mineral-glow",
       "type": "point",
-      "color": "#f4c94a",
+      "color": "#5be0a8",
       "intensity": 5.8,
-      "position": [0.1, 0.75, -0.05]
-    },
-    {
-      "id": "teal-vein",
-      "type": "point",
-      "color": "#2ad4b8",
-      "intensity": 2.7,
-      "position": [-0.65, 0.35, 0.85]
+      "position": [0.15, 1.25, 0.35]
     }
   ],
   "objects": [
     {
-      "id": "iron-dome",
+      "id": "hillside",
       "type": "terrain",
-      "width": 9.4,
-      "depth": 8.6,
-      "segments": 58,
-      "heightScale": 0.48,
-      "seed": 134,
-      "material": { "color": "#2a2722", "roughness": 0.95 }
-    },
-    {
-      "id": "plate-north",
-      "type": "rock",
-      "position": [-1.35, 0.48, -1.85],
-      "scale": [1.65, 0.42, 1.25],
-      "radius": 0.78,
-      "detail": 1,
-      "seed": 147,
+      "width": 9.5,
+      "depth": 8.8,
+      "segments": 72,
+      "heightScale": 1.15,
+      "position": [0, 0.35, 0],
+      "seed": 1042,
       "material": {
-        "color": "#38342d",
-        "roughness": 0.9,
-        "emissive": "#1f2a22",
-        "emissiveIntensity": 0.25
+        "color": "#4b4638",
+        "roughness": 0.96
       }
     },
     {
-      "id": "plate-east",
-      "type": "rock",
-      "position": [2.05, 0.35, 0.55],
-      "scale": [1.1, 0.38, 1.55],
-      "radius": 0.65,
-      "detail": 0,
-      "seed": 153,
-      "material": { "color": "#312d28", "roughness": 0.92 }
-    },
-    {
-      "id": "sharp-sentinel",
-      "type": "rock",
-      "position": [-2.15, 0.72, 1.35],
-      "scale": [0.55, 1.15, 0.6],
-      "radius": 0.42,
-      "detail": 2,
-      "seed": 161,
-      "material": { "color": "#25221f", "roughness": 0.88 }
-    },
-    {
-      "id": "low-lichen",
-      "type": "rock",
-      "position": [1.25, 0.28, -1.65],
-      "scale": [0.85, 0.32, 0.95],
-      "radius": 0.5,
-      "detail": 1,
-      "seed": 167,
-      "material": { "color": "#2f362b", "roughness": 0.93 }
-    },
-    {
-      "id": "meander-seam",
+      "id": "primary-fault",
       "type": "crack",
-      "position": [0.05, 0.82, -0.1],
-      "rotation": [-1.5708, -0.18, 0.65],
-      "length": 3.8,
-      "branches": 7,
-      "glowColor": "#f4c94a",
-      "seed": 179
+      "position": [0.2, 1.45, 0.25],
+      "rotation": [-1.52, 0.68, 0.18],
+      "length": 4.85,
+      "branches": 8,
+      "glowColor": "#5de8b2",
+      "seed": 1047
     },
     {
-      "id": "mineral-vapor",
+      "id": "detached-boulder-a",
+      "type": "rock",
+      "position": [-2.15, 0.85, 1.65],
+      "scale": [1.35, 1.05, 1.2],
+      "radius": 1.05,
+      "detail": 1,
+      "seed": 1051,
+      "material": {
+        "color": "#3f3a32",
+        "roughness": 0.93
+      }
+    },
+    {
+      "id": "detached-boulder-b",
+      "type": "rock",
+      "position": [2.45, 0.55, -1.35],
+      "scale": [0.95, 0.8, 1.1],
+      "radius": 0.82,
+      "detail": 0,
+      "seed": 1055,
+      "material": {
+        "color": "#36322b",
+        "roughness": 0.95
+      }
+    },
+    {
+      "id": "upper-moss-shelf",
+      "type": "plane",
+      "position": [-1.45, 2.15, -1.85],
+      "rotation": [-1.48, 0.35, 0.22],
+      "width": 3.2,
+      "height": 2.1,
+      "material": {
+        "color": "#556b42",
+        "roughness": 0.98,
+        "opacity": 0.82
+      }
+    },
+    {
+      "id": "mineral-dust",
       "type": "particleField",
-      "position": [0.0, 0.9, 0.05],
-      "count": 165,
-      "spread": [2.8, 1.6, 2.4],
-      "size": 0.022,
-      "colorPalette": ["#f4e38a", "#5fe8c8", "#c9d88a"],
-      "drift": [0.08, 0.65, -0.04],
-      "opacity": 0.72,
+      "position": [0.35, 1.65, 0.55],
+      "count": 135,
+      "spread": [2.6, 1.8, 2.2],
+      "size": 0.029,
+      "colorPalette": ["#68e8b8", "#e8d48a", "#a8f0d2"],
+      "drift": [0.08, 0.65, -0.12],
+      "opacity": 0.65,
       "speed": 0.55,
-      "seed": 191
+      "seed": 1061
+    },
+    {
+      "id": "slope-debris",
+      "type": "particleField",
+      "position": [-0.85, 0.95, 1.25],
+      "count": 88,
+      "spread": [3.8, 0.9, 2.6],
+      "size": 0.022,
+      "colorPalette": ["#5a5548", "#6b6355"],
+      "drift": [0.02, -0.15, 0.08],
+      "opacity": 0.78,
+      "speed": 0.35,
+      "seed": 1066
+    },
+    {
+      "id": "small-rock-1",
+      "type": "rock",
+      "position": [1.55, 1.75, 2.1],
+      "scale": [0.6, 0.48, 0.72],
+      "radius": 0.52,
+      "detail": 0,
+      "seed": 1071,
+      "material": {
+        "color": "#403b33",
+        "roughness": 0.92
+      }
+    },
+    {
+      "id": "small-rock-2",
+      "type": "rock",
+      "position": [-2.85, 1.25, -0.75],
+      "scale": [0.72, 0.55, 0.65],
+      "radius": 0.6,
+      "detail": 1,
+      "seed": 1074,
+      "material": {
+        "color": "#3a362f",
+        "roughness": 0.94
+      }
     }
   ],
-  "effects": [{ "type": "bloomHint", "strength": 1.25 }]
+  "effects": [
+    {
+      "type": "bloomHint",
+      "strength": 0.78
+    }
+  ]
 }
