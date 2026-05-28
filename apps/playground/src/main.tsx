@@ -59,6 +59,9 @@ function App() {
   });
   const selectedElement = isElementName(elementQuery) ? elementQuery : "Fire";
   const selectedModel = isModelName(modelQuery) ? modelQuery : defaultModel;
+  const selectedModelLabel =
+    modelOptions.find((model) => model.value === selectedModel)?.label ??
+    selectedModel;
   const [activeElement, setActiveElement] = useState<ElementName>(() =>
     getInitialElement()
   );
@@ -188,6 +191,12 @@ function App() {
         >
           {stats.fps.toFixed(0)} FPS
         </Badge>
+        <p
+          aria-live="polite"
+          className="pointer-events-none absolute top-4 left-4 z-10 font-heading font-semibold text-3xl text-white drop-shadow-md md:text-4xl"
+        >
+          {selectedModelLabel}
+        </p>
         <SceneRenderer onStats={setStats} spec={spec} />
       </section>
     </main>
