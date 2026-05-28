@@ -23,6 +23,7 @@ import "./styles.css";
 const REPO = "TheOrcDev/4elements";
 
 const modelOptions: ReadonlyArray<{ label: string; value: ModelName }> = [
+  { label: "Opus 4.8", value: "opus-4.8" },
   { label: "Opus 4.7", value: "opus-4.7" },
   { label: "Sonnet 4.6", value: "sonnet-4.6" },
   { label: "GPT 5.5", value: "gpt-5.5" },
