@@ -141,15 +141,17 @@ function App() {
           </div>
           <ToggleGroup
             aria-label="Model selector"
-            className="grid w-full grid-cols-2 gap-2 sm:grid-cols-3"
+            className="grid w-full grid-cols-2 sm:grid-cols-3"
             onValueChange={loadModel}
+            size="sm"
+            spacing={2}
             type="single"
             value={selectedModel}
             variant="outline"
           >
             {modelOptions.map((model) => (
               <ToggleGroupItem
-                className="min-w-0"
+                className="w-full min-w-0 shrink truncate px-2 normal-case tracking-normal"
                 key={model.value}
                 value={model.value}
               >
