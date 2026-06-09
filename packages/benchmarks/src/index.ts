@@ -9,7 +9,7 @@ export type ModelName =
   | "composer-2.5"
   | "opus-4.8"
   | "opus-4.8-max"
-  | "fabel-5";
+  | "fable-5";
 
 export const defaultModel: ModelName = "gpt-5.5";
 export const elementOrder: readonly ElementName[] = [
@@ -5086,15 +5086,15 @@ const opus48MaxWaterSpec = {
 };
 
 // ---------------------------------------------------------------------------
-// Fabel 5 specs — animation-driven compositions: a spinning fire whirl,
+// Fable 5 specs — animation-driven compositions: a spinning fire whirl,
 // laundry snapping on an open hillside, a levitating fractured monolith,
 // and a vertical waterfall plunging through a gorge.
 // ---------------------------------------------------------------------------
 
-const fabelFireSpec = {
+const fableFireSpec = {
   schemaVersion: "1.0",
   metadata: {
-    id: "fabel-5-fire",
+    id: "fable-5-fire",
     name: "Cinder Vortex",
     element: "Fire",
     prompt: benchmarkPrompts.Fire,
@@ -5304,10 +5304,10 @@ const fabelFireSpec = {
   ],
 };
 
-const fabelAirSpec = {
+const fableAirSpec = {
   schemaVersion: "1.0",
   metadata: {
-    id: "fabel-5-air",
+    id: "fable-5-air",
     name: "Washline Gale",
     element: "Air",
     prompt: benchmarkPrompts.Air,
@@ -5510,10 +5510,10 @@ const fabelAirSpec = {
   effects: [{ type: "bloomHint", strength: 0.3 }],
 };
 
-const fabelEarthSpec = {
+const fableEarthSpec = {
   schemaVersion: "1.0",
   metadata: {
-    id: "fabel-5-earth",
+    id: "fable-5-earth",
     name: "The Risen Stone",
     element: "Earth",
     prompt: benchmarkPrompts.Earth,
@@ -5724,10 +5724,10 @@ const fabelEarthSpec = {
   effects: [{ type: "bloomHint", strength: 1.0 }],
 };
 
-const fabelWaterSpec = {
+const fableWaterSpec = {
   schemaVersion: "1.0",
   metadata: {
-    id: "fabel-5-water",
+    id: "fable-5-water",
     name: "Veilfall Gorge",
     element: "Water",
     prompt: benchmarkPrompts.Water,
@@ -5990,11 +5990,11 @@ export const benchmarkSpecs: Record<
     Earth: sceneSpecSchema.parse(composerEarthSpec),
     Water: sceneSpecSchema.parse(composerWaterSpec),
   },
-  "fabel-5": {
-    Fire: sceneSpecSchema.parse(fabelFireSpec),
-    Air: sceneSpecSchema.parse(fabelAirSpec),
-    Earth: sceneSpecSchema.parse(fabelEarthSpec),
-    Water: sceneSpecSchema.parse(fabelWaterSpec),
+  "fable-5": {
+    Fire: sceneSpecSchema.parse(fableFireSpec),
+    Air: sceneSpecSchema.parse(fableAirSpec),
+    Earth: sceneSpecSchema.parse(fableEarthSpec),
+    Water: sceneSpecSchema.parse(fableWaterSpec),
   },
 };
 
