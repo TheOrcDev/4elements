@@ -11,6 +11,204 @@ import { type ReactNode, useEffect, useMemo, useRef } from "react";
 // biome-ignore lint/performance/noNamespaceImport: Three.js classes and constants are used broadly across renderer primitives.
 import * as THREE from "three";
 
+const FIRE_VOLUME_VERTEX_SHADER = `
+  varying vec3 vLocalPosition;
+
+  void main() {
+    vLocalPosition = position;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const FIRE_VOLUME_FRAGMENT_SHADER = `
+  precision highp float;
+
+  uniform vec3 uCameraLocal;
+  uniform vec3 uColorCore;
+  uniform vec3 uColorMid;
+  uniform vec3 uColorOuter;
+  uniform float uHeight;
+  uniform float uOpacity;
+  uniform float uRadius;
+  uniform float uSeed;
+  uniform float uTime;
+  uniform float uTurbulence;
+  uniform vec2 uWind;
+
+  varying vec3 vLocalPosition;
+
+  float hash3(vec3 point) {
+    point = fract(point * 0.1031);
+    point += dot(point, point.yzx + 33.33);
+    return fract((point.x + point.y) * point.z);
+  }
+
+  float valueNoise(vec3 point) {
+    vec3 cell = floor(point);
+    vec3 local = fract(point);
+    local = local * local * (3.0 - 2.0 * local);
+
+    float n000 = hash3(cell + vec3(0.0, 0.0, 0.0));
+    float n100 = hash3(cell + vec3(1.0, 0.0, 0.0));
+    float n010 = hash3(cell + vec3(0.0, 1.0, 0.0));
+    float n110 = hash3(cell + vec3(1.0, 1.0, 0.0));
+    float n001 = hash3(cell + vec3(0.0, 0.0, 1.0));
+    float n101 = hash3(cell + vec3(1.0, 0.0, 1.0));
+    float n011 = hash3(cell + vec3(0.0, 1.0, 1.0));
+    float n111 = hash3(cell + vec3(1.0, 1.0, 1.0));
+
+    float lowA = mix(n000, n100, local.x);
+    float lowB = mix(n010, n110, local.x);
+    float highA = mix(n001, n101, local.x);
+    float highB = mix(n011, n111, local.x);
+    float low = mix(lowA, lowB, local.y);
+    float high = mix(highA, highB, local.y);
+    return mix(low, high, local.z);
+  }
+
+  float flameNoise(vec3 point) {
+    float value = 0.0;
+    float amplitude = 0.56;
+    for (int octave = 0; octave < 3; octave += 1) {
+      value += valueNoise(point) * amplitude;
+      point = point * 2.03 + vec3(13.7, 7.9, 11.3);
+      amplitude *= 0.5;
+    }
+    return value;
+  }
+
+  vec2 intersectBox(vec3 origin, vec3 direction, vec3 bounds) {
+    vec3 inverseDirection = 1.0 / direction;
+    vec3 nearPlane = (-bounds - origin) * inverseDirection;
+    vec3 farPlane = (bounds - origin) * inverseDirection;
+    vec3 smaller = min(nearPlane, farPlane);
+    vec3 larger = max(nearPlane, farPlane);
+    float nearDistance = max(max(smaller.x, smaller.y), smaller.z);
+    float farDistance = min(min(larger.x, larger.y), larger.z);
+    return vec2(nearDistance, farDistance);
+  }
+
+  float flameDensity(vec3 position) {
+    float height = clamp(position.y / uHeight + 0.5, 0.0, 1.0);
+    float baseFade = smoothstep(0.0, 0.055, height);
+    float tipFade = 1.0 - smoothstep(0.9, 1.0, height);
+    float taper = mix(1.08, 0.045, pow(height, 0.72));
+    vec2 centered = position.xz / uRadius;
+    centered -= uWind * height * height * 2.5;
+    centered.x -= sin(uTime * 0.86 + height * 7.4 + uSeed) * height * 0.12;
+    centered.y -= cos(uTime * 0.63 + height * 5.8 + uSeed) * height * 0.075;
+
+    vec3 noisePosition = vec3(
+      centered.x * 1.9,
+      height * 4.4 - uTime * 1.35,
+      centered.y * 1.9
+    );
+    noisePosition += vec3(uSeed * 0.017, 0.0, uSeed * 0.013);
+    float broadNoise = flameNoise(noisePosition);
+    float detailNoise = valueNoise(
+      noisePosition * 2.15 + vec3(9.2, -uTime * 0.5, 5.7)
+    );
+    float warpStrength = (0.045 + uTurbulence * 0.035) * height;
+    centered +=
+      vec2(broadNoise - 0.5, detailNoise - 0.5) * warpStrength;
+
+    float radialDistance = length(centered);
+    float mainBody = 1.0 - smoothstep(taper * 0.28, taper, radialDistance);
+    float split = smoothstep(0.24, 0.48, height);
+
+    vec2 leftCenter = vec2(
+      -0.34 + sin(uTime * 1.07 + height * 4.9 + uSeed) * 0.09,
+      0.035
+    );
+    float leftTaper = mix(0.48, 0.05, smoothstep(0.2, 0.94, height));
+    float leftBody = 1.0 - smoothstep(
+      leftTaper * 0.24,
+      leftTaper,
+      length(centered - leftCenter)
+    );
+    leftBody *= smoothstep(0.17, 0.34, height);
+    leftBody *= 1.0 - smoothstep(0.78, 0.96, height);
+
+    vec2 rightCenter = vec2(
+      0.31 + cos(uTime * 1.21 + height * 5.6 + uSeed) * 0.08,
+      -0.06
+    );
+    float rightTaper = mix(0.42, 0.04, smoothstep(0.2, 0.76, height));
+    float rightBody = 1.0 - smoothstep(
+      rightTaper * 0.24,
+      rightTaper,
+      length(centered - rightCenter)
+    );
+    rightBody *= smoothstep(0.14, 0.31, height);
+    rightBody *= 1.0 - smoothstep(0.62, 0.82, height);
+
+    float body = max(
+      mainBody * (1.0 - split * 0.32),
+      max(leftBody * 0.9, rightBody * 0.84)
+    );
+    float breakup = smoothstep(
+      0.19,
+      0.69,
+      broadNoise * 0.55 + detailNoise * 0.31 + body * 0.62 - height * 0.08
+    );
+    float lick = 0.82 + sin(
+      centered.x * 4.8 + centered.y * 3.7 + uTime * 2.1 + broadNoise * 5.0
+    ) * 0.18 * height;
+    float turbulentBody = body * (0.38 + breakup * 0.78) * lick;
+
+    float hotBase = exp(-radialDistance * radialDistance * 5.2);
+    hotBase *= 1.0 - smoothstep(0.02, 0.24, height);
+    return clamp((turbulentBody + hotBase * 0.92) * baseFade * tipFade, 0.0, 1.5);
+  }
+
+  void main() {
+    vec3 rayDirection = normalize(vLocalPosition - uCameraLocal);
+    vec3 bounds = vec3(uRadius * 1.2, uHeight * 0.5, uRadius * 1.2);
+    vec2 hit = intersectBox(uCameraLocal, rayDirection, bounds);
+    if (hit.x > hit.y || hit.y < 0.0) {
+      discard;
+    }
+
+    float rayStart = max(hit.x, 0.0);
+    float rayLength = hit.y - rayStart;
+    float stepLength = rayLength / 36.0;
+    float jitter = hash3(vec3(gl_FragCoord.xy, uSeed)) * stepLength;
+    vec3 accumulatedColor = vec3(0.0);
+    float accumulatedAlpha = 0.0;
+
+    for (int stepIndex = 0; stepIndex < 36; stepIndex += 1) {
+      float distanceAlongRay = rayStart + jitter + float(stepIndex) * stepLength;
+      vec3 samplePosition = uCameraLocal + rayDirection * distanceAlongRay;
+      float density = flameDensity(samplePosition);
+      float height = clamp(samplePosition.y / uHeight + 0.5, 0.0, 1.0);
+      float radialDistance = length(samplePosition.xz / uRadius);
+
+      vec3 verticalColor = mix(uColorCore, uColorMid, smoothstep(0.08, 0.44, height));
+      verticalColor = mix(verticalColor, uColorOuter, smoothstep(0.46, 0.96, height));
+      float heat = clamp(density * 1.35 + (1.0 - height) * 0.42 - radialDistance * 0.12, 0.0, 1.0);
+      vec3 sampleColor = mix(uColorOuter, verticalColor, smoothstep(0.08, 0.62, density));
+      sampleColor = mix(sampleColor, uColorCore, heat * heat * 0.38);
+      sampleColor *= 0.8 + density * 0.82;
+
+      float sampleAlpha = density * uOpacity * 0.095;
+      sampleAlpha *= 1.0 - accumulatedAlpha;
+      accumulatedColor += sampleColor * sampleAlpha;
+      accumulatedAlpha += sampleAlpha;
+
+      if (accumulatedAlpha > 0.97) {
+        break;
+      }
+    }
+
+    if (accumulatedAlpha < 0.015) {
+      discard;
+    }
+    gl_FragColor = vec4(accumulatedColor, accumulatedAlpha);
+  }
+`;
+
+const GUST_POINT_COUNT = 9;
+
 export interface RenderStats {
   fps: number;
   objects: number;
@@ -298,13 +496,33 @@ function WindowPrimitive({
 function BasicPrimitive({
   object,
 }: {
-  object: Extract<SceneObject, { type: "box" | "sphere" | "plane" | "text" }>;
+  object: Extract<
+    SceneObject,
+    { type: "box" | "cylinder" | "sphere" | "plane" | "text" }
+  >;
 }) {
   if (object.type === "box") {
     return (
       <AnimatedGroup object={object}>
         <mesh castShadow receiveShadow>
           <boxGeometry args={object.size} />
+          <meshStandardMaterial {...materialProps(object.material)} />
+        </mesh>
+      </AnimatedGroup>
+    );
+  }
+  if (object.type === "cylinder") {
+    return (
+      <AnimatedGroup object={object}>
+        <mesh castShadow receiveShadow>
+          <cylinderGeometry
+            args={[
+              object.radiusTop,
+              object.radiusBottom,
+              object.height,
+              object.radialSegments,
+            ]}
+          />
           <meshStandardMaterial {...materialProps(object.material)} />
         </mesh>
       </AnimatedGroup>
@@ -567,6 +785,157 @@ function FlamePrimitive({
   );
 }
 
+function FireVolumePrimitive({
+  object,
+}: {
+  object: Extract<SceneObject, { type: "fireVolume" }>;
+}) {
+  const volumeMesh = useRef<THREE.Mesh>(null);
+  const sparkMesh = useRef<THREE.InstancedMesh>(null);
+  const light = useRef<THREE.PointLight>(null);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const cameraLocal = useMemo(() => new THREE.Vector3(), []);
+  const { camera } = useThree();
+  const uniforms = useMemo(
+    () => ({
+      uCameraLocal: { value: new THREE.Vector3() },
+      uColorCore: { value: new THREE.Color(object.colorCore) },
+      uColorMid: { value: new THREE.Color(object.colorMid) },
+      uColorOuter: { value: new THREE.Color(object.colorOuter) },
+      uHeight: { value: object.height },
+      uOpacity: { value: object.opacity },
+      uRadius: { value: object.radius },
+      uSeed: { value: object.seed },
+      uTime: { value: 0 },
+      uTurbulence: { value: object.turbulence },
+      uWind: { value: new THREE.Vector2(object.wind[0], object.wind[2]) },
+    }),
+    [
+      object.colorCore,
+      object.colorMid,
+      object.colorOuter,
+      object.height,
+      object.opacity,
+      object.radius,
+      object.seed,
+      object.turbulence,
+      object.wind,
+    ]
+  );
+  const sparks = useMemo(() => {
+    const random = seededRandom(object.seed + 97);
+    return Array.from({ length: object.sparkCount }, () => ({
+      x: (random() - 0.5) * object.radius * 1.45,
+      z: (random() - 0.5) * object.radius * 1.45,
+      phase: random(),
+      speed: 0.34 + random() * 0.72,
+      size: 0.012 + random() * 0.025,
+      life: 0.46 + random() * 0.3,
+    }));
+  }, [object.radius, object.seed, object.sparkCount]);
+
+  useFrame(({ clock }) => {
+    const time = clock.elapsedTime;
+    const currentVolume = volumeMesh.current;
+    if (currentVolume) {
+      uniforms.uTime.value = time * object.flickerSpeed;
+      currentVolume.updateWorldMatrix(true, false);
+      cameraLocal.copy(camera.position);
+      currentVolume.worldToLocal(cameraLocal);
+      uniforms.uCameraLocal.value.copy(cameraLocal);
+    }
+
+    const currentSparks = sparkMesh.current;
+    if (currentSparks) {
+      for (const [index, spark] of sparks.entries()) {
+        const cycle = (time * spark.speed + spark.phase) % 1;
+        const remaining = 1 - cycle;
+        const spiral = time * 2.1 + spark.phase * Math.PI * 2;
+        dummy.position.set(
+          spark.x * remaining +
+            object.wind[0] * cycle * object.height * 1.8 +
+            Math.sin(spiral) * object.radius * cycle * 0.18,
+          0.12 + cycle * object.height * 1.18,
+          spark.z * remaining +
+            object.wind[2] * cycle * object.height * 1.8 +
+            Math.cos(spiral * 0.83) * object.radius * cycle * 0.16
+        );
+        const appear = THREE.MathUtils.smoothstep(cycle, 0.02, 0.1);
+        const disappear =
+          1 -
+          THREE.MathUtils.smoothstep(
+            cycle,
+            spark.life,
+            Math.min(spark.life + 0.18, 1)
+          );
+        const scale =
+          spark.size * (0.36 + remaining * 0.9) * appear * disappear;
+        dummy.scale.set(scale, scale * 1.45, scale);
+        dummy.rotation.set(spiral, spiral * 0.7, 0);
+        dummy.updateMatrix();
+        currentSparks.setMatrixAt(index, dummy.matrix);
+      }
+      currentSparks.instanceMatrix.needsUpdate = true;
+    }
+
+    if (light.current) {
+      const pulse =
+        0.9 + Math.sin(time * 7.1) * 0.065 + Math.sin(time * 11.7) * 0.035;
+      light.current.intensity = object.lightIntensity * pulse;
+    }
+  });
+
+  return (
+    <AnimatedGroup object={object}>
+      <mesh
+        position={[0, object.height * 0.5, 0]}
+        ref={volumeMesh}
+        renderOrder={4}
+      >
+        <boxGeometry
+          args={[object.radius * 2.4, object.height, object.radius * 2.4]}
+        />
+        <shaderMaterial
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          fragmentShader={FIRE_VOLUME_FRAGMENT_SHADER}
+          premultipliedAlpha
+          side={THREE.BackSide}
+          toneMapped={false}
+          transparent
+          uniforms={uniforms}
+          vertexShader={FIRE_VOLUME_VERTEX_SHADER}
+        />
+      </mesh>
+      {object.sparkCount > 0 ? (
+        <instancedMesh
+          args={[undefined, undefined, object.sparkCount]}
+          ref={sparkMesh}
+          renderOrder={5}
+        >
+          <sphereGeometry args={[1, 6, 4]} />
+          <meshBasicMaterial
+            blending={THREE.AdditiveBlending}
+            color={object.colorMid}
+            depthWrite={false}
+            opacity={0.9}
+            toneMapped={false}
+            transparent
+          />
+        </instancedMesh>
+      ) : null}
+      <pointLight
+        color={object.colorMid}
+        decay={1.7}
+        distance={7}
+        intensity={object.lightIntensity}
+        position={[0, object.height * 0.42, 0]}
+        ref={light}
+      />
+    </AnimatedGroup>
+  );
+}
+
 function SmokePrimitive({
   object,
 }: {
@@ -625,7 +994,7 @@ function SmokePrimitive({
   );
 }
 
-function WindFieldPrimitive({
+function LinearWindFieldPrimitive({
   object,
 }: {
   object: Extract<SceneObject, { type: "windField" }>;
@@ -677,6 +1046,103 @@ function WindFieldPrimitive({
       </group>
     </AnimatedGroup>
   );
+}
+
+function GustWindFieldPrimitive({
+  object,
+}: {
+  object: Extract<SceneObject, { type: "windField" }>;
+}) {
+  const positionAttributes = useRef<Array<THREE.BufferAttribute | null>>([]);
+  const boundingSphere = useMemo(
+    () =>
+      new THREE.Sphere(
+        new THREE.Vector3(),
+        Math.hypot(object.width * 0.75, object.height, 1.5)
+      ),
+    [object.height, object.width]
+  );
+  const gusts = useMemo(() => {
+    const random = seededRandom(object.seed);
+    return Array.from({ length: object.count }, (_, index) => ({
+      key: `${object.id}-gust-${index}`,
+      y: (random() - 0.5) * object.height,
+      z: (random() - 0.5) * 1.25,
+      phase: random() * object.width,
+      speed: 0.48 + random() * 0.78,
+      length: object.width * (0.13 + random() * 0.14),
+      lift: (random() - 0.5) * 0.28,
+      positions: new Float32Array(GUST_POINT_COUNT * 3),
+    }));
+  }, [object.count, object.height, object.id, object.seed, object.width]);
+
+  useFrame(({ clock }) => {
+    const time = clock.elapsedTime * object.strength;
+    for (const [gustIndex, gust] of gusts.entries()) {
+      const positions = positionAttributes.current[gustIndex];
+      if (!positions) {
+        continue;
+      }
+      const travel = object.width + gust.length * 2;
+      const head =
+        ((time * gust.speed + gust.phase) % travel) -
+        object.width * 0.5 -
+        gust.length;
+      for (let pointIndex = 0; pointIndex < GUST_POINT_COUNT; pointIndex += 1) {
+        const progress = pointIndex / (GUST_POINT_COUNT - 1);
+        const x = head - gust.length * (1 - progress);
+        const curl = Math.sin(progress * Math.PI);
+        positions.setXYZ(
+          pointIndex,
+          x,
+          gust.y +
+            Math.sin(x * 0.72 + time * 1.25 + gust.phase) * 0.1 +
+            curl * gust.lift,
+          gust.z +
+            Math.cos(x * 0.58 - time * 0.9 + gust.phase) * 0.08 +
+            curl * 0.12
+        );
+      }
+      positions.needsUpdate = true;
+    }
+  });
+
+  return (
+    <AnimatedGroup object={object}>
+      {gusts.map((gust, index) => (
+        <line key={gust.key}>
+          <bufferGeometry boundingSphere={boundingSphere}>
+            <bufferAttribute
+              args={[gust.positions, 3]}
+              attach="attributes-position"
+              ref={(attribute) => {
+                positionAttributes.current[index] = attribute;
+              }}
+              usage={THREE.DynamicDrawUsage}
+            />
+          </bufferGeometry>
+          <lineBasicMaterial
+            blending={THREE.AdditiveBlending}
+            color={object.color}
+            depthWrite={false}
+            opacity={0.32 + (index % 4) * 0.08}
+            transparent
+          />
+        </line>
+      ))}
+    </AnimatedGroup>
+  );
+}
+
+function WindFieldPrimitive({
+  object,
+}: {
+  object: Extract<SceneObject, { type: "windField" }>;
+}) {
+  if (object.style === "gusts") {
+    return <GustWindFieldPrimitive object={object} />;
+  }
+  return <LinearWindFieldPrimitive object={object} />;
 }
 
 function LeafFieldPrimitive({
@@ -1048,6 +1514,8 @@ function SceneObjectRenderer({ object }: { object: SceneObject }) {
       return <ParticleFieldPrimitive object={object} />;
     case "flame":
       return <FlamePrimitive object={object} />;
+    case "fireVolume":
+      return <FireVolumePrimitive object={object} />;
     case "smoke":
       return <SmokePrimitive object={object} />;
     case "windField":
