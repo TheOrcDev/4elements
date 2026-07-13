@@ -5,6 +5,12 @@ import {
   solUltra56FireSpec,
   solUltra56WaterSpec,
 } from "./sol-ultra-5-6";
+import {
+  terraUltraAirSpec,
+  terraUltraEarthSpec,
+  terraUltraFireSpec,
+  terraUltraWaterSpec,
+} from "./terra-ultra";
 
 export type ElementName = "Fire" | "Air" | "Earth" | "Water";
 export type ModelName =
@@ -17,7 +23,8 @@ export type ModelName =
   | "opus-4.8-max"
   | "fable-5"
   | "sonnet-5"
-  | "5.6-sol-ultra";
+  | "5.6-sol-ultra"
+  | "terra-ultra";
 
 export const defaultModel: ModelName = "gpt-5.5";
 export const elementOrder: readonly ElementName[] = [
@@ -6779,6 +6786,12 @@ export const benchmarkSpecs: Record<
     Air: sceneSpecSchema.parse(solUltra56AirSpec),
     Earth: sceneSpecSchema.parse(solUltra56EarthSpec),
     Water: sceneSpecSchema.parse(solUltra56WaterSpec),
+  },
+  "terra-ultra": {
+    Fire: sceneSpecSchema.parse(terraUltraFireSpec),
+    Air: sceneSpecSchema.parse(terraUltraAirSpec),
+    Earth: sceneSpecSchema.parse(terraUltraEarthSpec),
+    Water: sceneSpecSchema.parse(terraUltraWaterSpec),
   },
 };
 
