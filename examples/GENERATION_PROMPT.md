@@ -70,6 +70,11 @@ interface ObjectBase {
 
 type SceneObject =
   | (ObjectBase & { type: "box"; size?: Vec3 })
+  | (ObjectBase & {
+      type: "cylinder"; radiusTop?: number /* >= 0 */;
+      radiusBottom?: number /* >= 0 */; height?: number /* > 0 */;
+      radialSegments?: number /* integer, 3..96 */;
+    })
   | (ObjectBase & { type: "sphere"; radius?: number; segments?: number /* 8..96 */ })
   | (ObjectBase & { type: "plane"; width?: number; height?: number })
   | (ObjectBase & { type: "text"; text?: string; fontSize?: number })
@@ -96,6 +101,14 @@ type SceneObject =
       flickerSpeed?: number /* 0..10 */; lightIntensity?: number /* 0..30 */;
     })
   | (ObjectBase & {
+      type: "fireVolume"; height?: number; radius?: number;
+      colorCore?: Color; colorMid?: Color; colorOuter?: Color;
+      flickerSpeed?: number /* 0..10 */; turbulence?: number /* 0..5 */;
+      wind?: Vec3; opacity?: number /* 0..1 */;
+      lightIntensity?: number /* 0..30 */;
+      sparkCount?: number /* integer, 0..400 */; seed?: number;
+    })
+  | (ObjectBase & {
       type: "smoke";
       count?: number /* 1..300 */; height?: number; radius?: number;
       opacity?: number; seed?: number;
@@ -104,6 +117,7 @@ type SceneObject =
       type: "windField";
       count?: number /* 1..80 */; width?: number; height?: number;
       color?: Color; strength?: number /* 0..5 */; seed?: number;
+      style?: "lines" | "gusts";
     })
   | (ObjectBase & {
       type: "terrain";
@@ -174,11 +188,11 @@ interface SceneSpec {
 6. Integers where required (counts, segments, branches, seeds). Bounds are inclusive.
 7. Color strings must match `#RGB` or `#RRGGBB` hex format.
 8. Each scene's required element must be unmistakably present:
-   - Fire → at least one `flame`
+   - Fire → at least one `flame` or `fireVolume`
    - Air → at least one `curtain` and one `leafField`
    - Earth → at least one `terrain`, one `crack`, and at least two `rock` objects
    - Water → at least one `waterSurface` and at least one `waveRing`
-9. Total particles across a scene (particleField count + smoke count + foam count + leafField count + windField count) should stay under 600.
+9. Total particles across a scene (particleField count + fireVolume sparkCount + smoke count + foam count + leafField count + windField count) should stay under 600.
 10. 2–4 lights per scene, including exactly one `ambient`.
 
 ---

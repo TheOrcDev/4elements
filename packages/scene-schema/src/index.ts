@@ -54,6 +54,16 @@ const boxSchema = objectBaseSchema
   })
   .strict();
 
+const cylinderSchema = objectBaseSchema
+  .extend({
+    type: z.literal("cylinder"),
+    radiusTop: z.number().min(0).default(0.5),
+    radiusBottom: z.number().min(0).default(0.5),
+    height: z.number().positive().default(1),
+    radialSegments: z.number().int().min(3).max(96).default(32),
+  })
+  .strict();
+
 const sphereSchema = objectBaseSchema
   .extend({
     type: z.literal("sphere"),
@@ -148,6 +158,24 @@ const flameSchema = objectBaseSchema
   })
   .strict();
 
+const fireVolumeSchema = objectBaseSchema
+  .extend({
+    type: z.literal("fireVolume"),
+    height: z.number().positive().default(2.35),
+    radius: z.number().positive().default(0.7),
+    colorCore: colorSchema.default("#fff6bf"),
+    colorMid: colorSchema.default("#ff9828"),
+    colorOuter: colorSchema.default("#c93416"),
+    flickerSpeed: z.number().min(0).max(10).default(1.8),
+    turbulence: z.number().min(0).max(5).default(1.15),
+    wind: vector3Schema.default([0.08, 0, 0.02]),
+    opacity: z.number().min(0).max(1).default(0.96),
+    lightIntensity: z.number().min(0).max(30).default(10),
+    sparkCount: z.number().int().min(0).max(400).default(110),
+    seed: z.number().int().default(1),
+  })
+  .strict();
+
 const smokeSchema = objectBaseSchema
   .extend({
     type: z.literal("smoke"),
@@ -168,6 +196,7 @@ const windFieldSchema = objectBaseSchema
     color: colorSchema.default("#cfeee6"),
     strength: z.number().min(0).max(5).default(1),
     seed: z.number().int().default(1),
+    style: z.enum(["lines", "gusts"]).default("lines"),
   })
   .strict();
 
@@ -251,11 +280,13 @@ export const sceneObjectSchema = z.discriminatedUnion("type", [
   floorSchema,
   wallSchema,
   boxSchema,
+  cylinderSchema,
   sphereSchema,
   planeSchema,
   textSchema,
   particleFieldSchema,
   flameSchema,
+  fireVolumeSchema,
   smokeSchema,
   windFieldSchema,
   terrainSchema,
