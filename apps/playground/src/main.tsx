@@ -56,6 +56,7 @@ const modelOptions: readonly ModelOption[] = [
   { label: "Opus 4.8", provider: "anthropic", value: "opus-4.8" },
   { label: "Opus 4.7", provider: "anthropic", value: "opus-4.7" },
   { label: "Sonnet 4.6", provider: "anthropic", value: "sonnet-4.6" },
+  { label: "Grok 4.5", provider: "grok", value: "grok-4.5" },
   { label: "Grok 4.3", provider: "grok", value: "grok-4.3" },
   { label: "Fable 5", provider: "anthropic", value: "fable-5" },
   { label: "Composer 2.5", provider: "other", value: "composer-2.5" },

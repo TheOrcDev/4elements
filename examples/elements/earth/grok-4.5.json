@@ -1,0 +1,475 @@
+{
+  "schemaVersion": "1.0",
+  "metadata": {
+    "id": "grok-4.5-earth",
+    "name": "Stone Convocation",
+    "element": "Earth",
+    "prompt": "Create an interactive 3D earth scene: layered terrain with rocks, soil, moss, and a slow fracture revealing glowing minerals beneath the surface.",
+    "seed": 4603,
+    "description": "A tight assembly of weathered rocks — stacked, leaning, split — with moss in the joints and a slow glowing fracture winding between the boulders, minerals seeping light from the seams."
+  },
+  "camera": {
+    "position": [
+      4.2,
+      2.8,
+      5.4
+    ],
+    "target": [
+      0,
+      0.7,
+      0
+    ],
+    "fov": 44
+  },
+  "environment": {
+    "background": "#181612",
+    "fogColor": "#242018",
+    "fogNear": 6,
+    "fogFar": 14
+  },
+  "lights": [
+    {
+      "id": "dust-ambient",
+      "type": "ambient",
+      "color": "#a89878",
+      "intensity": 0.7,
+      "position": [
+        0,
+        4,
+        4
+      ]
+    },
+    {
+      "id": "low-sun",
+      "type": "directional",
+      "color": "#f0c888",
+      "intensity": 2.3,
+      "position": [
+        3.5,
+        4.5,
+        2
+      ]
+    },
+    {
+      "id": "mineral-glow",
+      "type": "point",
+      "color": "#70e0a8",
+      "intensity": 5.5,
+      "position": [
+        0.15,
+        0.45,
+        0.2
+      ]
+    },
+    {
+      "id": "amber-seam",
+      "type": "point",
+      "color": "#e0a850",
+      "intensity": 2.8,
+      "position": [
+        -0.8,
+        0.55,
+        -0.4
+      ]
+    }
+  ],
+  "objects": [
+    {
+      "id": "soil-base",
+      "position": [
+        0,
+        -0.4,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "material": {
+        "color": "#4a4030",
+        "roughness": 0.97
+      },
+      "animations": [],
+      "type": "terrain",
+      "width": 9,
+      "depth": 8.5,
+      "segments": 48,
+      "heightScale": 0.35,
+      "seed": 4631
+    },
+    {
+      "id": "monolith",
+      "position": [
+        -0.4,
+        1.05,
+        -0.3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1.1,
+        1.8,
+        0.95
+      ],
+      "material": {
+        "color": "#5a5448",
+        "roughness": 0.9
+      },
+      "animations": [],
+      "type": "rock",
+      "radius": 0.85,
+      "detail": 1,
+      "seed": 4632
+    },
+    {
+      "id": "leaning-slab",
+      "position": [
+        1.15,
+        0.75,
+        0.15
+      ],
+      "rotation": [
+        0,
+        0.4,
+        0.35
+      ],
+      "scale": [
+        0.7,
+        1.35,
+        1.1
+      ],
+      "material": {
+        "color": "#3e3a32",
+        "roughness": 0.93
+      },
+      "animations": [],
+      "type": "rock",
+      "radius": 0.75,
+      "detail": 1,
+      "seed": 4633
+    },
+    {
+      "id": "grounded-boulder",
+      "position": [
+        -1.55,
+        0.45,
+        0.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1.25,
+        0.7,
+        1.15
+      ],
+      "material": {
+        "color": "#6a6250",
+        "roughness": 0.88
+      },
+      "animations": [],
+      "type": "rock",
+      "radius": 0.8,
+      "detail": 1,
+      "seed": 4634
+    },
+    {
+      "id": "stack-base",
+      "position": [
+        0.55,
+        0.35,
+        1.4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.95,
+        0.55,
+        0.85
+      ],
+      "material": {
+        "color": "#4a4638",
+        "roughness": 0.94
+      },
+      "animations": [],
+      "type": "rock",
+      "radius": 0.65,
+      "detail": 0,
+      "seed": 4635
+    },
+    {
+      "id": "stack-top",
+      "position": [
+        0.7,
+        0.85,
+        1.35
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.4,
+        0.5
+      ],
+      "material": {
+        "color": "#585448",
+        "roughness": 0.91
+      },
+      "animations": [],
+      "type": "rock",
+      "radius": 0.42,
+      "detail": 0,
+      "seed": 4636
+    },
+    {
+      "id": "shard-left",
+      "position": [
+        -1.1,
+        0.55,
+        -1.2
+      ],
+      "rotation": [
+        0.2,
+        -0.5,
+        0.15
+      ],
+      "scale": [
+        0.5,
+        0.9,
+        0.45
+      ],
+      "material": {
+        "color": "#504840",
+        "emissive": "#70e0a8",
+        "emissiveIntensity": 0.12,
+        "roughness": 0.7,
+        "metalness": 0.2
+      },
+      "animations": [],
+      "type": "rock",
+      "radius": 0.5,
+      "detail": 1,
+      "seed": 4637
+    },
+    {
+      "id": "chip-a",
+      "position": [
+        1.9,
+        0.28,
+        1.1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.28,
+        0.38
+      ],
+      "material": {
+        "color": "#6a6454",
+        "roughness": 0.92
+      },
+      "animations": [],
+      "type": "rock",
+      "radius": 0.32,
+      "detail": 0,
+      "seed": 4638
+    },
+    {
+      "id": "chip-b",
+      "position": [
+        -0.2,
+        0.22,
+        1.9
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.35,
+        0.22,
+        0.4
+      ],
+      "material": {
+        "color": "#3a3830",
+        "roughness": 0.95
+      },
+      "animations": [],
+      "type": "rock",
+      "radius": 0.28,
+      "detail": 0,
+      "seed": 4639
+    },
+    {
+      "id": "seam-fault",
+      "position": [
+        0.1,
+        0.35,
+        0.1
+      ],
+      "rotation": [
+        -1.5708,
+        0.15,
+        0.4
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "animations": [],
+      "type": "crack",
+      "length": 3.6,
+      "branches": 8,
+      "glowColor": "#78e8b0",
+      "seed": 4640
+    },
+    {
+      "id": "side-seam",
+      "position": [
+        -0.7,
+        0.5,
+        -0.5
+      ],
+      "rotation": [
+        -1.3,
+        -0.6,
+        0.2
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "animations": [],
+      "type": "crack",
+      "length": 1.8,
+      "branches": 3,
+      "glowColor": "#e8b060",
+      "seed": 4641
+    },
+    {
+      "id": "moss-joint-a",
+      "position": [
+        -0.9,
+        0.55,
+        0.35
+      ],
+      "rotation": [
+        -1.1,
+        0.3,
+        0.5
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "material": {
+        "color": "#4a6a38",
+        "opacity": 0.8,
+        "roughness": 0.98
+      },
+      "animations": [],
+      "type": "plane",
+      "width": 0.9,
+      "height": 0.55
+    },
+    {
+      "id": "moss-joint-b",
+      "position": [
+        0.85,
+        0.4,
+        0.9
+      ],
+      "rotation": [
+        -1.4,
+        -0.2,
+        -0.3
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "material": {
+        "color": "#5a7840",
+        "opacity": 0.75,
+        "roughness": 0.97
+      },
+      "animations": [],
+      "type": "plane",
+      "width": 0.7,
+      "height": 0.45
+    },
+    {
+      "id": "mineral-dust",
+      "position": [
+        0.1,
+        0.65,
+        0.15
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "animations": [],
+      "type": "particleField",
+      "count": 140,
+      "spread": [
+        2.4,
+        1.2,
+        1.8
+      ],
+      "size": 0.028,
+      "colorPalette": [
+        "#78e8b0",
+        "#e8b060",
+        "#c0ffe0",
+        "#f0d080"
+      ],
+      "drift": [
+        0.02,
+        0.18,
+        0.015
+      ],
+      "opacity": 0.7,
+      "speed": 0.45,
+      "seed": 4642
+    }
+  ],
+  "effects": [
+    {
+      "type": "bloomHint",
+      "strength": 0.85
+    }
+  ]
+}

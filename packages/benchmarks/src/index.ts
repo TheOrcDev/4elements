@@ -1,5 +1,11 @@
 import { type SceneSpec, sceneSpecSchema } from "@4elements/scene-schema";
 import {
+  grok45AirSpec,
+  grok45EarthSpec,
+  grok45FireSpec,
+  grok45WaterSpec,
+} from "./grok-4.5";
+import {
   lunaExtraHighAirSpec,
   lunaExtraHighEarthSpec,
   lunaExtraHighFireSpec,
@@ -24,6 +30,7 @@ export type ModelName =
   | "opus-4.7"
   | "sonnet-4.6"
   | "grok-4.3"
+  | "grok-4.5"
   | "composer-2.5"
   | "opus-4.8"
   | "opus-4.8-max"
@@ -6769,6 +6776,12 @@ export const benchmarkSpecs: Record<
     Air: sceneSpecSchema.parse(grokAirSpec),
     Earth: sceneSpecSchema.parse(grokEarthSpec),
     Water: sceneSpecSchema.parse(grokWaterSpec),
+  },
+  "grok-4.5": {
+    Fire: sceneSpecSchema.parse(grok45FireSpec),
+    Air: sceneSpecSchema.parse(grok45AirSpec),
+    Earth: sceneSpecSchema.parse(grok45EarthSpec),
+    Water: sceneSpecSchema.parse(grok45WaterSpec),
   },
   "composer-2.5": {
     Fire: sceneSpecSchema.parse(composerFireSpec),
