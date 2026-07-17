@@ -1,0 +1,321 @@
+{
+  "schemaVersion": "1.0",
+  "metadata": {
+    "id": "kimi-k2-earth",
+    "name": "Emerald Rift",
+    "element": "Earth",
+    "prompt": "Create an interactive 3D earth scene: layered terrain with rocks, soil, moss, and a slow fracture revealing glowing minerals beneath the surface.",
+    "seed": 2103,
+    "description": "A canyon splitting open over a molten mineral vein: a sedimentary cliff towering behind, giant emerald crystal spikes erupting from the fissure, watching boulders, moss cushions, and motes of teal and amber light rising out of the seam."
+  },
+  "camera": {
+    "position": [5.0, 2.5, 5.6],
+    "target": [0, 0.7, -0.3],
+    "fov": 43
+  },
+  "environment": {
+    "background": "#0e110b",
+    "fogColor": "#1b2113",
+    "fogNear": 7,
+    "fogFar": 16
+  },
+  "lights": [
+    {
+      "id": "ambient",
+      "type": "ambient",
+      "color": "#9aa884",
+      "intensity": 0.75
+    },
+    {
+      "id": "low-sun",
+      "type": "directional",
+      "color": "#f3cf87",
+      "intensity": 2.6,
+      "position": [3.4, 4.2, 1.8]
+    },
+    {
+      "id": "rift-glow",
+      "type": "point",
+      "color": "#52e8ac",
+      "intensity": 6,
+      "position": [0.2, 0.7, 0.1]
+    },
+    {
+      "id": "seam-glow",
+      "type": "point",
+      "color": "#f0b65f",
+      "intensity": 2.6,
+      "position": [-1.4, 0.6, -0.7]
+    }
+  ],
+  "objects": [
+    {
+      "id": "mesa-terrain",
+      "type": "terrain",
+      "width": 10,
+      "depth": 9,
+      "segments": 96,
+      "heightScale": 1.3,
+      "seed": 61,
+      "material": { "color": "#54492f", "roughness": 0.96 }
+    },
+    {
+      "id": "rift-rim",
+      "type": "box",
+      "position": [0, 0.4, 0],
+      "rotation": [0, 0.12, 0],
+      "size": [5.0, 0.06, 0.95],
+      "material": {
+        "color": "#17140f",
+        "roughness": 0.95,
+        "emissive": "#0f3d2e",
+        "emissiveIntensity": 0.35
+      }
+    },
+    {
+      "id": "rift-seam",
+      "type": "box",
+      "position": [0, 0.39, 0],
+      "rotation": [0, 0.12, 0],
+      "size": [4.8, 0.08, 0.5],
+      "material": {
+        "color": "#0d3f30",
+        "roughness": 0.4,
+        "emissive": "#3cf0b0",
+        "emissiveIntensity": 2.4
+      }
+    },
+    {
+      "id": "main-fault",
+      "type": "crack",
+      "position": [0, 0.62, 0],
+      "rotation": [-1.5708, 0.12, 0],
+      "length": 4.8,
+      "branches": 10,
+      "glowColor": "#7ef0c0",
+      "seed": 62
+    },
+    {
+      "id": "side-seam",
+      "type": "crack",
+      "position": [-1.4, 0.52, -0.7],
+      "rotation": [-1.5708, 0.35, 0],
+      "length": 2.4,
+      "branches": 5,
+      "glowColor": "#f4c76a",
+      "seed": 63
+    },
+    {
+      "id": "crystal-alpha",
+      "type": "cylinder",
+      "position": [0.35, 1.05, 0.05],
+      "rotation": [0.1, 0, -0.08],
+      "radiusTop": 0.03,
+      "radiusBottom": 0.2,
+      "height": 1.3,
+      "radialSegments": 6,
+      "material": {
+        "color": "#0e7a5c",
+        "roughness": 0.18,
+        "emissive": "#2fdc9c",
+        "emissiveIntensity": 0.7
+      }
+    },
+    {
+      "id": "crystal-beta",
+      "type": "cylinder",
+      "position": [0.0, 0.85, 0.35],
+      "rotation": [-0.06, 0.7, 0.12],
+      "radiusTop": 0.02,
+      "radiusBottom": 0.15,
+      "height": 0.9,
+      "radialSegments": 6,
+      "material": {
+        "color": "#128a66",
+        "roughness": 0.2,
+        "emissive": "#3fe0aa",
+        "emissiveIntensity": 0.6
+      }
+    },
+    {
+      "id": "crystal-gamma",
+      "type": "cylinder",
+      "position": [0.7, 0.75, -0.2],
+      "rotation": [0.16, -0.4, 0.05],
+      "radiusTop": 0.025,
+      "radiusBottom": 0.16,
+      "height": 0.7,
+      "radialSegments": 6,
+      "material": {
+        "color": "#0d7557",
+        "roughness": 0.2,
+        "emissive": "#34d89e",
+        "emissiveIntensity": 0.65
+      }
+    },
+    {
+      "id": "crystal-delta",
+      "type": "cylinder",
+      "position": [-0.55, 0.68, 0.15],
+      "rotation": [-0.12, 0.3, 0.1],
+      "radiusTop": 0.02,
+      "radiusBottom": 0.12,
+      "height": 0.55,
+      "radialSegments": 6,
+      "material": {
+        "color": "#0e7a5c",
+        "roughness": 0.22,
+        "emissive": "#2fdc9c",
+        "emissiveIntensity": 0.55
+      }
+    },
+    {
+      "id": "crystal-amber",
+      "type": "cylinder",
+      "position": [-1.3, 0.66, -0.75],
+      "rotation": [-0.08, 0.4, 0.14],
+      "radiusTop": 0.02,
+      "radiusBottom": 0.13,
+      "height": 0.65,
+      "radialSegments": 6,
+      "material": {
+        "color": "#a87428",
+        "roughness": 0.22,
+        "emissive": "#f0b452",
+        "emissiveIntensity": 0.7
+      }
+    },
+    {
+      "id": "crystal-amber-b",
+      "type": "cylinder",
+      "position": [-1.65, 0.58, -0.45],
+      "rotation": [0.1, -0.3, 0.08],
+      "radiusTop": 0.015,
+      "radiusBottom": 0.1,
+      "height": 0.45,
+      "radialSegments": 6,
+      "material": {
+        "color": "#a87428",
+        "roughness": 0.25,
+        "emissive": "#f0b452",
+        "emissiveIntensity": 0.6
+      }
+    },
+    {
+      "id": "strata-shale",
+      "type": "box",
+      "position": [0, 0.42, -3.25],
+      "rotation": [0.005, 0.01, 0.005],
+      "size": [7.0, 0.85, 1.2],
+      "material": { "color": "#4a4238", "roughness": 0.95 }
+    },
+    {
+      "id": "strata-sandstone",
+      "type": "box",
+      "position": [0.1, 1.13, -3.28],
+      "rotation": [-0.005, -0.008, -0.005],
+      "size": [6.8, 0.58, 1.15],
+      "material": { "color": "#8a6a42", "roughness": 0.92 }
+    },
+    {
+      "id": "strata-clay",
+      "type": "box",
+      "position": [-0.08, 1.64, -3.22],
+      "rotation": [0.008, 0.01, 0.005],
+      "size": [6.4, 0.45, 1.1],
+      "material": { "color": "#7d5240", "roughness": 0.94 }
+    },
+    {
+      "id": "strata-topsoil",
+      "type": "box",
+      "position": [0.05, 2.03, -3.25],
+      "rotation": [-0.005, -0.01, 0],
+      "size": [6.0, 0.34, 1.05],
+      "material": { "color": "#55603a", "roughness": 0.97 }
+    },
+    {
+      "id": "boulder-warden",
+      "type": "rock",
+      "position": [-2.3, 0.7, 0.9],
+      "scale": [1.4, 1.1, 1.15],
+      "radius": 0.95,
+      "detail": 2,
+      "seed": 64,
+      "material": { "color": "#4f4a3d", "roughness": 0.93 }
+    },
+    {
+      "id": "boulder-twin-a",
+      "type": "rock",
+      "position": [2.1, 0.6, -0.6],
+      "scale": [1.0, 0.75, 1.25],
+      "radius": 0.8,
+      "detail": 1,
+      "seed": 65,
+      "material": { "color": "#3a3931", "roughness": 0.95 }
+    },
+    {
+      "id": "boulder-twin-b",
+      "type": "rock",
+      "position": [2.5, 0.45, 0.3],
+      "scale": [0.6, 0.48, 0.65],
+      "radius": 0.6,
+      "detail": 1,
+      "seed": 66,
+      "material": { "color": "#45423a", "roughness": 0.94 }
+    },
+    {
+      "id": "moss-cushion-a",
+      "type": "sphere",
+      "position": [-1.1, 0.48, -0.9],
+      "scale": [1.4, 0.35, 1.1],
+      "radius": 0.5,
+      "segments": 12,
+      "material": { "color": "#6b9048", "roughness": 0.98 }
+    },
+    {
+      "id": "moss-cushion-b",
+      "type": "sphere",
+      "position": [1.5, 0.44, -1.4],
+      "scale": [1.1, 0.3, 0.9],
+      "radius": 0.42,
+      "segments": 12,
+      "material": { "color": "#749852", "roughness": 0.98 }
+    },
+    {
+      "id": "moss-cushion-c",
+      "type": "sphere",
+      "position": [-2.0, 0.55, 0.2],
+      "scale": [0.9, 0.28, 0.75],
+      "radius": 0.36,
+      "segments": 12,
+      "material": { "color": "#5f8040", "roughness": 0.98 }
+    },
+    {
+      "id": "mineral-motes",
+      "type": "particleField",
+      "position": [0.2, 0.75, 0.05],
+      "count": 130,
+      "spread": [3.0, 1.3, 1.2],
+      "size": 0.032,
+      "colorPalette": ["#8df2c6", "#d2ffe9", "#f6cf7a"],
+      "drift": [0.02, 0.16, 0.01],
+      "opacity": 0.7,
+      "speed": 0.45,
+      "seed": 68
+    },
+    {
+      "id": "amber-motes",
+      "type": "particleField",
+      "position": [-1.4, 0.6, -0.65],
+      "count": 50,
+      "spread": [1.4, 0.7, 0.9],
+      "size": 0.026,
+      "colorPalette": ["#f2bf70", "#ffe0a6"],
+      "drift": [0.01, 0.1, 0.01],
+      "opacity": 0.55,
+      "speed": 0.35,
+      "seed": 69
+    }
+  ],
+  "effects": [{ "type": "bloomHint", "strength": 1.1 }]
+}

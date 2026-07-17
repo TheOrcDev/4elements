@@ -6,6 +6,12 @@ import {
   grok45WaterSpec,
 } from "./grok-4.5";
 import {
+  kimiK2AirSpec,
+  kimiK2EarthSpec,
+  kimiK2FireSpec,
+  kimiK2WaterSpec,
+} from "./kimi-k2";
+import {
   lunaExtraHighAirSpec,
   lunaExtraHighEarthSpec,
   lunaExtraHighFireSpec,
@@ -38,7 +44,8 @@ export type ModelName =
   | "sonnet-5"
   | "5.6-sol-ultra"
   | "terra-ultra"
-  | "luna-extra-high";
+  | "luna-extra-high"
+  | "kimi-k2";
 
 export const defaultModel: ModelName = "gpt-5.5";
 export const elementOrder: readonly ElementName[] = [
@@ -6818,6 +6825,12 @@ export const benchmarkSpecs: Record<
     Air: sceneSpecSchema.parse(lunaExtraHighAirSpec),
     Earth: sceneSpecSchema.parse(lunaExtraHighEarthSpec),
     Water: sceneSpecSchema.parse(lunaExtraHighWaterSpec),
+  },
+  "kimi-k2": {
+    Fire: sceneSpecSchema.parse(kimiK2FireSpec),
+    Air: sceneSpecSchema.parse(kimiK2AirSpec),
+    Earth: sceneSpecSchema.parse(kimiK2EarthSpec),
+    Water: sceneSpecSchema.parse(kimiK2WaterSpec),
   },
 };
 
