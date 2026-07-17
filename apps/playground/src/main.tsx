@@ -60,7 +60,7 @@ const modelOptions: readonly ModelOption[] = [
   { label: "Grok 4.3", provider: "grok", value: "grok-4.3" },
   { label: "Fable 5", provider: "anthropic", value: "fable-5" },
   { label: "Composer 2.5", provider: "other", value: "composer-2.5" },
-  { label: "Kimi K2", provider: "other", value: "kimi-k2" },
+  { label: "Kimi K3", provider: "other", value: "kimi-k3" },
 ] as const;
 
 function isElementName(value: string): value is ElementName {

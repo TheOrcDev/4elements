@@ -11,17 +11,17 @@ const WATER_PROMPT =
   "Create an interactive 3D water scene: a clear pool with animated ripples, reflective highlights, floating droplets, foam at the edges, and soft blue-green caustic light.";
 
 /**
- * Kimi K2 — original elemental compositions.
+ * Kimi K3 — original elemental compositions.
  * Fire: a roaring pyre blooming with flame tongues and floor fissures.
  * Air: a storm draft ripping a gauze curtain off its rod.
  * Earth: a canyon rift erupting with emerald crystal spikes.
  * Water: a moonlit waterfall pouring into a gorge pool.
  */
 
-export const kimiK2FireSpec = {
+export const kimiK3FireSpec = {
   schemaVersion: "1.0",
   metadata: {
-    id: "kimi-k2-fire",
+    id: "kimi-k3-fire",
     name: "Inferno Bloom",
     element: "Fire",
     prompt: FIRE_PROMPT,
@@ -357,10 +357,10 @@ export const kimiK2FireSpec = {
   ],
 };
 
-export const kimiK2AirSpec = {
+export const kimiK3AirSpec = {
   schemaVersion: "1.0",
   metadata: {
-    id: "kimi-k2-air",
+    id: "kimi-k3-air",
     name: "Mistral Hour",
     element: "Air",
     prompt: AIR_PROMPT,
@@ -565,10 +565,10 @@ export const kimiK2AirSpec = {
   effects: [{ type: "bloomHint", strength: 0.5 }],
 };
 
-export const kimiK2EarthSpec = {
+export const kimiK3EarthSpec = {
   schemaVersion: "1.0",
   metadata: {
-    id: "kimi-k2-earth",
+    id: "kimi-k3-earth",
     name: "Emerald Rift",
     element: "Earth",
     prompt: EARTH_PROMPT,
@@ -883,10 +883,10 @@ export const kimiK2EarthSpec = {
   effects: [{ type: "bloomHint", strength: 1.1 }],
 };
 
-export const kimiK2WaterSpec = {
+export const kimiK3WaterSpec = {
   schemaVersion: "1.0",
   metadata: {
-    id: "kimi-k2-water",
+    id: "kimi-k3-water",
     name: "Moonfall Gorge",
     element: "Water",
     prompt: WATER_PROMPT,
