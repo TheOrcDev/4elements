@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Four Elements — Fire · Air · Water · Earth</title>
+    <link rel="stylesheet" href="/src/style.css">
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="canvas"></canvas>
+      <div id="ui">
+        <header>
+          <h1>FOUR ELEMENTS</h1>
+          <p class="subtitle">
+            Drag to orbit · Scroll to zoom · Click an element to focus
+          </p>
+        </header>
+        <nav id="element-nav">
+          <button data-element="fire" class="active">
+            <span class="icon">🔥</span>
+            <span class="label">Fire</span>
+          </button>
+          <button data-element="air">
+            <span class="icon">💨</span>
+            <span class="label">Air</span>
+          </button>
+          <button data-element="water">
+            <span class="icon">💧</span>
+            <span class="label">Water</span>
+          </button>
+          <button data-element="earth">
+            <span class="icon">🌍</span>
+            <span class="label">Earth</span>
+          </button>
+          <button data-element="all">
+            <span class="icon">✦</span>
+            <span class="label">All</span>
+          </button>
+        </nav>
+        <footer>
+          <p id="element-desc">Roaring flame — heat, light, and chaos</p>
+        </footer>
+      </div>
+      <div id="loading">
+        <div class="loader-ring"></div>
+        <p>Summoning the elements…</p>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -27,6 +27,16 @@ importers:
         specifier: 7.6.2
         version: 7.6.2
 
+  apps/grok-4.5:
+    dependencies:
+      three:
+        specifier: ^0.172.0
+        version: 0.172.0
+    devDependencies:
+      vite:
+        specifier: ^6.0.0
+        version: 6.4.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(yaml@2.8.3)
+
   apps/kimi-k3:
     dependencies:
       three:
@@ -3123,6 +3133,9 @@ packages:
 
   three@0.170.0:
     resolution: {integrity: sha512-FQK+LEpYc0fBD+J8g6oSEyyNzjp+Q7Ks1C568WWaoMRLW+TkNNWmenWeGgJjV105Gd+p/2ql1ZcjYvNiPZBhuQ==}
+
+  three@0.172.0:
+    resolution: {integrity: sha512-6HMgMlzU97MsV7D/tY8Va38b83kz8YJX+BefKjspMNAv0Vx6dxMogHOrnRl/sbMIs3BPUKijPqDqJ/+UwJbIow==}
 
   three@0.185.1:
     resolution: {integrity: sha512-5aojFCXKwnjBRZvUnt3WFfEcvUJgkN5LlijRFN95hMy8WVkG4I0QNcJE+OuWvuJ0bOdStrbfXn0pkd6/QyiAlg==}
@@ -6329,6 +6342,8 @@ snapshots:
   tapable@2.3.3: {}
 
   three@0.170.0: {}
+
+  three@0.172.0: {}
 
   three@0.185.1: {}
 

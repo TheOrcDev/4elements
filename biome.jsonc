@@ -7,6 +7,7 @@
     "includes": [
       "!apps/opus-5",
       "!apps/kimi-k3",
+      "!apps/grok-4.5",
       "!apps/playground/public/models"
     ]
   }

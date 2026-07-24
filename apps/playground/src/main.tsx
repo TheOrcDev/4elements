@@ -11,16 +11,16 @@ import "./styles.css";
 
 const REPO = "TheOrcDev/4elements";
 
-type ModelName = "opus-5" | "kimi-k3";
+type ModelName = "opus-5" | "kimi-k3" | "grok-4.5";
 
 interface ModelOption {
   controls: string;
+  /** Wall-clock time the model took to produce its app. */
+  duration: string;
   /** Highest reasoning setting the model offers, and what it is called there. */
   effort: string;
   effortDetail: string;
   label: string;
-  /** Wall-clock minutes the model took to produce its app. */
-  minutes: number;
   summary: string;
   value: ModelName;
 }
@@ -31,7 +31,7 @@ const modelOptions: readonly ModelOption[] = [
     value: "opus-5",
     effort: "Max",
     effortDetail: "Thinking effort: max",
-    minutes: 47,
+    duration: "47m",
     summary:
       "Fire, water, earth and air share one stage, each on its own custom GLSL shader — a volumetric raymarched flame, a refracting swell, ridged terrain with magma in the cracks, and 50k particles integrating a curl field.",
     controls: "Drag to orbit, scroll to zoom, click an element to fly to it.",
@@ -41,10 +41,21 @@ const modelOptions: readonly ModelOption[] = [
     value: "kimi-k3",
     effort: "Max",
     effortDetail: "reasoning_effort: max",
-    minutes: 70,
+    duration: "70m",
     summary:
       "Four procedural elemental worlds you move between, each with its own shaders, GPU particles and bloom pass.",
     controls: "Nav buttons or keys 1–4 / ← →, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Grok 4.5",
+    value: "grok-4.5",
+    effort: "High",
+    effortDetail: "reasoning_effort: high",
+    duration: "5m 37s",
+    summary:
+      "One stage holding GPU particle flames, a vortex field with wind ribbons, a multi-wave water surface with caustics, and displaced rock with crystal spikes — finished with unreal bloom and ACES tone mapping.",
+    controls:
+      "Nav buttons or click an element to focus, drag to orbit, scroll to zoom.",
   },
 ] as const;
 
@@ -95,7 +106,7 @@ function App() {
           <h2 className="font-semibold text-sm">Model</h2>
           <ToggleGroup
             aria-label="Model selector"
-            className="grid w-full grid-cols-2"
+            className="grid w-full grid-cols-3"
             data-model={selectedModel}
             onValueChange={loadModel}
             size="sm"
@@ -130,7 +141,7 @@ function App() {
               <dt className="font-bold text-muted-foreground text-xs uppercase tracking-normal">
                 Time to build
               </dt>
-              <dd className="font-medium text-sm">{activeModel.minutes} min</dd>
+              <dd className="font-medium text-sm">{activeModel.duration}</dd>
             </div>
           </dl>
           <p className="text-muted-foreground text-sm">{activeModel.summary}</p>

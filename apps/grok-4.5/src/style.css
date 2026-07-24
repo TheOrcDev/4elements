@@ -1,0 +1,225 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500&display=swap");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Inter", system-ui, sans-serif;
+  color: #e8e6e3;
+  background: #050508;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+#ui {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem 2rem 2rem;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 5, 8, 0.55) 0%,
+    transparent 18%,
+    transparent 75%,
+    rgba(5, 5, 8, 0.65) 100%
+  );
+}
+
+header {
+  text-align: center;
+}
+
+header h1 {
+  font-family: "Cinzel", serif;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: transparent;
+  text-indent: 0.35em;
+  letter-spacing: 0.35em;
+  text-shadow: none;
+  background: linear-gradient(
+    135deg,
+    #ff6b35 0%,
+    #f7c948 25%,
+    #7ec8e3 50%,
+    #4a90d9 75%,
+    #6b8e4e 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(255, 200, 100, 0.25));
+}
+
+.subtitle {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 300;
+  color: rgba(232, 230, 227, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+#element-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-self: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+#element-nav button {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-items: center;
+  min-width: 4.5rem;
+  padding: 0.7rem 1rem;
+  font-family: "Inter", sans-serif;
+  color: rgba(232, 230, 227, 0.7);
+  cursor: pointer;
+  background: rgba(12, 12, 18, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  transition: all 0.25s ease;
+}
+
+#element-nav button:hover {
+  color: #fff;
+  background: rgba(20, 20, 30, 0.85);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+#element-nav button.active {
+  color: #fff;
+  background: rgba(40, 28, 16, 0.85);
+  border-color: rgba(255, 200, 120, 0.5);
+  box-shadow: 0 0 24px rgba(255, 160, 60, 0.2);
+}
+
+#element-nav button[data-element="fire"].active {
+  border-color: rgba(255, 100, 40, 0.6);
+  box-shadow: 0 0 24px rgba(255, 80, 20, 0.35);
+}
+
+#element-nav button[data-element="air"].active {
+  background: rgba(16, 28, 40, 0.85);
+  border-color: rgba(180, 220, 255, 0.55);
+  box-shadow: 0 0 24px rgba(140, 200, 255, 0.3);
+}
+
+#element-nav button[data-element="water"].active {
+  background: rgba(10, 24, 40, 0.85);
+  border-color: rgba(60, 160, 255, 0.55);
+  box-shadow: 0 0 24px rgba(40, 140, 255, 0.3);
+}
+
+#element-nav button[data-element="earth"].active {
+  background: rgba(20, 28, 14, 0.85);
+  border-color: rgba(140, 180, 80, 0.55);
+  box-shadow: 0 0 24px rgba(100, 160, 60, 0.3);
+}
+
+#element-nav .icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+#element-nav .label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+footer {
+  text-align: center;
+}
+
+#element-desc {
+  font-family: "Cinzel", serif;
+  font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+  color: rgba(232, 230, 227, 0.55);
+  letter-spacing: 0.08em;
+  transition: opacity 0.3s ease;
+}
+
+#loading {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  background: #050508;
+  transition:
+    opacity 0.6s ease,
+    visibility 0.6s ease;
+}
+
+#loading.hidden {
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+
+#loading p {
+  font-family: "Cinzel", serif;
+  font-size: 0.85rem;
+  color: rgba(232, 230, 227, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.loader-ring {
+  width: 48px;
+  height: 48px;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-top-color: #f7c948;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 600px) {
+  #ui {
+    padding: 1rem;
+  }
+
+  #element-nav button {
+    min-width: 3.6rem;
+    padding: 0.55rem 0.7rem;
+  }
+}
