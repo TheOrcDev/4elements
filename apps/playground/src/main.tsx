@@ -11,7 +11,7 @@ import "./styles.css";
 
 const REPO = "TheOrcDev/4elements";
 
-type ModelName = "opus-5" | "kimi-k3" | "grok-4.5" | "fable-5";
+type ModelName = "opus-5" | "kimi-k3" | "grok-4.5" | "fable-5" | "sol-ultra";
 
 interface ModelOption {
   controls: string;
@@ -67,6 +67,17 @@ const modelOptions: readonly ModelOption[] = [
       "One interactive scene for all four elements, built on custom GLSL shaders, GPU particles and bloom post-processing.",
     controls:
       "Keys 1–4 or click an element to summon it, 0 or Esc for the full view, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Sol Ultra",
+    value: "sol-ultra",
+    effort: "Ultra",
+    effortDetail: "Effort tier: ultra",
+    duration: "25m",
+    summary:
+      "A field-guide study of the four elements, each with its own bloom-lit Three.js composition, reached from a guide along the bottom of the frame.",
+    controls:
+      "Keys 1–4 or the field guide to select an element, arrow keys to move between them, Esc or O for the overview, drag to orbit, scroll to zoom.",
   },
 ] as const;
 

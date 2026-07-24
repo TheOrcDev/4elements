@@ -10,6 +10,7 @@
 | Kimi K3 | Max | 70m | [`apps/kimi-k3`](apps/kimi-k3) |
 | Grok 4.5 | High | 5m 37s | [`apps/grok-4.5`](apps/grok-4.5) |
 | Fable 5 | Max | 16m | [`apps/fable-5`](apps/fable-5) |
+| Sol Ultra | Ultra | 25m | [`apps/sol-ultra`](apps/sol-ultra) |
 
 Every model ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5 and Fable 5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Time to build is wall-clock from the brief to a working app.
 
@@ -21,7 +22,17 @@ Every model ran at the highest reasoning setting it offers, so the times are com
 
 **Fable 5** stands the four elements on lit plinths in one scene, on custom GLSL shaders with GPU particles and bloom post-processing.
 
+**Sol Ultra** presents the elements as a field guide, each with its own bloom-lit composition. It currently does not get past its own loading veil — see [Known issues](#known-issues).
+
 Each app's own README documents how that model built its scenes.
+
+## Known issues
+
+**Sol Ultra stays on its loading veil.** It builds, mounts a correctly sized canvas and acquires a live WebGL context, but never reveals the scene. This reproduces standalone, outside the playground, so it is not an artefact of being framed.
+
+`ElementalExperience` lifts the veil by applying `.is-ready`, which it does on the second pass through its render loop. That class is never applied, so the loop is not getting that far. An earlier, separate fault — `#root` having no height, which collapsed the canvas to zero — has been fixed upstream and is no longer the cause.
+
+The app is left as the model wrote it rather than patched, since what it produced is the result being measured.
 
 ## How it works
 
@@ -93,6 +104,7 @@ apps/opus-5       Opus 5's Four Elements app
 apps/kimi-k3      Kimi K3's Four Elements app
 apps/grok-4.5     Grok 4.5's Four Elements app
 apps/fable-5      Fable 5's Four Elements app
+apps/sol-ultra    Sol Ultra's Four Elements app
 tests/visual      Playwright smoke test and generated screenshots
 ```
 
