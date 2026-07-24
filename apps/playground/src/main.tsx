@@ -15,7 +15,12 @@ type ModelName = "opus-5" | "kimi-k3";
 
 interface ModelOption {
   controls: string;
+  /** Highest reasoning setting the model offers, and what it is called there. */
+  effort: string;
+  effortDetail: string;
   label: string;
+  /** Wall-clock minutes the model took to produce its app. */
+  minutes: number;
   summary: string;
   value: ModelName;
 }
@@ -24,6 +29,9 @@ const modelOptions: readonly ModelOption[] = [
   {
     label: "Opus 5",
     value: "opus-5",
+    effort: "Max",
+    effortDetail: "Thinking effort: max",
+    minutes: 47,
     summary:
       "Fire, water, earth and air share one stage, each on its own custom GLSL shader — a volumetric raymarched flame, a refracting swell, ridged terrain with magma in the cracks, and 50k particles integrating a curl field.",
     controls: "Drag to orbit, scroll to zoom, click an element to fly to it.",
@@ -31,6 +39,9 @@ const modelOptions: readonly ModelOption[] = [
   {
     label: "Kimi K3",
     value: "kimi-k3",
+    effort: "Max",
+    effortDetail: "reasoning_effort: max",
+    minutes: 70,
     summary:
       "Four procedural elemental worlds you move between, each with its own shaders, GPU particles and bloom pass.",
     controls: "Nav buttons or keys 1–4 / ← →, drag to orbit, scroll to zoom.",
@@ -103,6 +114,25 @@ function App() {
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
+          <dl className="grid grid-cols-2 gap-3 rounded-md border border-border bg-muted/40 px-3 py-2">
+            <div className="flex flex-col gap-0.5">
+              <dt className="font-bold text-muted-foreground text-xs uppercase tracking-normal">
+                Reasoning
+              </dt>
+              <dd
+                className="font-medium text-sm"
+                title={activeModel.effortDetail}
+              >
+                {activeModel.effort}
+              </dd>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <dt className="font-bold text-muted-foreground text-xs uppercase tracking-normal">
+                Time to build
+              </dt>
+              <dd className="font-medium text-sm">{activeModel.minutes} min</dd>
+            </div>
+          </dl>
           <p className="text-muted-foreground text-sm">{activeModel.summary}</p>
         </section>
 

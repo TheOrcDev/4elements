@@ -4,10 +4,16 @@
 
 ## Models
 
-| Model | App | What it does |
-| --- | --- | --- |
-| Opus 5 | [`apps/opus-5`](apps/opus-5) | All four elements share one stage, each on its own custom GLSL shader: a volumetric raymarched flame, a refracting swell, ridged terrain with magma in the cracks, and 50k particles integrating a curl field. |
-| Kimi K3 | [`apps/kimi-k3`](apps/kimi-k3) | Four procedural elemental worlds you move between, each with its own shaders, GPU particles and bloom pass. |
+| Model | Reasoning | Time to build | App |
+| --- | --- | --- | --- |
+| Opus 5 | Max | 47 min | [`apps/opus-5`](apps/opus-5) |
+| Kimi K3 | Max | 70 min | [`apps/kimi-k3`](apps/kimi-k3) |
+
+Both models ran at the highest reasoning setting they offer. For Opus 5 that is thinking effort `max`; for Kimi K3 it is the [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) field set to `max`, the top of its `low` / `high` / `max` range. Time to build is wall-clock from the brief to a working app.
+
+**Opus 5** puts all four elements on one stage, each on its own custom GLSL shader: a volumetric raymarched flame, a refracting swell, ridged terrain with magma in the cracks, and 50k particles integrating a curl field.
+
+**Kimi K3** builds four procedural elemental worlds you move between, each with its own shaders, GPU particles and bloom pass.
 
 Each app's own README documents how that model built its scenes.
 
