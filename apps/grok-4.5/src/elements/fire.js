@@ -11,7 +11,7 @@ export function createFire(position = new THREE.Vector3(0, 0, 0)) {
   // --- Glowing core ---
   const coreGeo = new THREE.SphereGeometry(0.35, 32, 32);
   const coreMat = new THREE.MeshBasicMaterial({
-    color: 0xff_aa_33,
+    color: 0xffaa33,
     transparent: true,
     opacity: 0.9,
   });
@@ -22,7 +22,7 @@ export function createFire(position = new THREE.Vector3(0, 0, 0)) {
   // Inner white-hot core
   const hotGeo = new THREE.SphereGeometry(0.18, 24, 24);
   const hotMat = new THREE.MeshBasicMaterial({
-    color: 0xff_f5_d0,
+    color: 0xfff5d0,
     transparent: true,
     opacity: 0.95,
   });
@@ -31,11 +31,11 @@ export function createFire(position = new THREE.Vector3(0, 0, 0)) {
   group.add(hot);
 
   // Soft light
-  const fireLight = new THREE.PointLight(0xff_66_22, 8, 18, 1.5);
+  const fireLight = new THREE.PointLight(0xff6622, 8, 18, 1.5);
   fireLight.position.set(0, 1.2, 0);
   group.add(fireLight);
 
-  const fireLight2 = new THREE.PointLight(0xff_aa_44, 3, 10, 2);
+  const fireLight2 = new THREE.PointLight(0xffaa44, 3, 10, 2);
   fireLight2.position.set(0, 0.5, 0);
   group.add(fireLight2);
 
@@ -187,7 +187,7 @@ export function createFire(position = new THREE.Vector3(0, 0, 0)) {
   // Base glow disc
   const discGeo = new THREE.CircleGeometry(1.1, 48);
   const discMat = new THREE.MeshBasicMaterial({
-    color: 0xff_44_00,
+    color: 0xff4400,
     transparent: true,
     opacity: 0.25,
     blending: THREE.AdditiveBlending,
@@ -202,7 +202,7 @@ export function createFire(position = new THREE.Vector3(0, 0, 0)) {
   // Ground ring
   const ringGeo = new THREE.RingGeometry(0.9, 1.35, 64);
   const ringMat = new THREE.MeshBasicMaterial({
-    color: 0xff_66_22,
+    color: 0xff6622,
     transparent: true,
     opacity: 0.15,
     blending: THREE.AdditiveBlending,
@@ -237,27 +237,15 @@ export function createFire(position = new THREE.Vector3(0, 0, 0)) {
       const i3 = i * 3;
       ages[i] += dt;
       if (ages[i] >= lifetimes[i]) {
-        resetFlame(
-          i,
-          positions,
-          velocities,
-          lifetimes,
-          ages,
-          sizes,
-          seeds,
-          false
-        );
+        resetFlame(i, positions, velocities, lifetimes, ages, sizes, seeds, false);
         continue;
       }
       const life = ages[i] / lifetimes[i];
       // Turbulence
       const turb = Math.sin(time * 3 + seeds[i] * 20) * 0.4;
-      pos[i3] +=
-        velocities[i3] * dt +
-        Math.sin(time * 4 + seeds[i] * 10 + pos[i3 + 1]) * 0.015;
+      pos[i3] += velocities[i3] * dt + Math.sin(time * 4 + seeds[i] * 10 + pos[i3 + 1]) * 0.015;
       pos[i3 + 1] += velocities[i3 + 1] * dt;
-      pos[i3 + 2] +=
-        velocities[i3 + 2] * dt + Math.cos(time * 3.5 + seeds[i] * 8) * 0.012;
+      pos[i3 + 2] += velocities[i3 + 2] * dt + Math.cos(time * 3.5 + seeds[i] * 8) * 0.012;
       // Spread as rises
       velocities[i3] += turb * dt * 0.3;
       velocities[i3 + 1] *= 1 - life * 0.002;
@@ -296,7 +284,7 @@ export function createFire(position = new THREE.Vector3(0, 0, 0)) {
 function resetFlame(i, pos, vel, life, age, size, seed, randomAge) {
   const i3 = i * 3;
   const angle = Math.random() * Math.PI * 2;
-  const r = Math.random() ** 0.6 * 0.45;
+  const r = Math.pow(Math.random(), 0.6) * 0.45;
   pos[i3] = Math.cos(angle) * r;
   pos[i3 + 1] = Math.random() * 0.15;
   pos[i3 + 2] = Math.sin(angle) * r;

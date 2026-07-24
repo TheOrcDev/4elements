@@ -1,5 +1,5 @@
-import * as THREE from "three";
-import { CURL } from "../glsl/noise.js";
+import * as THREE from 'three';
+import { CURL } from '../glsl/noise.js';
 
 /**
  * AIR — 50k particles advected through an analytic curl field.
@@ -187,11 +187,11 @@ export function createAir({ radius = 1.85 } = {}) {
     }
   }
 
-  geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  geo.setAttribute("aSeed", new THREE.BufferAttribute(seed, 3));
-  geo.setAttribute("aPhase", new THREE.BufferAttribute(phase, 1));
-  geo.setAttribute("aIndex", new THREE.BufferAttribute(index, 1));
-  geo.setAttribute("aSpeed", new THREE.BufferAttribute(speed, 1));
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('aSeed', new THREE.BufferAttribute(seed, 3));
+  geo.setAttribute('aPhase', new THREE.BufferAttribute(phase, 1));
+  geo.setAttribute('aIndex', new THREE.BufferAttribute(index, 1));
+  geo.setAttribute('aSpeed', new THREE.BufferAttribute(speed, 1));
 
   const mat = new THREE.ShaderMaterial({
     uniforms: {
@@ -216,7 +216,7 @@ export function createAir({ radius = 1.85 } = {}) {
   const coreMat = new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
-      uColor: { value: new THREE.Color(0x9f_dc_ff) },
+      uColor: { value: new THREE.Color(0x9fdcff) },
     },
     vertexShader: coreVert,
     fragmentShader: coreFrag,
@@ -224,19 +224,16 @@ export function createAir({ radius = 1.85 } = {}) {
     depthWrite: false,
     blending: THREE.AdditiveBlending,
   });
-  const core = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(radius * 0.42, 4),
-    coreMat
-  );
+  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(radius * 0.42, 4), coreMat);
   group.add(core);
 
   return {
-    name: "air",
+    name: 'air',
     group,
     radius,
     // Bluer than the particles themselves: this tints the floor pool and
     // reflection, and a near-white tint there just smears the stone grey.
-    color: new THREE.Color(0x8e_cd_ff),
+    color: new THREE.Color(0x8ecdff),
     hitRadius: radius * 0.95,
 
     update(t) {

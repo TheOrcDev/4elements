@@ -1,15 +1,16 @@
-import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { FXAAPass } from "three/addons/postprocessing/FXAAPass.js";
-import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
-import { createAir } from "./elements/air.js";
-import { createEarth } from "./elements/earth.js";
-import { createFire } from "./elements/fire.js";
-import { createWater } from "./elements/water.js";
-import { createWorld } from "./world.js";
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { FXAAPass } from 'three/addons/postprocessing/FXAAPass.js';
+
+import { createFire } from './elements/fire.js';
+import { createWater } from './elements/water.js';
+import { createEarth } from './elements/earth.js';
+import { createAir } from './elements/air.js';
+import { createWorld } from './world.js';
 
 const RING_RADIUS = 7.4;
 const FLOOR_Y = -3.1;
@@ -18,11 +19,11 @@ const FLOOR_Y = -3.1;
 // Renderer
 // ---------------------------------------------------------------------------
 
-const canvas = document.getElementById("scene");
+const canvas = document.getElementById('scene');
 const renderer = new THREE.WebGLRenderer({
   canvas,
   antialias: false, // the composer's FXAA pass handles this
-  powerPreference: "high-performance",
+  powerPreference: 'high-performance',
   stencil: false,
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -39,12 +40,7 @@ renderer.setPixelRatio(pixelRatio);
 
 const scene = new THREE.Scene();
 
-const camera = new THREE.PerspectiveCamera(
-  46,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  400
-);
+const camera = new THREE.PerspectiveCamera(46, window.innerWidth / window.innerHeight, 0.1, 400);
 camera.position.set(0, 5.2, 19);
 
 const controls = new OrbitControls(camera, canvas);
@@ -73,22 +69,14 @@ const elements = [fire, water, earth, air];
 
 elements.forEach((el, i) => {
   const a = (i / elements.length) * Math.PI * 2 + Math.PI / 4;
-  el.group.position.set(
-    Math.cos(a) * RING_RADIUS,
-    0.35,
-    Math.sin(a) * RING_RADIUS
-  );
+  el.group.position.set(Math.cos(a) * RING_RADIUS, 0.35, Math.sin(a) * RING_RADIUS);
   scene.add(el.group);
 });
 
 // Water's warm rim highlight should come from where the fire actually is.
 water.setFireDirection(fire.group.position.clone().sub(water.group.position));
 
-const world = createWorld({
-  elements,
-  ringRadius: RING_RADIUS,
-  floorY: FLOOR_Y,
-});
+const world = createWorld({ elements, ringRadius: RING_RADIUS, floorY: FLOOR_Y });
 scene.add(world.group);
 
 // There are deliberately no THREE.Light objects in this scene. Every surface is
@@ -111,8 +99,8 @@ composer.addPass(new RenderPass(scene, camera));
 const bloom = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
   0.62, // strength
-  0.5, // radius
-  0.85 // threshold
+  0.50, // radius
+  0.85, // threshold
 );
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
@@ -127,7 +115,7 @@ const desired = {
   target: controls.target.clone(),
 };
 let flying = false;
-let focus = "all";
+let focus = 'all';
 const flightScratch = new THREE.Vector3();
 
 const overview = {
@@ -139,12 +127,12 @@ function focusOn(name) {
   focus = name;
   world.setEmphasis(name);
 
-  for (const btn of document.querySelectorAll(".elem-btn")) {
-    btn.classList.toggle("active", btn.dataset.target === name);
+  for (const btn of document.querySelectorAll('.elem-btn')) {
+    btn.classList.toggle('active', btn.dataset.target === name);
   }
-  document.getElementById("r-focus").textContent = name;
+  document.getElementById('r-focus').textContent = name;
 
-  if (name === "all") {
+  if (name === 'all') {
     desired.pos.copy(overview.pos);
     desired.target.copy(overview.target);
     controls.autoRotate = true;
@@ -157,10 +145,7 @@ function focusOn(name) {
     const outward = new THREE.Vector3(p.x, 0, p.z).normalize();
     outward.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.42);
 
-    desired.pos
-      .copy(p)
-      .addScaledVector(outward, el.radius * 3.5)
-      .add(new THREE.Vector3(0, 1.35, 0));
+    desired.pos.copy(p).addScaledVector(outward, el.radius * 3.5).add(new THREE.Vector3(0, 1.35, 0));
     desired.target.copy(p);
     controls.autoRotate = false;
   }
@@ -169,8 +154,8 @@ function focusOn(name) {
   controls.enabled = false;
 }
 
-for (const btn of document.querySelectorAll(".elem-btn")) {
-  btn.addEventListener("click", () => focusOn(btn.dataset.target));
+for (const btn of document.querySelectorAll('.elem-btn')) {
+  btn.addEventListener('click', () => focusOn(btn.dataset.target));
 }
 
 // ---------------------------------------------------------------------------
@@ -182,7 +167,7 @@ const pointer = new THREE.Vector2();
 const worldPos = new THREE.Vector3();
 let downAt = null;
 
-canvas.addEventListener("pointerdown", (e) => {
+canvas.addEventListener('pointerdown', (e) => {
   downAt = { x: e.clientX, y: e.clientY };
   // Touching the canvas hands control straight back, so a drag mid-flight
   // responds immediately instead of fighting the tween.
@@ -190,24 +175,20 @@ canvas.addEventListener("pointerdown", (e) => {
   controls.enabled = true;
 });
 
-canvas.addEventListener("pointerup", (e) => {
+canvas.addEventListener('pointerup', (e) => {
   // Ignore the pointerup that ends an orbit drag.
-  if (!downAt || Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 5) {
-    return;
-  }
+  if (!downAt || Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > 5) return;
 
   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
   pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
 
   let best = null;
-  let bestDist = Number.POSITIVE_INFINITY;
+  let bestDist = Infinity;
   for (const el of elements) {
     el.group.getWorldPosition(worldPos);
     const perp = raycaster.ray.distanceSqToPoint(worldPos);
-    if (perp > el.hitRadius * el.hitRadius) {
-      continue;
-    }
+    if (perp > el.hitRadius * el.hitRadius) continue;
     const along = worldPos.distanceTo(camera.position);
     if (along < bestDist) {
       bestDist = along;
@@ -215,20 +196,11 @@ canvas.addEventListener("pointerup", (e) => {
     }
   }
 
-  if (best) {
-    focusOn(best.name === focus ? "all" : best.name);
-  }
+  if (best) focusOn(best.name === focus ? 'all' : best.name);
 });
 
 // Any manual orbit input cancels an in-flight camera move.
-canvas.addEventListener(
-  "wheel",
-  () => {
-    flying = false;
-    controls.enabled = true;
-  },
-  { passive: true }
-);
+canvas.addEventListener('wheel', () => { flying = false; controls.enabled = true; }, { passive: true });
 
 // ---------------------------------------------------------------------------
 // Resize
@@ -248,12 +220,10 @@ function onResize() {
   composer.setPixelRatio(pixelRatio);
   composer.setSize(w, h);
 
-  for (const el of elements) {
-    el.setPixelRatio?.(pixelRatio);
-  }
+  for (const el of elements) el.setPixelRatio?.(pixelRatio);
   world.setPixelRatio(pixelRatio);
 }
-window.addEventListener("resize", onResize);
+window.addEventListener('resize', onResize);
 
 // ---------------------------------------------------------------------------
 // Loop
@@ -262,14 +232,13 @@ window.addEventListener("resize", onResize);
 let elapsed = 0;
 let lastTime = performance.now();
 
-const fpsEl = document.getElementById("r-fps");
+const fpsEl = document.getElementById('r-fps');
 let fpsAccum = 0;
 let fpsFrames = 0;
 
 const totalParticles =
   elements.reduce((n, e) => n + (e.particleCount || 0), 0) + world.starCount;
-document.getElementById("r-parts").textContent =
-  totalParticles.toLocaleString();
+document.getElementById('r-parts').textContent = totalParticles.toLocaleString();
 
 function tick() {
   requestAnimationFrame(tick);
@@ -281,7 +250,7 @@ function tick() {
 
   if (flying) {
     // Critically-damped-ish approach; hand control back once it's close.
-    const k = 1 - 0.0016 ** dt;
+    const k = 1 - Math.pow(0.0016, dt);
     camera.position.lerp(desired.pos, k);
     controls.target.lerp(desired.target, k);
 
@@ -292,9 +261,7 @@ function tick() {
     const standoff = desired.pos.distanceTo(desired.target);
     flightScratch.copy(camera.position).sub(desired.target);
     if (flightScratch.length() < standoff) {
-      camera.position
-        .copy(desired.target)
-        .add(flightScratch.setLength(standoff));
+      camera.position.copy(desired.target).add(flightScratch.setLength(standoff));
     }
 
     // Both have to arrive: the eye can be in position while the look-at point
@@ -312,9 +279,7 @@ function tick() {
     }
   }
 
-  for (const el of elements) {
-    el.update(elapsed, dt, camera);
-  }
+  for (const el of elements) el.update(elapsed, dt, camera);
   world.update(elapsed);
 
   controls.update();
@@ -336,17 +301,15 @@ function tick() {
 // Warm the shaders up on a first frame before revealing the scene, so the
 // reveal isn't a stutter.
 water.updateEnvironment(renderer, scene);
-for (const el of elements) {
-  el.update(0, 0, camera);
-}
+for (const el of elements) el.update(0, 0, camera);
 world.update(0);
 composer.render();
 
 // Reveal on the next frame so the warm-up frame is on screen first — but never
 // leave the overlay up if that frame is slow to arrive (a backgrounded or
 // throttled tab can defer rAF indefinitely).
-const loader = document.getElementById("loader");
-const reveal = () => loader.classList.add("done");
+const loader = document.getElementById('loader');
+const reveal = () => loader.classList.add('done');
 requestAnimationFrame(reveal);
 setTimeout(reveal, 1200);
 
@@ -366,9 +329,7 @@ window.__scene = {
   /** Render one frame at an arbitrary time — useful for inspecting motion. */
   renderAt(t) {
     elapsed = t;
-    for (const el of elements) {
-      el.update(t, 1 / 60, camera);
-    }
+    for (const el of elements) el.update(t, 1 / 60, camera);
     world.update(t);
     water.updateEnvironment(renderer, scene);
     composer.render();

@@ -9,11 +9,11 @@ export function createWater(position = new THREE.Vector3(0, 0, 0)) {
   group.name = "water";
 
   // Underwater light
-  const waterLight = new THREE.PointLight(0x22_88_ff, 5, 16, 1.8);
+  const waterLight = new THREE.PointLight(0x2288ff, 5, 16, 1.8);
   waterLight.position.set(0, 0.3, 0);
   group.add(waterLight);
 
-  const waterLight2 = new THREE.PointLight(0x44_cc_ff, 2, 10, 2);
+  const waterLight2 = new THREE.PointLight(0x44ccff, 2, 10, 2);
   waterLight2.position.set(0.5, 1.0, 0.3);
   group.add(waterLight2);
 
@@ -25,9 +25,9 @@ export function createWater(position = new THREE.Vector3(0, 0, 0)) {
     depthWrite: true,
     uniforms: {
       uTime: { value: 0 },
-      uColorDeep: { value: new THREE.Color(0x0a_2a_4a) },
-      uColorShallow: { value: new THREE.Color(0x3a_b0_e8) },
-      uColorFoam: { value: new THREE.Color(0xb8_e8_ff) },
+      uColorDeep: { value: new THREE.Color(0x0a2a4a) },
+      uColorShallow: { value: new THREE.Color(0x3ab0e8) },
+      uColorFoam: { value: new THREE.Color(0xb8e8ff) },
     },
     vertexShader: /* glsl */ `
       uniform float uTime;
@@ -162,7 +162,7 @@ export function createWater(position = new THREE.Vector3(0, 0, 0)) {
   // Pool floor
   const floorGeo = new THREE.CircleGeometry(1.35, 64);
   const floorMat = new THREE.MeshStandardMaterial({
-    color: 0x0a_20_35,
+    color: 0x0a2035,
     roughness: 0.8,
     metalness: 0.1,
     transparent: true,
@@ -176,7 +176,7 @@ export function createWater(position = new THREE.Vector3(0, 0, 0)) {
   // Rim
   const rimGeo = new THREE.TorusGeometry(1.5, 0.06, 12, 64);
   const rimMat = new THREE.MeshStandardMaterial({
-    color: 0x3a_5a_70,
+    color: 0x3a5a70,
     roughness: 0.4,
     metalness: 0.6,
   });
@@ -257,7 +257,7 @@ export function createWater(position = new THREE.Vector3(0, 0, 0)) {
   sprayGeo.setAttribute("position", new THREE.BufferAttribute(sPos, 3));
 
   const sprayMat = new THREE.PointsMaterial({
-    color: 0xaa_dd_ff,
+    color: 0xaaddff,
     size: 0.04,
     transparent: true,
     opacity: 0.6,

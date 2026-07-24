@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import { chromium } from "playwright";
 
 const targetUrl = process.env.FOUR_ELEMENTS_URL ?? "http://localhost:4173/";
-const models = ["opus-5", "kimi-k3", "grok-4.5"];
+const models = ["opus-5", "kimi-k3", "grok-4.5", "fable-5"];
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },
   { name: "mobile", width: 390, height: 844 },

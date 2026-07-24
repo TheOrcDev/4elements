@@ -1,0 +1,195 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: #04060a;
+}
+
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: #dfe6f0;
+  -webkit-font-smoothing: antialiased;
+}
+
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 45%, transparent 52%, rgba(2, 3, 8, 0.62) 100%);
+}
+
+#ui {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 16px 18px;
+}
+
+header {
+  text-align: center;
+  animation: fadeDown 1.6s ease both;
+}
+
+h1 {
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-weight: 400;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  font-size: clamp(17px, 2.6vw, 28px);
+  color: #eef2f8;
+  text-shadow: 0 0 26px rgba(140, 180, 255, 0.35);
+}
+
+.sub {
+  margin-top: 8px;
+  font-size: 10.5px;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  text-transform: uppercase;
+  color: rgba(200, 215, 235, 0.5);
+}
+
+#bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  animation: fadeUp 1.6s 0.3s ease both;
+}
+
+#caption {
+  text-align: center;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  min-height: 64px;
+}
+
+#caption.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#cap-name {
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: var(--c, #fff);
+  text-shadow: 0 0 34px color-mix(in srgb, var(--c, #fff) 65%, transparent);
+}
+
+#cap-line {
+  margin-top: 5px;
+  font-size: 12.5px;
+  letter-spacing: 0.12em;
+  color: rgba(215, 225, 240, 0.78);
+  font-style: italic;
+  font-family: Georgia, serif;
+}
+
+#dock {
+  pointer-events: auto;
+  display: flex;
+  gap: 8px;
+  background: rgba(8, 12, 20, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 7px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 12px 44px rgba(0, 0, 0, 0.5);
+}
+
+#dock button {
+  --c: #9db4d4;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: transparent;
+  color: rgba(220, 230, 245, 0.82);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+}
+
+#dock button .glyph {
+  font-family: 'Apple Symbols', 'Segoe UI Symbol', serif;
+  font-size: 15px;
+  letter-spacing: 0;
+  color: var(--c);
+  text-shadow: 0 0 12px var(--c);
+}
+
+#dock button:hover {
+  border-color: color-mix(in srgb, var(--c) 55%, transparent);
+  color: #fff;
+}
+
+#dock button.active {
+  background: color-mix(in srgb, var(--c) 16%, transparent);
+  border-color: color-mix(in srgb, var(--c) 70%, transparent);
+  color: #fff;
+}
+
+#hint {
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  color: rgba(190, 205, 225, 0.42);
+}
+
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 700px) {
+  #dock button span.label {
+    display: none;
+  }
+  #dock button {
+    padding: 9px 12px;
+  }
+}

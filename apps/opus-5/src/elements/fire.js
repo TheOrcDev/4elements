@@ -1,5 +1,5 @@
-import * as THREE from "three";
-import { NOISE } from "../glsl/noise.js";
+import * as THREE from 'three';
+import { NOISE } from '../glsl/noise.js';
 
 /**
  * FIRE — a true volumetric raymarch.
@@ -379,21 +379,21 @@ export function createFire({ radius = 1.55 } = {}) {
 
   for (let i = 0; i < EMBER_COUNT; i++) {
     const a = Math.random() * Math.PI * 2;
-    const r = Math.sqrt(Math.random()) * 0.3 * radius;
+    const r = Math.sqrt(Math.random()) * 0.30 * radius;
     seeds[i * 3 + 0] = Math.cos(a) * r;
     seeds[i * 3 + 1] = -radius * 0.55 + Math.random() * 0.7;
     seeds[i * 3 + 2] = Math.sin(a) * r;
     phases[i] = Math.random();
     speeds[i] = 0.65 + Math.random() * 0.9;
     // Cubed, so most embers are fine sparks and only a handful are big.
-    scales[i] = Math.random() ** 3;
+    scales[i] = Math.pow(Math.random(), 3);
   }
 
-  eg.setAttribute("position", new THREE.BufferAttribute(seeds.slice(), 3));
-  eg.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 3));
-  eg.setAttribute("aPhase", new THREE.BufferAttribute(phases, 1));
-  eg.setAttribute("aSpeed", new THREE.BufferAttribute(speeds, 1));
-  eg.setAttribute("aScale", new THREE.BufferAttribute(scales, 1));
+  eg.setAttribute('position', new THREE.BufferAttribute(seeds.slice(), 3));
+  eg.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 3));
+  eg.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
+  eg.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 1));
+  eg.setAttribute('aScale', new THREE.BufferAttribute(scales, 1));
 
   const emberMat = new THREE.ShaderMaterial({
     uniforms: {
@@ -415,13 +415,13 @@ export function createFire({ radius = 1.55 } = {}) {
   const local = new THREE.Vector3();
 
   return {
-    name: "fire",
+    name: 'fire',
     group,
     radius,
     // The flame is a narrow column inside a larger bounding volume, so the
     // floor's rune ring and reflection want the silhouette's width, not this.
     floorRadius: radius * 0.62,
-    color: new THREE.Color(0xff_6a_1f),
+    color: new THREE.Color(0xff6a1f),
     hitRadius: radius * 0.9,
     pulse: 1,
 

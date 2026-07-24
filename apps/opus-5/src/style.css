@@ -6,29 +6,27 @@
 }
 
 * {
-  box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html,
 body {
   height: 100%;
   overflow: hidden;
-  font-family:
-    ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "Segoe UI",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  color: var(--ink);
   background: #04050a;
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display", "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 #scene {
   position: fixed;
   inset: 0;
-  display: block;
   width: 100%;
   height: 100%;
+  display: block;
   touch-action: none;
 }
 
@@ -38,17 +36,17 @@ body {
   position: fixed;
   top: 34px;
   left: 40px;
-  z-index: 5;
   pointer-events: none;
+  z-index: 5;
 }
 
 #hud-top h1 {
-  display: flex;
-  gap: 0.42em;
   font-size: 13px;
   font-weight: 600;
-  line-height: 1;
   letter-spacing: 0.42em;
+  line-height: 1;
+  display: flex;
+  gap: 0.42em;
 }
 
 #hud-top h1 span {
@@ -59,9 +57,9 @@ body {
 #subtitle {
   margin-top: 10px;
   font-size: 10.5px;
-  color: var(--dim);
-  text-transform: uppercase;
   letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
 }
 
 #readout {
@@ -69,18 +67,18 @@ body {
   top: 34px;
   right: 40px;
   z-index: 5;
-  min-width: 132px;
-  font-size: 10.5px;
-  font-variant-numeric: tabular-nums;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   pointer-events: none;
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  min-width: 132px;
 }
 
 #readout .row {
   display: flex;
-  gap: 18px;
   justify-content: space-between;
+  gap: 18px;
   padding: 5px 0;
   border-bottom: 1px solid var(--line);
 }
@@ -97,48 +95,44 @@ body {
   position: fixed;
   bottom: 34px;
   left: 50%;
+  transform: translateX(-50%);
   z-index: 5;
   display: flex;
   gap: 6px;
   padding: 6px;
+  border-radius: 999px;
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 999px;
-  -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
-  transform: translateX(-50%);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .elem-btn {
-  display: flex;
-  gap: 9px;
-  align-items: center;
-  padding: 9px 17px;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--dim);
   font: inherit;
   font-size: 11px;
-  color: var(--dim);
-  text-transform: uppercase;
   letter-spacing: 0.14em;
-  appearance: none;
-  cursor: pointer;
-  background: transparent;
-  border: 0;
+  text-transform: uppercase;
+  padding: 9px 17px;
   border-radius: 999px;
-  transition:
-    color 0.25s ease,
-    background 0.25s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  transition: color 0.25s ease, background 0.25s ease;
 }
 
 .elem-btn .dot {
   width: 6px;
   height: 6px;
-  background: var(--c);
   border-radius: 50%;
-  box-shadow: 0 0 0 0 var(--c);
+  background: var(--c);
   opacity: 0.5;
-  transition:
-    opacity 0.25s ease,
-    box-shadow 0.35s ease;
+  box-shadow: 0 0 0 0 var(--c);
+  transition: opacity 0.25s ease, box-shadow 0.35s ease;
 }
 
 .elem-btn:hover {
@@ -151,21 +145,21 @@ body {
 }
 
 .elem-btn.active .dot {
-  box-shadow: 0 0 10px 1px var(--c);
   opacity: 1;
+  box-shadow: 0 0 10px 1px var(--c);
 }
 
 #hint {
   position: fixed;
   bottom: 14px;
   left: 50%;
+  transform: translateX(-50%);
   z-index: 5;
   font-size: 9.5px;
-  color: rgba(232, 236, 248, 0.28);
-  text-transform: uppercase;
   letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(232, 236, 248, 0.28);
   pointer-events: none;
-  transform: translateX(-50%);
 }
 
 /* ---------- Loader ---------- */
@@ -175,31 +169,31 @@ body {
   inset: 0;
   z-index: 20;
   display: grid;
-  gap: 22px;
   place-content: center;
   justify-items: center;
+  gap: 22px;
   background: #04050a;
   transition: opacity 0.8s ease;
 }
 
 #loader.done {
-  pointer-events: none;
   opacity: 0;
+  pointer-events: none;
 }
 
 #loader p {
   font-size: 10px;
-  color: var(--dim);
-  text-transform: uppercase;
   letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--dim);
 }
 
 .loader-ring {
   width: 34px;
   height: 34px;
+  border-radius: 50%;
   border: 1px solid var(--line);
   border-top-color: var(--ink);
-  border-radius: 50%;
   animation: spin 0.9s linear infinite;
 }
 
@@ -225,8 +219,8 @@ body {
     padding: 5px;
   }
   .elem-btn {
-    gap: 6px;
     padding: 8px 11px;
     font-size: 10px;
+    gap: 6px;
   }
 }

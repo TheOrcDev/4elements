@@ -11,7 +11,7 @@ import "./styles.css";
 
 const REPO = "TheOrcDev/4elements";
 
-type ModelName = "opus-5" | "kimi-k3" | "grok-4.5";
+type ModelName = "opus-5" | "kimi-k3" | "grok-4.5" | "fable-5";
 
 interface ModelOption {
   controls: string;
@@ -56,6 +56,17 @@ const modelOptions: readonly ModelOption[] = [
       "One stage holding GPU particle flames, a vortex field with wind ribbons, a multi-wave water surface with caustics, and displaced rock with crystal spikes — finished with unreal bloom and ACES tone mapping.",
     controls:
       "Nav buttons or click an element to focus, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Fable 5",
+    value: "fable-5",
+    effort: "Max",
+    effortDetail: "Thinking effort: max",
+    duration: "16m",
+    summary:
+      "One interactive scene for all four elements, built on custom GLSL shaders, GPU particles and bloom post-processing.",
+    controls:
+      "Keys 1–4 or click an element to summon it, 0 or Esc for the full view, drag to orbit, scroll to zoom.",
   },
 ] as const;
 
@@ -106,7 +117,7 @@ function App() {
           <h2 className="font-semibold text-sm">Model</h2>
           <ToggleGroup
             aria-label="Model selector"
-            className="grid w-full grid-cols-3"
+            className="grid w-full grid-cols-2"
             data-model={selectedModel}
             onValueChange={loadModel}
             size="sm"

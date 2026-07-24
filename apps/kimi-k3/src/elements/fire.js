@@ -1,23 +1,23 @@
-import * as THREE from "three";
+import * as THREE from 'three';
 
 // Procedural lava-crack texture: glowing ring + jagged cracks radiating out.
 function makeLavaTexture() {
   const size = 512;
-  const canvas = document.createElement("canvas");
+  const canvas = document.createElement('canvas');
   canvas.width = canvas.height = size;
-  const ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#000";
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, size, size);
   const cx = size / 2;
 
   const ring = ctx.createRadialGradient(cx, cx, 120, cx, cx, 200);
-  ring.addColorStop(0.0, "rgba(255,80,10,0)");
-  ring.addColorStop(0.5, "rgba(255,110,20,0.5)");
-  ring.addColorStop(1.0, "rgba(255,60,5,0)");
+  ring.addColorStop(0.0, 'rgba(255,80,10,0)');
+  ring.addColorStop(0.5, 'rgba(255,110,20,0.5)');
+  ring.addColorStop(1.0, 'rgba(255,60,5,0)');
   ctx.fillStyle = ring;
   ctx.fillRect(0, 0, size, size);
 
-  ctx.lineCap = "round";
+  ctx.lineCap = 'round';
   for (let i = 0; i < 26; i++) {
     let a = Math.random() * Math.PI * 2;
     let r = 30 + Math.random() * 40;
@@ -46,10 +46,7 @@ export function createFire(originX = 0) {
   // ---------- flame column: ~3000 GPU particles ----------
   const COUNT = 3000;
   const geo = new THREE.BufferGeometry();
-  geo.setAttribute(
-    "position",
-    new THREE.BufferAttribute(new Float32Array(COUNT * 3), 3)
-  );
+  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(COUNT * 3), 3));
   const seeds = new Float32Array(COUNT);
   const speeds = new Float32Array(COUNT);
   const radii = new Float32Array(COUNT);
@@ -58,9 +55,9 @@ export function createFire(originX = 0) {
     speeds[i] = 0.6 + Math.random() * 0.9;
     radii[i] = Math.sqrt(Math.random()); // uniform across the flame disc
   }
-  geo.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
-  geo.setAttribute("aSpeed", new THREE.BufferAttribute(speeds, 1));
-  geo.setAttribute("aRadius", new THREE.BufferAttribute(radii, 1));
+  geo.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1));
+  geo.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 1));
+  geo.setAttribute('aRadius', new THREE.BufferAttribute(radii, 1));
 
   const flameUniforms = {
     uTime: { value: 0 },
@@ -74,7 +71,7 @@ export function createFire(originX = 0) {
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
-    vertexShader: /* glsl */ `
+    vertexShader: /* glsl */`
       uniform float uTime, uHeight, uBaseRadius, uSize, uPixelRatio;
       attribute float aSeed, aSpeed, aRadius;
       varying float vLife;
@@ -95,7 +92,7 @@ export function createFire(originX = 0) {
         gl_Position = projectionMatrix * mv;
       }
     `,
-    fragmentShader: /* glsl */ `
+    fragmentShader: /* glsl */`
       varying float vLife;
       varying float vDepth;
       void main() {
@@ -119,10 +116,7 @@ export function createFire(originX = 0) {
   // ---------- embers: long-lived sparks drifting up ----------
   const ECOUNT = 150;
   const egeo = new THREE.BufferGeometry();
-  egeo.setAttribute(
-    "position",
-    new THREE.BufferAttribute(new Float32Array(ECOUNT * 3), 3)
-  );
+  egeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(ECOUNT * 3), 3));
   const eSeeds = new Float32Array(ECOUNT);
   const eSpeeds = new Float32Array(ECOUNT);
   const eOffsets = new Float32Array(ECOUNT * 3);
@@ -133,20 +127,17 @@ export function createFire(originX = 0) {
     eOffsets[i * 3 + 1] = 0;
     eOffsets[i * 3 + 2] = (Math.random() - 0.5) * 2.4;
   }
-  egeo.setAttribute("aSeed", new THREE.BufferAttribute(eSeeds, 1));
-  egeo.setAttribute("aSpeed", new THREE.BufferAttribute(eSpeeds, 1));
-  egeo.setAttribute("aOffset", new THREE.BufferAttribute(eOffsets, 3));
+  egeo.setAttribute('aSeed', new THREE.BufferAttribute(eSeeds, 1));
+  egeo.setAttribute('aSpeed', new THREE.BufferAttribute(eSpeeds, 1));
+  egeo.setAttribute('aOffset', new THREE.BufferAttribute(eOffsets, 3));
 
-  const emberUniforms = {
-    uTime: { value: 0 },
-    uPixelRatio: { value: pixelRatio },
-  };
+  const emberUniforms = { uTime: { value: 0 }, uPixelRatio: { value: pixelRatio } };
   const emberMat = new THREE.ShaderMaterial({
     uniforms: emberUniforms,
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
-    vertexShader: /* glsl */ `
+    vertexShader: /* glsl */`
       uniform float uTime, uPixelRatio;
       attribute float aSeed, aSpeed;
       attribute vec3 aOffset;
@@ -168,7 +159,7 @@ export function createFire(originX = 0) {
         gl_Position = projectionMatrix * mv;
       }
     `,
-    fragmentShader: /* glsl */ `
+    fragmentShader: /* glsl */`
       varying float vTw;
       varying float vDepth;
       void main() {
@@ -189,7 +180,7 @@ export function createFire(originX = 0) {
     new THREE.SphereGeometry(0.8, 32, 32),
     new THREE.ShaderMaterial({
       uniforms: coreUniforms,
-      vertexShader: /* glsl */ `
+      vertexShader: /* glsl */`
         varying vec3 vN;
         varying vec3 vV;
         void main() {
@@ -199,7 +190,7 @@ export function createFire(originX = 0) {
           gl_Position = projectionMatrix * mv;
         }
       `,
-      fragmentShader: /* glsl */ `
+      fragmentShader: /* glsl */`
         uniform float uTime;
         varying vec3 vN;
         varying vec3 vV;
@@ -216,7 +207,7 @@ export function createFire(originX = 0) {
   group.add(core);
 
   // ---------- flickering fire light ----------
-  const light = new THREE.PointLight(0xff_6a_1f, 60, 30, 2);
+  const light = new THREE.PointLight(0xff6a1f, 60, 30, 2);
   light.position.set(0, 2.4, 0);
   group.add(light);
 
@@ -224,10 +215,10 @@ export function createFire(originX = 0) {
   const ground = new THREE.Mesh(
     new THREE.CircleGeometry(9, 64),
     new THREE.MeshStandardMaterial({
-      color: 0x14_0b_06,
+      color: 0x140b06,
       roughness: 0.95,
       metalness: 0.0,
-      emissive: 0xff_ff_ff,
+      emissive: 0xffffff,
       emissiveMap: makeLavaTexture(),
       emissiveIntensity: 1.6,
     })
@@ -241,15 +232,12 @@ export function createFire(originX = 0) {
     emberUniforms.uTime.value = elapsed;
     coreUniforms.uTime.value = elapsed;
     // smooth pseudo-noise flicker (sum of incommensurate sines)
-    light.intensity =
-      58 +
-      16 *
-        (0.5 * Math.sin(elapsed * 9.3) +
-          0.3 * Math.sin(elapsed * 23.7 + 1.3) +
-          0.2 * Math.sin(elapsed * 4.1 + 2.1));
-    core.scale.setScalar(
-      1 + 0.05 * Math.sin(elapsed * 7.0) + 0.03 * Math.sin(elapsed * 17.0)
+    light.intensity = 58 + 16 * (
+      0.5 * Math.sin(elapsed * 9.3) +
+      0.3 * Math.sin(elapsed * 23.7 + 1.3) +
+      0.2 * Math.sin(elapsed * 4.1 + 2.1)
     );
+    core.scale.setScalar(1 + 0.05 * Math.sin(elapsed * 7.0) + 0.03 * Math.sin(elapsed * 17.0));
   }
 
   return {
@@ -257,6 +245,6 @@ export function createFire(originX = 0) {
     update,
     anchor: new THREE.Vector3(originX, 2.6, 12),
     target: new THREE.Vector3(originX, 3.6, 0),
-    background: 0x0a_03_02,
+    background: 0x0a0302,
   };
 }

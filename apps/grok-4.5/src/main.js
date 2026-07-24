@@ -1,13 +1,14 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
-import { createAir } from "./elements/air.js";
-import { createEarth } from "./elements/earth.js";
+import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
+
 import { createFire } from "./elements/fire.js";
+import { createAir } from "./elements/air.js";
 import { createWater } from "./elements/water.js";
+import { createEarth } from "./elements/earth.js";
 
 const DESCRIPTIONS = {
   fire: "Roaring flame — heat, light, and chaos",
@@ -49,8 +50,8 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 // --- Scene ---
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x05_05_08);
-scene.fog = new THREE.FogExp2(0x05_05_08, 0.018);
+scene.background = new THREE.Color(0x050508);
+scene.fog = new THREE.FogExp2(0x050508, 0.018);
 
 // --- Camera ---
 const camera = new THREE.PerspectiveCamera(
@@ -71,18 +72,18 @@ controls.maxPolarAngle = Math.PI * 0.48;
 controls.target.copy(FOCUS.all);
 
 // --- Lights ---
-const ambient = new THREE.AmbientLight(0x33_44_55, 0.35);
+const ambient = new THREE.AmbientLight(0x334455, 0.35);
 scene.add(ambient);
 
-const hemi = new THREE.HemisphereLight(0x88_99_bb, 0x22_18_10, 0.45);
+const hemi = new THREE.HemisphereLight(0x8899bb, 0x221810, 0.45);
 scene.add(hemi);
 
-const keyLight = new THREE.DirectionalLight(0xff_e8_d0, 0.6);
+const keyLight = new THREE.DirectionalLight(0xffe8d0, 0.6);
 keyLight.position.set(5, 12, 8);
 scene.add(keyLight);
 
 // Soft fill
-const fill = new THREE.DirectionalLight(0x66_88_aa, 0.25);
+const fill = new THREE.DirectionalLight(0x6688aa, 0.25);
 fill.position.set(-8, 4, -5);
 scene.add(fill);
 
@@ -127,7 +128,7 @@ scene.add(createStarfield());
 // --- Ground platform ---
 const groundGeo = new THREE.CircleGeometry(22, 64);
 const groundMat = new THREE.MeshStandardMaterial({
-  color: 0x0a_0a_10,
+  color: 0x0a0a10,
   roughness: 0.95,
   metalness: 0.05,
 });
@@ -156,7 +157,7 @@ function addPedestal(pos, color) {
   const disc = new THREE.Mesh(
     new THREE.CircleGeometry(1.9, 48),
     new THREE.MeshStandardMaterial({
-      color: 0x0c_0c_12,
+      color: 0x0c0c12,
       roughness: 0.9,
       metalness: 0.15,
     })
@@ -166,15 +167,15 @@ function addPedestal(pos, color) {
   scene.add(disc);
 }
 
-addPedestal(FOCUS.fire, 0xff_55_22);
-addPedestal(FOCUS.air, 0x88_bb_ff);
-addPedestal(FOCUS.water, 0x22_88_ff);
-addPedestal(FOCUS.earth, 0x66_aa_44);
+addPedestal(FOCUS.fire, 0xff5522);
+addPedestal(FOCUS.air, 0x88bbff);
+addPedestal(FOCUS.water, 0x2288ff);
+addPedestal(FOCUS.earth, 0x66aa44);
 
 // Connecting lines between elements (subtle magic circle)
 const circleGeo = new THREE.TorusGeometry(7.8, 0.015, 8, 128);
 const circleMat = new THREE.MeshBasicMaterial({
-  color: 0x44_55_66,
+  color: 0x445566,
   transparent: true,
   opacity: 0.25,
   blending: THREE.AdditiveBlending,
@@ -186,7 +187,7 @@ scene.add(magicCircle);
 
 // Connectors between elements
 const connectorMat = new THREE.LineBasicMaterial({
-  color: 0x55_66_77,
+  color: 0x556677,
   transparent: true,
   opacity: 0.2,
 });
@@ -328,9 +329,7 @@ const clickTargets = [];
 });
 
 canvas.addEventListener("pointerdown", (event) => {
-  if (event.button !== 0) {
-    return;
-  }
+  if (event.button !== 0) return;
   pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
   pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(pointer, camera);
@@ -359,7 +358,7 @@ const clock = new THREE.Clock();
 let ready = false;
 
 function easeInOutCubic(t) {
-  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
 function animate() {
@@ -375,8 +374,7 @@ function animate() {
 
     // Gentle label bob
     for (const [name, label] of Object.entries(labels)) {
-      const base =
-        FOCUS[name].y + (name === "water" ? 3.6 : name === "earth" ? 4.0 : 4.2);
+      const base = FOCUS[name].y + (name === "water" ? 3.6 : name === "earth" ? 4.0 : 4.2);
       label.position.y = base + Math.sin(t * 1.2 + label.position.x) * 0.08;
       label.material.opacity = 0.7 + Math.sin(t * 2 + label.position.z) * 0.1;
     }
@@ -389,9 +387,7 @@ function animate() {
     const e = easeInOutCubic(camT);
     camera.position.lerpVectors(camFrom, camTo, e);
     controls.target.lerpVectors(targetFrom, targetTo, e);
-    if (camT >= 1) {
-      animatingCamera = false;
-    }
+    if (camT >= 1) animatingCamera = false;
   }
 
   controls.update();

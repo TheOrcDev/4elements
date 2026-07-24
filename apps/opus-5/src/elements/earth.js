@@ -1,5 +1,5 @@
-import * as THREE from "three";
-import { NOISE } from "../glsl/noise.js";
+import * as THREE from 'three';
+import { NOISE } from '../glsl/noise.js';
 
 /**
  * EARTH — a ridged-multifractal planetoid with molten veins.
@@ -247,12 +247,12 @@ export function createEarth({ radius = 1.6 } = {}) {
   const uniforms = {
     uTime: { value: 0 },
     uRadius: { value: radius },
-    uAmp: { value: 0.3 },
+    uAmp: { value: 0.30 },
     uKeyDir: { value: new THREE.Vector3(0.55, 0.75, 0.38).normalize() },
-    uKeyColor: { value: new THREE.Color(0xff_f0_dc) },
+    uKeyColor: { value: new THREE.Color(0xfff0dc) },
     uFillDir: { value: new THREE.Vector3(-0.6, 0.15, -0.5).normalize() },
-    uFillColor: { value: new THREE.Color(0x3a_6e_a8) },
-    uLavaColor: { value: new THREE.Color(0xff_5c_14) },
+    uFillColor: { value: new THREE.Color(0x3a6ea8) },
+    uLavaColor: { value: new THREE.Color(0xff5c14) },
   };
 
   const mat = new THREE.ShaderMaterial({
@@ -268,7 +268,7 @@ export function createEarth({ radius = 1.6 } = {}) {
   // ---- crystal shards --------------------------------------------------
   const crystalUniforms = {
     uTime: { value: 0 },
-    uColor: { value: new THREE.Color(0x2f_e0_8a) },
+    uColor: { value: new THREE.Color(0x2fe08a) },
     uKeyDir: { value: uniforms.uKeyDir.value.clone() },
   };
   const crystalMat = new THREE.ShaderMaterial({
@@ -289,27 +289,15 @@ export function createEarth({ radius = 1.6 } = {}) {
   for (let i = 0; i < CRYSTAL_COUNT; i++) {
     const m = new THREE.Mesh(shardGeo, crystalMat);
     const s = 0.05 + Math.random() * 0.085;
-    m.scale.set(
-      s * (0.5 + Math.random() * 0.5),
-      s * (1.8 + Math.random() * 1.5),
-      s * (0.5 + Math.random() * 0.5)
-    );
+    m.scale.set(s * (0.5 + Math.random() * 0.5), s * (1.8 + Math.random() * 1.5), s * (0.5 + Math.random() * 0.5));
 
-    const dir = new THREE.Vector3(
-      Math.random() - 0.5,
-      (Math.random() - 0.5) * 0.65,
-      Math.random() - 0.5
-    ).normalize();
+    const dir = new THREE.Vector3(Math.random() - 0.5, (Math.random() - 0.5) * 0.65, Math.random() - 0.5).normalize();
     m.position.copy(dir).multiplyScalar(radius * (1.02 + Math.random() * 0.28));
     m.lookAt(0, 0, 0);
     m.rotateX(Math.PI / 2);
     m.rotation.z = Math.random() * Math.PI;
 
-    crystals.push({
-      mesh: m,
-      wobble: Math.random() * Math.PI * 2,
-      base: m.position.clone(),
-    });
+    crystals.push({ mesh: m, wobble: Math.random() * Math.PI * 2, base: m.position.clone() });
     crystalOrbit.add(m);
   }
 
@@ -324,10 +312,10 @@ export function createEarth({ radius = 1.6 } = {}) {
     mspeed[i] = 0.4 + Math.random() * 1.4;
     mrad[i] = radius * (1.15 + Math.random() * 0.85);
   }
-  mg.setAttribute("position", new THREE.BufferAttribute(mpos, 3));
-  mg.setAttribute("aPhase", new THREE.BufferAttribute(mphase, 1));
-  mg.setAttribute("aSpeed", new THREE.BufferAttribute(mspeed, 1));
-  mg.setAttribute("aRadius", new THREE.BufferAttribute(mrad, 1));
+  mg.setAttribute('position', new THREE.BufferAttribute(mpos, 3));
+  mg.setAttribute('aPhase', new THREE.BufferAttribute(mphase, 1));
+  mg.setAttribute('aSpeed', new THREE.BufferAttribute(mspeed, 1));
+  mg.setAttribute('aRadius', new THREE.BufferAttribute(mrad, 1));
 
   const moteMat = new THREE.ShaderMaterial({
     uniforms: {
@@ -345,10 +333,10 @@ export function createEarth({ radius = 1.6 } = {}) {
   group.add(motes);
 
   return {
-    name: "earth",
+    name: 'earth',
     group,
     radius,
-    color: new THREE.Color(0x57_d9_8a),
+    color: new THREE.Color(0x57d98a),
     hitRadius: radius * 1.2,
 
     update(t) {

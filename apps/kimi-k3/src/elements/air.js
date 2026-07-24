@@ -1,22 +1,16 @@
-import * as THREE from "three";
+import * as THREE from 'three';
 
 // Soft irregular cloud-puff sprite, drawn once on a canvas (no external assets).
 function makePuffTexture() {
   const s = 128;
-  const canvas = document.createElement("canvas");
+  const canvas = document.createElement('canvas');
   canvas.width = canvas.height = s;
-  const ctx = canvas.getContext("2d");
-  const lobes = [
-    [64, 70, 46],
-    [42, 66, 30],
-    [86, 64, 30],
-    [58, 48, 28],
-    [74, 52, 24],
-  ];
+  const ctx = canvas.getContext('2d');
+  const lobes = [[64, 70, 46], [42, 66, 30], [86, 64, 30], [58, 48, 28], [74, 52, 24]];
   for (const [x, y, r] of lobes) {
     const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-    g.addColorStop(0, "rgba(255,255,255,0.55)");
-    g.addColorStop(1, "rgba(255,255,255,0)");
+    g.addColorStop(0, 'rgba(255,255,255,0.55)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, s, s);
   }
@@ -32,10 +26,7 @@ export function createAir(originX = 0) {
   // ---------- vortex: ~5000 swirling particles ----------
   const COUNT = 5000;
   const geo = new THREE.BufferGeometry();
-  geo.setAttribute(
-    "position",
-    new THREE.BufferAttribute(new Float32Array(COUNT * 3), 3)
-  );
+  geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(COUNT * 3), 3));
   const seeds = new Float32Array(COUNT);
   const rands = new Float32Array(COUNT);
   const speeds = new Float32Array(COUNT);
@@ -44,9 +35,9 @@ export function createAir(originX = 0) {
     rands[i] = Math.random();
     speeds[i] = 0.5 + Math.random();
   }
-  geo.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
-  geo.setAttribute("aRand", new THREE.BufferAttribute(rands, 1));
-  geo.setAttribute("aSpeed", new THREE.BufferAttribute(speeds, 1));
+  geo.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1));
+  geo.setAttribute('aRand', new THREE.BufferAttribute(rands, 1));
+  geo.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 1));
 
   const vortexUniforms = {
     uTime: { value: 0 },
@@ -59,7 +50,7 @@ export function createAir(originX = 0) {
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
-    vertexShader: /* glsl */ `
+    vertexShader: /* glsl */`
       uniform float uTime, uHeight, uSize, uPixelRatio;
       attribute float aSeed, aRand, aSpeed;
       varying float vAlpha;
@@ -79,7 +70,7 @@ export function createAir(originX = 0) {
         gl_Position = projectionMatrix * mv;
       }
     `,
-    fragmentShader: /* glsl */ `
+    fragmentShader: /* glsl */`
       varying float vAlpha;
       varying float vH;
       varying float vDepth;
@@ -108,9 +99,7 @@ export function createAir(originX = 0) {
       const t = j / 26;
       const ang = t * Math.PI * 2 * turns + i * 1.05;
       const r = baseR * (0.55 + t * 0.95) + Math.sin(t * 8.0 + i * 2.0) * 0.35;
-      pts.push(
-        new THREE.Vector3(Math.cos(ang) * r, 0.3 + t * hMax, Math.sin(ang) * r)
-      );
+      pts.push(new THREE.Vector3(Math.cos(ang) * r, 0.3 + t * hMax, Math.sin(ang) * r));
     }
     const curve = new THREE.CatmullRomCurve3(pts);
     const tubeGeo = new THREE.TubeGeometry(curve, 240, 0.05, 6, false);
@@ -124,7 +113,7 @@ export function createAir(originX = 0) {
       transparent: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
-      vertexShader: /* glsl */ `
+      vertexShader: /* glsl */`
         varying vec2 vUv;
         varying float vDepth;
         void main() {
@@ -134,7 +123,7 @@ export function createAir(originX = 0) {
           gl_Position = projectionMatrix * mv;
         }
       `,
-      fragmentShader: /* glsl */ `
+      fragmentShader: /* glsl */`
         uniform float uTime, uRepeat, uOffset;
         varying vec2 vUv;
         varying float vDepth;
@@ -178,42 +167,33 @@ export function createAir(originX = 0) {
 
   // ---------- leaves / feathers caught in the swirl ----------
   const leafGeo = new THREE.PlaneGeometry(0.18, 0.1);
-  const leafColors = [0x93_a8_9b, 0xae_be_c4, 0x7b_92_96];
+  const leafColors = [0x93a89b, 0xaebec4, 0x7b9296];
   const leaves = [];
   for (let i = 0; i < 36; i++) {
-    const m = new THREE.Mesh(
-      leafGeo,
-      new THREE.MeshBasicMaterial({
-        color: leafColors[i % 3],
-        transparent: true,
-        opacity: 0.85,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-      })
-    );
+    const m = new THREE.Mesh(leafGeo, new THREE.MeshBasicMaterial({
+      color: leafColors[i % 3],
+      transparent: true,
+      opacity: 0.85,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    }));
     leaves.push({
       mesh: m,
       seed: Math.random(),
       speed: 0.6 + Math.random() * 0.8,
-      spin: new THREE.Vector3(
-        Math.random() * 2,
-        Math.random() * 2,
-        Math.random() * 2
-      ),
+      spin: new THREE.Vector3(Math.random() * 2, Math.random() * 2, Math.random() * 2),
     });
     group.add(m);
   }
 
   // ---------- cool light at the vortex heart ----------
-  const light = new THREE.PointLight(0x6f_d3_ff, 50, 38, 2);
+  const light = new THREE.PointLight(0x6fd3ff, 50, 38, 2);
   light.position.set(0, 4.5, 0);
   group.add(light);
 
   function update(elapsed) {
     vortexUniforms.uTime.value = elapsed;
-    for (const uni of ribbonUniforms) {
-      uni.uTime.value = elapsed;
-    }
+    for (const uni of ribbonUniforms) uni.uTime.value = elapsed;
     for (const c of clouds) {
       const a = c.phase + elapsed * c.speed;
       c.sprite.position.set(
@@ -224,14 +204,10 @@ export function createAir(originX = 0) {
     }
     for (const l of leaves) {
       const h = (l.seed + elapsed * l.speed * 0.09) % 1;
-      const r = 0.55 + 3.3 * h ** 1.3;
+      const r = 0.55 + 3.3 * Math.pow(h, 1.3);
       const ang = l.seed * Math.PI * 2 + elapsed * (2.2 - 0.9 * h);
       l.mesh.position.set(Math.cos(ang) * r, h * 10.5, Math.sin(ang) * r);
-      l.mesh.rotation.set(
-        elapsed * l.spin.x,
-        elapsed * l.spin.y,
-        elapsed * l.spin.z
-      );
+      l.mesh.rotation.set(elapsed * l.spin.x, elapsed * l.spin.y, elapsed * l.spin.z);
     }
   }
 
@@ -240,6 +216,6 @@ export function createAir(originX = 0) {
     update,
     anchor: new THREE.Vector3(originX, 3.4, 13.5),
     target: new THREE.Vector3(originX, 4.6, 0),
-    background: 0x0a_10_18,
+    background: 0x0a1018,
   };
 }

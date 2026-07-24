@@ -1,36 +1,25 @@
-import * as THREE from "three";
+import * as THREE from 'three';
 
 /* ---------- tiny deterministic value-noise util (CPU, init only) ---------- */
 function hash3(x, y, z) {
-  const s = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43_758.545_312_3;
+  const s = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453123;
   return s - Math.floor(s);
 }
-function fade(t) {
-  return t * t * (3 - 2 * t);
-}
+function fade(t) { return t * t * (3 - 2 * t); }
 function valueNoise3(x, y, z) {
-  const xi = Math.floor(x),
-    yi = Math.floor(y),
-    zi = Math.floor(z);
-  const u = fade(x - xi),
-    v = fade(y - yi),
-    w = fade(z - zi);
+  const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
+  const u = fade(x - xi), v = fade(y - yi), w = fade(z - zi);
   let res = 0;
-  for (let dx = 0; dx <= 1; dx++) {
-    for (let dy = 0; dy <= 1; dy++) {
+  for (let dx = 0; dx <= 1; dx++)
+    for (let dy = 0; dy <= 1; dy++)
       for (let dz = 0; dz <= 1; dz++) {
         const weight = (dx ? u : 1 - u) * (dy ? v : 1 - v) * (dz ? w : 1 - w);
         res += weight * hash3(xi + dx, yi + dy, zi + dz);
       }
-    }
-  }
   return res;
 }
 function fbm3(x, y, z, octaves = 4) {
-  let sum = 0,
-    amp = 0.5,
-    freq = 1,
-    norm = 0;
+  let sum = 0, amp = 0.5, freq = 1, norm = 0;
   for (let i = 0; i < octaves; i++) {
     sum += amp * valueNoise3(x * freq, y * freq, z * freq);
     norm += amp;
@@ -40,28 +29,20 @@ function fbm3(x, y, z, octaves = 4) {
   return sum / norm; // 0..1
 }
 
-const R = 3.5; // island radius
+const R = 3.5;      // island radius
 const ISLAND_Y = 3.2; // hover height
 
 // Top half of the island: noise-displaced hemisphere with a flatter mossy top.
 function buildDomeGeometry() {
-  const geo = new THREE.SphereGeometry(
-    R,
-    56,
-    28,
-    0,
-    Math.PI * 2,
-    0,
-    Math.PI / 2
-  );
+  const geo = new THREE.SphereGeometry(R, 56, 28, 0, Math.PI * 2, 0, Math.PI / 2);
   const pos = geo.attributes.position;
   const colors = new Float32Array(pos.count * 3);
   const v = new THREE.Vector3();
   const col = new THREE.Color();
-  const cDark = new THREE.Color(0x24_1a_10);
-  const cMid = new THREE.Color(0x5a_40_26);
-  const cMoss = new THREE.Color(0x4e_6b_2e);
-  const cGrass = new THREE.Color(0x6d_90_40);
+  const cDark = new THREE.Color(0x241a10);
+  const cMid = new THREE.Color(0x5a4026);
+  const cMoss = new THREE.Color(0x4e6b2e);
+  const cGrass = new THREE.Color(0x6d9040);
   for (let i = 0; i < pos.count; i++) {
     v.fromBufferAttribute(pos, i);
     const dir = v.clone().normalize();
@@ -71,19 +52,14 @@ function buildDomeGeometry() {
     v.addScaledVector(dir, (n - 0.5) * 1.2 * rim * plateau);
     pos.setXYZ(i, v.x, v.y, v.z);
     const t = THREE.MathUtils.clamp(v.y / R, 0, 1);
-    if (t < 0.55) {
-      col.lerpColors(cDark, cMid, t / 0.55);
-    } else {
-      col.lerpColors(cMid, cMoss, (t - 0.55) / 0.45);
-    }
-    if (dir.y > 0.7) {
-      col.lerp(cGrass, THREE.MathUtils.clamp((n - 0.35) * 0.9, 0, 1));
-    }
+    if (t < 0.55) col.lerpColors(cDark, cMid, t / 0.55);
+    else col.lerpColors(cMid, cMoss, (t - 0.55) / 0.45);
+    if (dir.y > 0.7) col.lerp(cGrass, THREE.MathUtils.clamp((n - 0.35) * 0.9, 0, 1));
     colors[i * 3] = col.r;
     colors[i * 3 + 1] = col.g;
     colors[i * 3 + 2] = col.b;
   }
-  geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   geo.computeVertexNormals();
   return geo;
 }
@@ -91,14 +67,14 @@ function buildDomeGeometry() {
 // Bottom half: inverted displaced cone (the torn rocky root of the island).
 function buildRootGeometry() {
   const geo = new THREE.ConeGeometry(R * 0.99, 4.4, 44, 18, true);
-  geo.rotateX(Math.PI); // apex down
+  geo.rotateX(Math.PI);      // apex down
   geo.translate(0, -2.2, 0); // rim at y = 0
   const pos = geo.attributes.position;
   const colors = new Float32Array(pos.count * 3);
   const v = new THREE.Vector3();
   const col = new THREE.Color();
-  const cDark = new THREE.Color(0x1c_12_0a);
-  const cMid = new THREE.Color(0x48_33_1d);
+  const cDark = new THREE.Color(0x1c120a);
+  const cMid = new THREE.Color(0x48331d);
   for (let i = 0; i < pos.count; i++) {
     v.fromBufferAttribute(pos, i);
     if (v.y < -0.01) {
@@ -106,8 +82,7 @@ function buildRootGeometry() {
       const depth = -v.y / 4.4;
       const n = fbm3(v.x * 0.9 + 3.1, v.y * 0.9, v.z * 0.9 - 2.2, 4);
       v.addScaledVector(radial, (n - 0.5) * 1.5 * (1 - depth * 0.55));
-      v.y +=
-        (fbm3(v.x * 1.7, v.y * 1.7 + 9.4, v.z * 1.7, 3) - 0.5) * 0.5 * depth;
+      v.y += (fbm3(v.x * 1.7, v.y * 1.7 + 9.4, v.z * 1.7, 3) - 0.5) * 0.5 * depth;
       pos.setXYZ(i, v.x, v.y, v.z);
     }
     col.lerpColors(cDark, cMid, THREE.MathUtils.clamp(1 + v.y / 4.4, 0, 1)); // darker toward the tip
@@ -115,7 +90,7 @@ function buildRootGeometry() {
     colors[i * 3 + 1] = col.g;
     colors[i * 3 + 2] = col.b;
   }
-  geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   geo.computeVertexNormals();
   return geo;
 }
@@ -141,22 +116,8 @@ export function createEarth(originX = 0) {
   // ---------- crystals embedded in the top ----------
   const crystalGeo = new THREE.OctahedronGeometry(0.5, 0);
   const baseCrystalMats = [
-    new THREE.MeshStandardMaterial({
-      color: 0x3a_24_08,
-      emissive: 0xff_9e_1f,
-      emissiveIntensity: 2.2,
-      roughness: 0.15,
-      metalness: 0.2,
-      flatShading: true,
-    }), // amber
-    new THREE.MeshStandardMaterial({
-      color: 0x0a_2e_1a,
-      emissive: 0x2f_e0_7a,
-      emissiveIntensity: 2.0,
-      roughness: 0.15,
-      metalness: 0.2,
-      flatShading: true,
-    }), // emerald
+    new THREE.MeshStandardMaterial({ color: 0x3a2408, emissive: 0xff9e1f, emissiveIntensity: 2.2, roughness: 0.15, metalness: 0.2, flatShading: true }), // amber
+    new THREE.MeshStandardMaterial({ color: 0x0a2e1a, emissive: 0x2fe07a, emissiveIntensity: 2.0, roughness: 0.15, metalness: 0.2, flatShading: true }), // emerald
   ];
   const crystals = [];
   const NC = 7;
@@ -170,22 +131,14 @@ export function createEarth(originX = 0) {
       Math.sqrt(Math.max(0.4, R * R - rr * rr)) - 0.35, // sit slightly embedded in the dome
       Math.sin(ang) * rr
     );
-    m.scale.set(
-      0.7 + Math.random() * 0.5,
-      1.9 + Math.random() * 1.1,
-      0.7 + Math.random() * 0.5
-    );
-    m.rotation.set(
-      (Math.random() - 0.5) * 0.5,
-      Math.random() * Math.PI,
-      (Math.random() - 0.5) * 0.5
-    );
+    m.scale.set(0.7 + Math.random() * 0.5, 1.9 + Math.random() * 1.1, 0.7 + Math.random() * 0.5);
+    m.rotation.set((Math.random() - 0.5) * 0.5, Math.random() * Math.PI, (Math.random() - 0.5) * 0.5);
     island.add(m);
     crystals.push({ mesh: m, phase: Math.random() * Math.PI * 2 });
   }
 
   // warm light radiating from the crystal cluster
-  const crystalLight = new THREE.PointLight(0xff_b1_4d, 45, 28, 2);
+  const crystalLight = new THREE.PointLight(0xffb14d, 45, 28, 2);
   crystalLight.position.set(0, 1.4, 0);
   island.add(crystalLight);
 
@@ -193,11 +146,7 @@ export function createEarth(originX = 0) {
   const ROCK_COUNT = 40;
   const rocks = new THREE.InstancedMesh(
     new THREE.DodecahedronGeometry(0.32, 0),
-    new THREE.MeshStandardMaterial({
-      color: 0x6d_51_36,
-      flatShading: true,
-      roughness: 1,
-    }),
+    new THREE.MeshStandardMaterial({ color: 0x6d5136, flatShading: true, roughness: 1 }),
     ROCK_COUNT
   );
   const rockSpecs = [];
@@ -209,13 +158,8 @@ export function createEarth(originX = 0) {
       speed: (0.08 + Math.random() * 0.22) * (Math.random() < 0.5 ? 1 : -1),
       scale: 0.35 + Math.random() * 1.1,
       bob: Math.random() * Math.PI * 2,
-      tumble: new THREE.Vector3(
-        Math.random() - 0.5,
-        Math.random() - 0.5,
-        Math.random() - 0.5
-      )
-        .normalize()
-        .multiplyScalar(0.4 + Math.random() * 0.8),
+      tumble: new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5)
+        .normalize().multiplyScalar(0.4 + Math.random() * 0.8),
     });
   }
   group.add(rocks);
@@ -224,10 +168,7 @@ export function createEarth(originX = 0) {
   // ---------- slow warm dust drifting around ----------
   const DCOUNT = 200;
   const dgeo = new THREE.BufferGeometry();
-  dgeo.setAttribute(
-    "position",
-    new THREE.BufferAttribute(new Float32Array(DCOUNT * 3), 3)
-  );
+  dgeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(DCOUNT * 3), 3));
   const dSeeds = new Float32Array(DCOUNT);
   const dSpeeds = new Float32Array(DCOUNT);
   const dOffsets = new Float32Array(DCOUNT * 3);
@@ -240,20 +181,17 @@ export function createEarth(originX = 0) {
     dOffsets[i * 3 + 1] = ISLAND_Y - 2 + Math.random() * 5.5;
     dOffsets[i * 3 + 2] = Math.sin(ang) * rr;
   }
-  dgeo.setAttribute("aSeed", new THREE.BufferAttribute(dSeeds, 1));
-  dgeo.setAttribute("aSpeed", new THREE.BufferAttribute(dSpeeds, 1));
-  dgeo.setAttribute("aOffset", new THREE.BufferAttribute(dOffsets, 3));
+  dgeo.setAttribute('aSeed', new THREE.BufferAttribute(dSeeds, 1));
+  dgeo.setAttribute('aSpeed', new THREE.BufferAttribute(dSpeeds, 1));
+  dgeo.setAttribute('aOffset', new THREE.BufferAttribute(dOffsets, 3));
 
-  const dustUniforms = {
-    uTime: { value: 0 },
-    uPixelRatio: { value: pixelRatio },
-  };
+  const dustUniforms = { uTime: { value: 0 }, uPixelRatio: { value: pixelRatio } };
   const dustMat = new THREE.ShaderMaterial({
     uniforms: dustUniforms,
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
-    vertexShader: /* glsl */ `
+    vertexShader: /* glsl */`
       uniform float uTime, uPixelRatio;
       attribute float aSeed, aSpeed;
       attribute vec3 aOffset;
@@ -272,7 +210,7 @@ export function createEarth(originX = 0) {
         gl_Position = projectionMatrix * mv;
       }
     `,
-    fragmentShader: /* glsl */ `
+    fragmentShader: /* glsl */`
       varying float vA;
       varying float vDepth;
       void main() {
@@ -291,8 +229,7 @@ export function createEarth(originX = 0) {
     island.position.y = ISLAND_Y + Math.sin(elapsed * 0.5) * 0.35;
     island.rotation.y = elapsed * 0.05;
     for (const c of crystals) {
-      c.mesh.material.emissiveIntensity =
-        2.1 + Math.sin(elapsed * 1.7 + c.phase) * 0.9;
+      c.mesh.material.emissiveIntensity = 2.1 + Math.sin(elapsed * 1.7 + c.phase) * 0.9;
     }
     for (let i = 0; i < ROCK_COUNT; i++) {
       const s = rockSpecs[i];
@@ -302,11 +239,7 @@ export function createEarth(originX = 0) {
         s.y + Math.sin(elapsed * 0.6 + s.bob) * 0.35,
         Math.sin(a) * s.r
       );
-      dummy.rotation.set(
-        s.tumble.x * elapsed,
-        s.tumble.y * elapsed,
-        s.tumble.z * elapsed
-      );
+      dummy.rotation.set(s.tumble.x * elapsed, s.tumble.y * elapsed, s.tumble.z * elapsed);
       dummy.scale.setScalar(s.scale);
       dummy.updateMatrix();
       rocks.setMatrixAt(i, dummy.matrix);
@@ -320,6 +253,6 @@ export function createEarth(originX = 0) {
     update,
     anchor: new THREE.Vector3(originX, 2.7, 12.5),
     target: new THREE.Vector3(originX, 3.7, 0),
-    background: 0x07_0b_06,
+    background: 0x070b06,
   };
 }

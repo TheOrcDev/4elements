@@ -1,5 +1,5 @@
-import * as THREE from "three";
-import { NOISE } from "../glsl/noise.js";
+import * as THREE from 'three';
+import { NOISE } from '../glsl/noise.js';
 
 /**
  * WATER — displaced sphere with genuine environment reflection + refraction.
@@ -222,10 +222,10 @@ export function createWater({ radius = 1.5 } = {}) {
     uRadius: { value: radius },
     uAmp: { value: 1.0 },
     uEnv: { value: cubeRT.texture },
-    uShallow: { value: new THREE.Color(0x39_d5_ff) },
-    uDeep: { value: new THREE.Color(0x02_13_2e) },
+    uShallow: { value: new THREE.Color(0x39d5ff) },
+    uDeep: { value: new THREE.Color(0x02132e) },
     uKeyDir: { value: new THREE.Vector3(0.45, 0.82, 0.35).normalize() },
-    uKeyColor: { value: new THREE.Color(0xdf_ef_ff) },
+    uKeyColor: { value: new THREE.Color(0xdfefff) },
     uFireDir: { value: new THREE.Vector3(1, 0.1, 0).normalize() },
   };
 
@@ -256,11 +256,7 @@ export function createWater({ radius = 1.5 } = {}) {
     pos[i * 3 + 1] = u;
     pos[i * 3 + 2] = s * Math.sin(th);
 
-    const a = new THREE.Vector3(
-      Math.random() - 0.5,
-      Math.random() - 0.5,
-      Math.random() - 0.5
-    ).normalize();
+    const a = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
     axis[i * 3 + 0] = a.x;
     axis[i * 3 + 1] = a.y;
     axis[i * 3 + 2] = a.z;
@@ -270,11 +266,11 @@ export function createWater({ radius = 1.5 } = {}) {
     scale[i] = Math.random();
   }
 
-  sg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  sg.setAttribute("aAxis", new THREE.BufferAttribute(axis, 3));
-  sg.setAttribute("aPhase", new THREE.BufferAttribute(phase, 1));
-  sg.setAttribute("aSpeed", new THREE.BufferAttribute(speed, 1));
-  sg.setAttribute("aScale", new THREE.BufferAttribute(scale, 1));
+  sg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  sg.setAttribute('aAxis', new THREE.BufferAttribute(axis, 3));
+  sg.setAttribute('aPhase', new THREE.BufferAttribute(phase, 1));
+  sg.setAttribute('aSpeed', new THREE.BufferAttribute(speed, 1));
+  sg.setAttribute('aScale', new THREE.BufferAttribute(scale, 1));
 
   const sprayMat = new THREE.ShaderMaterial({
     uniforms: {
@@ -296,10 +292,10 @@ export function createWater({ radius = 1.5 } = {}) {
   let frame = 0;
 
   return {
-    name: "water",
+    name: 'water',
     group,
     radius,
-    color: new THREE.Color(0x2e_c8_ff),
+    color: new THREE.Color(0x2ec8ff),
     hitRadius: radius * 1.1,
 
     update(t) {
@@ -312,9 +308,7 @@ export function createWater({ radius = 1.5 } = {}) {
     updateEnvironment(renderer, scene) {
       // Every third frame is plenty — reflections of moving fire still read as
       // live, and we skip two thirds of six extra scene renders.
-      if (frame++ % 3 !== 0) {
-        return;
-      }
+      if (frame++ % 3 !== 0) return;
 
       // Point sprites size themselves in device pixels, so on a 256px cube face
       // they cover roughly ten times the frame they do on the main canvas —
@@ -335,9 +329,7 @@ export function createWater({ radius = 1.5 } = {}) {
       cubeCamera.update(renderer, scene);
 
       body.visible = true;
-      for (const o of hidden) {
-        o.visible = true;
-      }
+      for (const o of hidden) o.visible = true;
     },
 
     setPixelRatio(pr) {

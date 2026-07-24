@@ -1,0 +1,19 @@
+{
+  "name": "@4elements/fable-5",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Fable 5 — Four Elements, an interactive Three.js scene with custom GLSL shaders and GPU particles",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4176"
+  },
+  "dependencies": {
+    "@fontsource/cinzel": "^5.2.5",
+    "three": "^0.182.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.0"
+  }
+}

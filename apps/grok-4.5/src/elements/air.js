@@ -9,7 +9,7 @@ export function createAir(position = new THREE.Vector3(0, 0, 0)) {
   group.name = "air";
 
   // Soft ambient light
-  const airLight = new THREE.PointLight(0xaa_cc_ff, 3, 14, 2);
+  const airLight = new THREE.PointLight(0xaaccff, 3, 14, 2);
   airLight.position.set(0, 1.5, 0);
   group.add(airLight);
 
@@ -119,19 +119,11 @@ export function createAir(position = new THREE.Vector3(0, 0, 0)) {
       const angle = baseAngle + t * Math.PI * 4;
       const rad = radius * (0.65 + Math.sin(t * Math.PI) * 0.55);
       const y = yOff + t * pitch - pitch * 0.5;
-      points.push(
-        new THREE.Vector3(Math.cos(angle) * rad, y, Math.sin(angle) * rad)
-      );
+      points.push(new THREE.Vector3(Math.cos(angle) * rad, y, Math.sin(angle) * rad));
     }
 
     const curve = new THREE.CatmullRomCurve3(points);
-    const tubeGeo = new THREE.TubeGeometry(
-      curve,
-      80,
-      0.01 + (r % 3) * 0.005,
-      5,
-      false
-    );
+    const tubeGeo = new THREE.TubeGeometry(curve, 80, 0.01 + (r % 3) * 0.005, 5, false);
     const tubeMat = new THREE.MeshBasicMaterial({
       color: new THREE.Color().setHSL(0.55 + r * 0.012, 0.5, 0.72),
       transparent: true,
@@ -188,7 +180,7 @@ export function createAir(position = new THREE.Vector3(0, 0, 0)) {
   // Inner swirl sphere
   const innerGeo = new THREE.IcosahedronGeometry(0.28, 2);
   const innerMat = new THREE.MeshBasicMaterial({
-    color: 0xcc_ee_ff,
+    color: 0xcceeff,
     transparent: true,
     opacity: 0.25,
     wireframe: true,
@@ -200,7 +192,7 @@ export function createAir(position = new THREE.Vector3(0, 0, 0)) {
   // Ground swirl ring
   const ringGeo = new THREE.TorusGeometry(1.3, 0.02, 8, 64);
   const ringMat = new THREE.MeshBasicMaterial({
-    color: 0x88_bb_ff,
+    color: 0x88bbff,
     transparent: true,
     opacity: 0.3,
     blending: THREE.AdditiveBlending,

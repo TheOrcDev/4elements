@@ -1,7 +1,7 @@
-import * as THREE from "three";
+import * as THREE from 'three';
 
 // Shared water shading: depth-tinted body, fresnel sky rim, hot sun glint, crest foam.
-const waterFragment = /* glsl */ `
+const waterFragment = /* glsl */`
   uniform vec3 uSunDir, uDeepColor, uShallowColor, uSkyColor, uSunColor;
   varying vec3 vNormal;
   varying vec3 vWorldPos;
@@ -27,7 +27,7 @@ const waterFragment = /* glsl */ `
 `;
 
 // Ocean vertex shader: sum of 5 Gerstner waves with analytic normals (GPU Gems 1).
-const oceanVertex = /* glsl */ `
+const oceanVertex = /* glsl */`
   uniform float uTime;
   varying vec3 vNormal;
   varying vec3 vWorldPos;
@@ -68,7 +68,7 @@ const oceanVertex = /* glsl */ `
 `;
 
 // Orb vertex shader: animated 3D value-noise displacement, same varyings as the ocean.
-const orbVertex = /* glsl */ `
+const orbVertex = /* glsl */`
   uniform float uTime;
   varying vec3 vNormal;
   varying vec3 vWorldPos;
@@ -103,14 +103,17 @@ const orbVertex = /* glsl */ `
 `;
 
 function waterUniforms() {
-  return Object.assign(THREE.UniformsUtils.clone(THREE.UniformsLib.fog), {
-    uTime: { value: 0 },
-    uSunDir: { value: new THREE.Vector3(0.45, 0.75, 0.35).normalize() },
-    uDeepColor: { value: new THREE.Color(0x03_20_30) },
-    uShallowColor: { value: new THREE.Color(0x0e_5f_6e) },
-    uSkyColor: { value: new THREE.Color(0x9f_c6_d8) },
-    uSunColor: { value: new THREE.Color(0xff_f2_cf) },
-  });
+  return Object.assign(
+    THREE.UniformsUtils.clone(THREE.UniformsLib.fog),
+    {
+      uTime: { value: 0 },
+      uSunDir: { value: new THREE.Vector3(0.45, 0.75, 0.35).normalize() },
+      uDeepColor: { value: new THREE.Color(0x032030) },
+      uShallowColor: { value: new THREE.Color(0x0e5f6e) },
+      uSkyColor: { value: new THREE.Color(0x9fc6d8) },
+      uSunColor: { value: new THREE.Color(0xfff2cf) },
+    }
+  );
 }
 
 export function createWater(originX = 0) {
@@ -122,15 +125,12 @@ export function createWater(originX = 0) {
   const oceanGeo = new THREE.PlaneGeometry(70, 70, 180, 180);
   oceanGeo.rotateX(-Math.PI / 2); // lie in the XZ plane, displaced along +Y in the shader
   const oceanUniforms = waterUniforms();
-  const ocean = new THREE.Mesh(
-    oceanGeo,
-    new THREE.ShaderMaterial({
-      uniforms: oceanUniforms,
-      vertexShader: oceanVertex,
-      fragmentShader: waterFragment,
-      fog: true,
-    })
-  );
+  const ocean = new THREE.Mesh(oceanGeo, new THREE.ShaderMaterial({
+    uniforms: oceanUniforms,
+    vertexShader: oceanVertex,
+    fragmentShader: waterFragment,
+    fog: true,
+  }));
   group.add(ocean);
 
   // ---------- floating water orb ----------
@@ -150,10 +150,7 @@ export function createWater(originX = 0) {
   // ---------- mist droplets drifting above the surface ----------
   const MCOUNT = 300;
   const mgeo = new THREE.BufferGeometry();
-  mgeo.setAttribute(
-    "position",
-    new THREE.BufferAttribute(new Float32Array(MCOUNT * 3), 3)
-  );
+  mgeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(MCOUNT * 3), 3));
   const mSeeds = new Float32Array(MCOUNT);
   const mSpeeds = new Float32Array(MCOUNT);
   const mOffsets = new Float32Array(MCOUNT * 3);
@@ -166,19 +163,16 @@ export function createWater(originX = 0) {
     mOffsets[i * 3 + 1] = 0.2 + Math.random() * 0.6;
     mOffsets[i * 3 + 2] = Math.sin(ang) * rr;
   }
-  mgeo.setAttribute("aSeed", new THREE.BufferAttribute(mSeeds, 1));
-  mgeo.setAttribute("aSpeed", new THREE.BufferAttribute(mSpeeds, 1));
-  mgeo.setAttribute("aOffset", new THREE.BufferAttribute(mOffsets, 3));
+  mgeo.setAttribute('aSeed', new THREE.BufferAttribute(mSeeds, 1));
+  mgeo.setAttribute('aSpeed', new THREE.BufferAttribute(mSpeeds, 1));
+  mgeo.setAttribute('aOffset', new THREE.BufferAttribute(mOffsets, 3));
 
-  const mistUniforms = {
-    uTime: { value: 0 },
-    uPixelRatio: { value: pixelRatio },
-  };
+  const mistUniforms = { uTime: { value: 0 }, uPixelRatio: { value: pixelRatio } };
   const mistMat = new THREE.ShaderMaterial({
     uniforms: mistUniforms,
     transparent: true,
     depthWrite: false,
-    vertexShader: /* glsl */ `
+    vertexShader: /* glsl */`
       uniform float uTime, uPixelRatio;
       attribute float aSeed, aSpeed;
       attribute vec3 aOffset;
@@ -198,7 +192,7 @@ export function createWater(originX = 0) {
         gl_Position = projectionMatrix * mv;
       }
     `,
-    fragmentShader: /* glsl */ `
+    fragmentShader: /* glsl */`
       varying float vA;
       varying float vDepth;
       void main() {
@@ -214,7 +208,7 @@ export function createWater(originX = 0) {
   group.add(mist);
 
   // ---------- cool light above the orb ----------
-  const light = new THREE.PointLight(0x4d_8f_d1, 55, 35, 2);
+  const light = new THREE.PointLight(0x4d8fd1, 55, 35, 2);
   light.position.set(0, 6.5, 0);
   group.add(light);
 
@@ -231,6 +225,6 @@ export function createWater(originX = 0) {
     update,
     anchor: new THREE.Vector3(originX, 2.8, 13),
     target: new THREE.Vector3(originX, 3.0, 0),
-    background: 0x02_0b_16,
+    background: 0x020b16,
   };
 }

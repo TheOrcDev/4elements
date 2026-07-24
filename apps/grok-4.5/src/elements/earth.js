@@ -8,11 +8,11 @@ export function createEarth(position = new THREE.Vector3(0, 0, 0)) {
   group.position.copy(position);
   group.name = "earth";
 
-  const earthLight = new THREE.PointLight(0x88_aa_44, 3, 14, 2);
+  const earthLight = new THREE.PointLight(0x88aa44, 3, 14, 2);
   earthLight.position.set(0, 1.2, 0);
   group.add(earthLight);
 
-  const crystalLight = new THREE.PointLight(0x66_ff_aa, 2, 8, 2);
+  const crystalLight = new THREE.PointLight(0x66ffaa, 2, 8, 2);
   crystalLight.position.set(0.3, 1.5, 0.2);
   group.add(crystalLight);
 
@@ -32,7 +32,7 @@ export function createEarth(position = new THREE.Vector3(0, 0, 0)) {
   coreGeo.computeVertexNormals();
 
   const coreMat = new THREE.MeshStandardMaterial({
-    color: 0x5a_4a_38,
+    color: 0x5a4a38,
     roughness: 0.92,
     metalness: 0.08,
     flatShading: true,
@@ -85,10 +85,7 @@ export function createEarth(position = new THREE.Vector3(0, 0, 0)) {
 
   for (let i = 0; i < rockCount; i++) {
     const detail = i % 3 === 0 ? 0 : 1;
-    const geo = new THREE.DodecahedronGeometry(
-      0.12 + Math.random() * 0.22,
-      detail
-    );
+    const geo = new THREE.DodecahedronGeometry(0.12 + Math.random() * 0.22, detail);
     const p = geo.attributes.position;
     for (let j = 0; j < p.count; j++) {
       const v = new THREE.Vector3().fromBufferAttribute(p, j);
@@ -112,11 +109,7 @@ export function createEarth(position = new THREE.Vector3(0, 0, 0)) {
       });
     } else {
       mat = new THREE.MeshStandardMaterial({
-        color: new THREE.Color().setHSL(
-          0.08,
-          0.25,
-          0.25 + Math.random() * 0.15
-        ),
+        color: new THREE.Color().setHSL(0.08, 0.25, 0.25 + Math.random() * 0.15),
         roughness: 0.9,
         metalness: 0.05,
         flatShading: true,
@@ -128,11 +121,7 @@ export function createEarth(position = new THREE.Vector3(0, 0, 0)) {
     const radius = 1.1 + Math.random() * 0.7;
     const y = 0.4 + Math.random() * 1.8;
     mesh.position.set(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
-    mesh.rotation.set(
-      Math.random() * Math.PI,
-      Math.random() * Math.PI,
-      Math.random() * Math.PI
-    );
+    mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
     mesh.userData = {
       angle,
       radius,
@@ -164,7 +153,7 @@ export function createEarth(position = new THREE.Vector3(0, 0, 0)) {
   }
   baseGeo.computeVertexNormals();
   const baseMat = new THREE.MeshStandardMaterial({
-    color: 0x3d_34_28,
+    color: 0x3d3428,
     roughness: 0.95,
     metalness: 0.05,
     flatShading: true,
@@ -177,7 +166,7 @@ export function createEarth(position = new THREE.Vector3(0, 0, 0)) {
   // Ground grass ring
   const grassGeo = new THREE.RingGeometry(1.3, 1.9, 48);
   const grassMat = new THREE.MeshStandardMaterial({
-    color: 0x2d_5a_28,
+    color: 0x2d5a28,
     roughness: 1,
     metalness: 0,
     side: THREE.DoubleSide,
@@ -192,11 +181,7 @@ export function createEarth(position = new THREE.Vector3(0, 0, 0)) {
   // Crystal spikes on top of core
   const spikes = [];
   for (let i = 0; i < 6; i++) {
-    const spikeGeo = new THREE.ConeGeometry(
-      0.06 + Math.random() * 0.04,
-      0.35 + Math.random() * 0.3,
-      5
-    );
+    const spikeGeo = new THREE.ConeGeometry(0.06 + Math.random() * 0.04, 0.35 + Math.random() * 0.3, 5);
     const spikeMat = new THREE.MeshPhysicalMaterial({
       color: new THREE.Color().setHSL(0.4 + Math.random() * 0.08, 0.75, 0.55),
       roughness: 0.1,
@@ -205,17 +190,13 @@ export function createEarth(position = new THREE.Vector3(0, 0, 0)) {
       thickness: 0.4,
       transparent: true,
       opacity: 0.9,
-      emissive: new THREE.Color(0x11_44_22),
+      emissive: new THREE.Color(0x114422),
       emissiveIntensity: 0.3,
       flatShading: true,
     });
     const spike = new THREE.Mesh(spikeGeo, spikeMat);
     const a = (i / 6) * Math.PI * 2 + 0.2;
-    spike.position.set(
-      Math.cos(a) * 0.35,
-      1.55 + Math.random() * 0.15,
-      Math.sin(a) * 0.35
-    );
+    spike.position.set(Math.cos(a) * 0.35, 1.55 + Math.random() * 0.15, Math.sin(a) * 0.35);
     spike.rotation.z = (Math.random() - 0.5) * 0.4;
     spike.rotation.x = (Math.random() - 0.5) * 0.4;
     group.add(spike);

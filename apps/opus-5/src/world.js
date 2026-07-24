@@ -1,5 +1,5 @@
-import * as THREE from "three";
-import { NOISE } from "./glsl/noise.js";
+import * as THREE from 'three';
+import { NOISE } from './glsl/noise.js';
 
 /**
  * The stage the elements stand on: an obsidian floor, a rune circle, a star
@@ -201,7 +201,7 @@ export function createWorld({ elements, ringRadius, floorY }) {
       uniforms: floorUniforms,
       vertexShader: floorVert,
       fragmentShader: floorFrag,
-    })
+    }),
   );
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = floorY;
@@ -216,7 +216,7 @@ export function createWorld({ elements, ringRadius, floorY }) {
       fragmentShader: skyFrag,
       side: THREE.BackSide,
       depthWrite: false,
-    })
+    }),
   );
   group.add(sky);
 
@@ -227,8 +227,8 @@ export function createWorld({ elements, ringRadius, floorY }) {
   const phase = new Float32Array(STAR_COUNT);
   const color = new Float32Array(STAR_COUNT * 3);
 
-  const warm = new THREE.Color(0xff_d9_b0);
-  const cool = new THREE.Color(0xae_cb_ff);
+  const warm = new THREE.Color(0xffd9b0);
+  const cool = new THREE.Color(0xaecbff);
   const tmp = new THREE.Color();
 
   for (let i = 0; i < STAR_COUNT; i++) {
@@ -240,21 +240,19 @@ export function createWorld({ elements, ringRadius, floorY }) {
     pos[i * 3 + 1] = u * r * 0.75 + 12;
     pos[i * 3 + 2] = s * Math.sin(th) * r;
 
-    size[i] = 0.7 + Math.random() ** 3 * 3.2;
+    size[i] = 0.7 + Math.pow(Math.random(), 3) * 3.2;
     phase[i] = Math.random();
 
-    tmp
-      .copy(Math.random() > 0.7 ? warm : cool)
-      .lerp(new THREE.Color(0xff_ff_ff), Math.random() * 0.6);
+    tmp.copy(Math.random() > 0.7 ? warm : cool).lerp(new THREE.Color(0xffffff), Math.random() * 0.6);
     color[i * 3 + 0] = tmp.r;
     color[i * 3 + 1] = tmp.g;
     color[i * 3 + 2] = tmp.b;
   }
 
-  sg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  sg.setAttribute("aSize", new THREE.BufferAttribute(size, 1));
-  sg.setAttribute("aPhase", new THREE.BufferAttribute(phase, 1));
-  sg.setAttribute("aColor", new THREE.BufferAttribute(color, 3));
+  sg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  sg.setAttribute('aSize', new THREE.BufferAttribute(size, 1));
+  sg.setAttribute('aPhase', new THREE.BufferAttribute(phase, 1));
+  sg.setAttribute('aColor', new THREE.BufferAttribute(color, 3));
 
   const starMat = new THREE.ShaderMaterial({
     uniforms: {
@@ -294,7 +292,7 @@ export function createWorld({ elements, ringRadius, floorY }) {
     /** Dim every element's contribution except the focused one. */
     setEmphasis(name) {
       for (let i = 0; i < elements.length; i++) {
-        const on = name === "all" || elements[i].name === name;
+        const on = name === 'all' || elements[i].name === name;
         floorUniforms.uPower.value[i] = on ? 1 : 0.25;
       }
     },
