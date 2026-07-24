@@ -1,6 +1,7 @@
 node_modules/
 dist/
 apps/*/dist/
+apps/playground/public/models/
 .DS_Store
 *.log
 tests/visual/*.png

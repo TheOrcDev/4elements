@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+    <title>Four Elements — Three.js</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="./src/style.css">
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+
+    <div id="loader">
+      <div class="loader-ring"></div>
+      <p>Summoning the elements…</p>
+    </div>
+
+    <header id="hud-top">
+      <h1>FOUR<span>ELEMENTS</span></h1>
+      <p id="subtitle">Real-time volumetric rendering · WebGL</p>
+    </header>
+
+    <div id="readout">
+      <div class="row">
+        <span class="k">focus</span><span class="v" id="r-focus">all</span>
+      </div>
+      <div class="row">
+        <span class="k">fps</span><span class="v" id="r-fps">–</span>
+      </div>
+      <div class="row">
+        <span class="k">particles</span><span class="v" id="r-parts">–</span>
+      </div>
+    </div>
+
+    <nav id="hud-bottom">
+      <button class="elem-btn active" data-target="all">
+        <span class="dot" style="--c:#cfd8ff"></span>All
+      </button>
+      <button class="elem-btn" data-target="fire">
+        <span class="dot" style="--c:#ff6a1f"></span>Fire
+      </button>
+      <button class="elem-btn" data-target="water">
+        <span class="dot" style="--c:#2ec8ff"></span>Water
+      </button>
+      <button class="elem-btn" data-target="earth">
+        <span class="dot" style="--c:#57d98a"></span>Earth
+      </button>
+      <button class="elem-btn" data-target="air">
+        <span class="dot" style="--c:#dff3ff"></span>Air
+      </button>
+    </nav>
+
+    <div id="hint">drag to orbit · scroll to zoom · click an element</div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

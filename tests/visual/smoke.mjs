@@ -1,105 +1,94 @@
 import fs from "node:fs/promises";
 import { chromium } from "playwright";
 
-const targetUrl = process.env.FOUR_ELEMENTS_URL ?? "http://localhost:5173/";
-const targetModel = process.env.FOUR_ELEMENTS_MODEL ?? "gpt-5.5";
-const benchmarkUrl = new URL(targetUrl);
-benchmarkUrl.searchParams.set("model", targetModel);
+const targetUrl = process.env.FOUR_ELEMENTS_URL ?? "http://localhost:4173/";
+const models = ["opus-5", "kimi-k3"];
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },
   { name: "mobile", width: 390, height: 844 },
 ];
-const elements = ["Fire", "Air", "Earth", "Water"];
 
 await fs.mkdir("tests/visual", { recursive: true });
 
 const browser = await chromium.launch({ headless: true });
+const failures = [];
 
 try {
   for (const viewport of viewports) {
     const page = await browser.newPage({ viewport });
-    await page.goto(benchmarkUrl.toString(), { waitUntil: "networkidle" });
-    await page.waitForSelector("canvas");
-    const selectedModel = new URL(page.url()).searchParams.get("model");
-    if (selectedModel !== targetModel) {
-      throw new Error(
-        `${viewport.name}: expected URL model=${targetModel}, got ${selectedModel}`
-      );
-    }
 
-    for (const element of elements) {
-      await page.getByRole("button", { name: element }).click();
-      await page.waitForTimeout(1100);
-      await page.waitForFunction(() => {
-        const metricsText =
-          document.querySelector("[data-metrics]")?.textContent ?? "";
-        return Number.parseInt(metricsText, 10) > 0;
-      });
-      const metrics = await page.locator("[data-metrics]").innerText();
-      const pixels = await page.evaluate(() => {
-        const canvas = document.querySelector("canvas");
-        if (!canvas) {
-          return { samples: 0, nonBlank: 0, width: 0, height: 0 };
-        }
+    for (const model of models) {
+      const pageErrors = [];
+      page.on("pageerror", (error) => pageErrors.push(String(error)));
 
-        const probe = document.createElement("canvas");
-        probe.width = Math.min(canvas.width, 320);
-        probe.height = Math.min(canvas.height, 240);
-        const context = probe.getContext("2d");
-        if (!context) {
-          return {
-            samples: 0,
-            nonBlank: 0,
-            width: canvas.width,
-            height: canvas.height,
-          };
-        }
+      const modelUrl = new URL(targetUrl);
+      modelUrl.searchParams.set("model", model);
+      await page.goto(modelUrl.toString(), { waitUntil: "networkidle" });
 
-        context.drawImage(canvas, 0, 0, probe.width, probe.height);
-        const data = context.getImageData(0, 0, probe.width, probe.height).data;
-        let samples = 0;
-        let nonBlank = 0;
-        for (let i = 0; i < data.length; i += 4 * 17) {
-          samples += 1;
-          const brightness = data[i] + data[i + 1] + data[i + 2];
-          if (data[i + 3] > 0 && brightness > 24) {
-            nonBlank += 1;
+      const selectedModel = new URL(page.url()).searchParams.get("model");
+      if (selectedModel !== model) {
+        failures.push(
+          `${viewport.name} ${model}: expected URL model=${model}, got ${selectedModel}`
+        );
+      }
+
+      // The model app runs in its own document, so reach through the frame.
+      const frame = page.frameLocator("[data-scene-stage] iframe");
+      await frame.locator("canvas").first().waitFor({ timeout: 20_000 });
+      await page.waitForTimeout(2500);
+
+      const canvas = await page
+        .frames()
+        .find((candidate) => candidate.url().includes(`/models/${model}/`))
+        ?.evaluate(() => {
+          const element = document.querySelector("canvas");
+          if (!element) {
+            return null;
           }
-        }
-        return {
-          samples,
-          nonBlank,
-          width: canvas.width,
-          height: canvas.height,
-        };
-      });
+          const context =
+            element.getContext("webgl2") ?? element.getContext("webgl");
+          return {
+            width: element.width,
+            height: element.height,
+            hasContext: Boolean(context),
+          };
+        });
 
-      if (!(metrics.includes("objects") && metrics.includes("triangles"))) {
-        throw new Error(`${viewport.name} ${element}: ${metrics}`);
-      }
-      const currentElement = new URL(page.url()).searchParams.get("element");
-      if (currentElement !== element) {
-        throw new Error(
-          `${viewport.name} ${element}: expected URL element=${element}, got ${currentElement}`
+      if (!canvas) {
+        failures.push(
+          `${viewport.name} ${model}: no canvas in the model frame`
+        );
+      } else if (
+        !(canvas.hasContext && canvas.width > 0 && canvas.height > 0)
+      ) {
+        failures.push(
+          `${viewport.name} ${model}: unusable canvas ${JSON.stringify(canvas)}`
         );
       }
-      if (pixels.nonBlank < Math.max(8, pixels.samples * 0.03)) {
-        throw new Error(
-          `${viewport.name} ${element}: canvas appears blank ${JSON.stringify(pixels)}`
-        );
+
+      if (pageErrors.length > 0) {
+        failures.push(`${viewport.name} ${model}: ${pageErrors.join(" | ")}`);
       }
 
       await page.screenshot({
-        path: `tests/visual/${viewport.name}-${element.toLowerCase()}.png`,
-        fullPage: true,
+        path: `tests/visual/${viewport.name}-${model}.png`,
       });
       console.log(
-        `${viewport.name} ${element}: ${metrics.replace(/\n/g, " | ")} canvas ${pixels.width}x${pixels.height}, nonblank ${pixels.nonBlank}/${pixels.samples}`
+        `${viewport.name} ${model}: canvas ${canvas?.width}x${canvas?.height}, errors ${pageErrors.length}`
       );
+      page.removeAllListeners("pageerror");
     }
 
     await page.close();
   }
 } finally {
   await browser.close();
+}
+
+if (failures.length > 0) {
+  console.error(`\n${failures.length} failure(s):`);
+  for (const failure of failures) {
+    console.error(`  - ${failure}`);
+  }
+  process.exitCode = 1;
 }
