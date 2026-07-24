@@ -43,7 +43,7 @@ A model's entry is a complete, self-contained web app that renders fire, water, 
 
 4. **Register it in the playground** — add an entry to `modelOptions` in `apps/playground/src/main.tsx` with a label, the `<model-id>` value, a one-line summary, and its controls.
 
-5. **Build it with the others** — add it to `build:models` in the root `package.json`, and to `models` in `tests/visual/smoke.mjs`.
+5. **Build it with the others** — add it to `build:models` in `apps/playground/package.json`, and to `models` in `tests/visual/smoke.mjs`. That script is what the playground's `dev` and `build` run first, so the generated output exists before the shell is served.
 
 6. **Verify:**
 

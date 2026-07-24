@@ -9,9 +9,9 @@
   },
   "name": "4elements",
   "scripts": {
-    "dev": "pnpm build:models && pnpm --filter @4elements/playground dev",
-    "build": "pnpm build:models && pnpm --filter @4elements/playground build",
-    "build:models": "pnpm --filter @4elements/opus-5 build && pnpm --filter @4elements/kimi-k3 build",
+    "dev": "pnpm --filter @4elements/playground dev",
+    "build": "pnpm --filter @4elements/playground build",
+    "build:models": "pnpm --filter @4elements/playground build:models",
     "preview": "pnpm --filter @4elements/playground preview",
     "test:visual": "node tests/visual/smoke.mjs",
     "typecheck": "pnpm --filter @4elements/playground typecheck",

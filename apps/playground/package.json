@@ -5,8 +5,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
-    "build": "tsc -p tsconfig.json && vite build",
+    "dev": "pnpm build:models && vite --host 0.0.0.0",
+    "build": "pnpm build:models && tsc -p tsconfig.json && vite build",
+    "build:models": "pnpm --dir ../opus-5 build && pnpm --dir ../kimi-k3 build",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc -p tsconfig.json"
   },

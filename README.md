@@ -17,6 +17,8 @@ Model apps are kept exactly as the model wrote them — their own Three.js versi
 
 Each app builds to `apps/playground/public/models/<model-id>/`, and the playground loads the selected one in an iframe. That isolation is what lets two apps on different Three.js versions coexist, and it keeps each model's post-processing and animation loop intact.
 
+That output is generated, not committed, so the playground's own `dev` and `build` scripts build the model apps first. Deploying works whether the host builds from the repo root or from `apps/playground`.
+
 ## Requirements
 
 - Node.js compatible with Vite 6 and React 19.
