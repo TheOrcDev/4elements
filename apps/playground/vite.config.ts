@@ -5,9 +5,6 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [tailwindcss(), react()],
-  optimizeDeps: {
-    include: ["three", "@react-three/fiber", "@react-three/drei"],
-  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),

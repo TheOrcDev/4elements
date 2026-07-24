@@ -1,160 +1,66 @@
-import {
-  benchmarkPrompts,
-  benchmarkSpecs,
-  defaultModel,
-  type ElementName,
-  elementOrder,
-  type ModelName,
-} from "@4elements/benchmarks";
-import { type RenderStats, SceneRenderer } from "@4elements/renderer";
-import { DownloadIcon } from "@phosphor-icons/react";
+import { ArrowSquareOutIcon } from "@phosphor-icons/react";
 import { useQueryState } from "nuqs";
 import { NuqsAdapter } from "nuqs/adapters/react";
-import { StrictMode, useEffect, useState } from "react";
+import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { GithubStars } from "@/components/github-stars";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import "./styles.css";
 
 const REPO = "TheOrcDev/4elements";
 
-type ModelProvider = "openai" | "anthropic" | "grok" | "other";
+type ModelName = "opus-5" | "kimi-k3";
 
 interface ModelOption {
+  controls: string;
   label: string;
-  provider: ModelProvider;
+  summary: string;
   value: ModelName;
 }
 
-interface ProviderOption {
-  label: string;
-  value: ModelProvider;
-}
-
-const providerOptions: readonly ProviderOption[] = [
-  { label: "OpenAI", value: "openai" },
-  { label: "Anthropic", value: "anthropic" },
-  { label: "Grok", value: "grok" },
-  { label: "Other", value: "other" },
-] as const;
-
 const modelOptions: readonly ModelOption[] = [
-  { label: "5.6 Sol Ultra", provider: "openai", value: "5.6-sol-ultra" },
-  { label: "Terra Ultra", provider: "openai", value: "terra-ultra" },
   {
-    label: "Luna Extra High",
-    provider: "openai",
-    value: "luna-extra-high",
+    label: "Opus 5",
+    value: "opus-5",
+    summary:
+      "Fire, water, earth and air share one stage, each on its own custom GLSL shader — a volumetric raymarched flame, a refracting swell, ridged terrain with magma in the cracks, and 50k particles integrating a curl field.",
+    controls: "Drag to orbit, scroll to zoom, click an element to fly to it.",
   },
-  { label: "GPT 5.5", provider: "openai", value: "gpt-5.5" },
-  { label: "Sonnet 5", provider: "anthropic", value: "sonnet-5" },
-  { label: "Opus 4.8 Max", provider: "anthropic", value: "opus-4.8-max" },
-  { label: "Opus 4.8", provider: "anthropic", value: "opus-4.8" },
-  { label: "Opus 4.7", provider: "anthropic", value: "opus-4.7" },
-  { label: "Sonnet 4.6", provider: "anthropic", value: "sonnet-4.6" },
-  { label: "Grok 4.5", provider: "grok", value: "grok-4.5" },
-  { label: "Grok 4.3", provider: "grok", value: "grok-4.3" },
-  { label: "Fable 5", provider: "anthropic", value: "fable-5" },
-  { label: "Composer 2.5", provider: "other", value: "composer-2.5" },
-  { label: "Kimi K3", provider: "other", value: "kimi-k3" },
+  {
+    label: "Kimi K3",
+    value: "kimi-k3",
+    summary:
+      "Four procedural elemental worlds you move between, each with its own shaders, GPU particles and bloom pass.",
+    controls: "Nav buttons or keys 1–4 / ← →, drag to orbit, scroll to zoom.",
+  },
 ] as const;
 
-function isElementName(value: string): value is ElementName {
-  return elementOrder.includes(value as ElementName);
-}
+const defaultModel: ModelName = "opus-5";
 
 function isModelName(value: string): value is ModelName {
   return modelOptions.some((model) => model.value === value);
 }
 
-function isModelProvider(value: string): value is ModelProvider {
-  return providerOptions.some((provider) => provider.value === value);
-}
-
-function getModelProvider(model: ModelName): ModelProvider {
-  return (
-    modelOptions.find((option) => option.value === model)?.provider ?? "other"
-  );
-}
-
-function getInitialElement(): ElementName {
-  if (typeof window === "undefined") {
-    return "Fire";
-  }
-  const element = new URLSearchParams(window.location.search).get("element");
-  return element && isElementName(element) ? element : "Fire";
-}
-
 function App() {
-  const [elementQuery, setElementQuery] = useQueryState("element", {
-    defaultValue: "Fire",
-    clearOnDefault: false,
-  });
   const [modelQuery, setModelQuery] = useQueryState("model", {
     defaultValue: defaultModel,
     clearOnDefault: false,
   });
-  const selectedElement = isElementName(elementQuery) ? elementQuery : "Fire";
   const selectedModel = isModelName(modelQuery) ? modelQuery : defaultModel;
-  const selectedModelLabel =
-    modelOptions.find((model) => model.value === selectedModel)?.label ??
-    selectedModel;
-  const [activeElement, setActiveElement] = useState<ElementName>(() =>
-    getInitialElement()
-  );
-  const [selectedProvider, setSelectedProvider] = useState<ModelProvider>(() =>
-    getModelProvider(selectedModel)
-  );
-  const filteredModelOptions = modelOptions.filter(
-    (model) => model.provider === selectedProvider
-  );
-  const spec = benchmarkSpecs[selectedModel][activeElement];
-  const [stats, setStats] = useState<RenderStats>({
-    fps: 0,
-    objects: 0,
-    triangles: 0,
-  });
+  const activeModel =
+    modelOptions.find((model) => model.value === selectedModel) ??
+    modelOptions[0];
+  const [isSceneReady, setIsSceneReady] = useState(false);
 
-  useEffect(() => {
-    setActiveElement(selectedElement);
-  }, [selectedElement]);
-
-  useEffect(() => {
-    setSelectedProvider(getModelProvider(selectedModel));
-  }, [selectedModel]);
-
-  const loadElement = (element: ElementName) => {
-    setElementQuery(element);
-    setActiveElement(element);
-  };
+  const sceneUrl = `${import.meta.env.BASE_URL}models/${selectedModel}/index.html`;
 
   const loadModel = (model: string) => {
     if (isModelName(model)) {
+      setIsSceneReady(false);
       setModelQuery(model);
     }
-  };
-
-  const filterByProvider = (provider: string) => {
-    if (isModelProvider(provider)) {
-      setSelectedProvider(provider);
-    }
-  };
-
-  const exportScreenshot = () => {
-    const canvas = document.querySelector<HTMLCanvasElement>(
-      "[data-scene-stage] canvas"
-    );
-    if (!canvas) {
-      return;
-    }
-    const link = document.createElement("a");
-    link.href = canvas.toDataURL("image/png");
-    link.download = `4-elements-${selectedElement.toLowerCase()}-${Date.now()}.png`;
-    link.click();
   };
 
   return (
@@ -175,42 +81,11 @@ function App() {
         <Separator />
 
         <section className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="font-semibold text-sm">Benchmark</h2>
-          </div>
-          <Tabs
-            onValueChange={(value) => loadElement(value as ElementName)}
-            value={selectedElement}
-          >
-            <TabsList aria-label="Element selector">
-              {elementOrder.map((element) => (
-                <TabsTrigger key={element} value={element}>
-                  {element}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-          <p className="text-muted-foreground text-sm">
-            {benchmarkPrompts[selectedElement]}
-          </p>
-        </section>
-
-        <section className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="font-semibold text-sm">Model</h2>
-          </div>
-          <Tabs onValueChange={filterByProvider} value={selectedProvider}>
-            <TabsList aria-label="Model provider filter">
-              {providerOptions.map((provider) => (
-                <TabsTrigger key={provider.value} value={provider.value}>
-                  {provider.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+          <h2 className="font-semibold text-sm">Model</h2>
           <ToggleGroup
             aria-label="Model selector"
-            className="grid w-full grid-cols-2 sm:grid-cols-3"
+            className="grid w-full grid-cols-2"
+            data-model={selectedModel}
             onValueChange={loadModel}
             size="sm"
             spacing={2}
@@ -218,7 +93,7 @@ function App() {
             value={selectedModel}
             variant="outline"
           >
-            {filteredModelOptions.map((model) => (
+            {modelOptions.map((model) => (
               <ToggleGroupItem
                 className="w-full min-w-0 shrink truncate px-2 normal-case tracking-normal"
                 key={model.value}
@@ -228,21 +103,23 @@ function App() {
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
+          <p className="text-muted-foreground text-sm">{activeModel.summary}</p>
         </section>
 
-        <section className="flex flex-col gap-3">
-          <div
-            className="flex items-center justify-between gap-3 text-muted-foreground text-sm"
-            data-metrics
-          >
-            <span>{stats.objects} objects</span>
-            <span>{stats.triangles.toLocaleString()} triangles</span>
-          </div>
+        <Separator />
+
+        <section className="flex flex-col gap-2">
+          <h2 className="font-semibold text-sm">Controls</h2>
+          <p className="text-muted-foreground text-sm">
+            {activeModel.controls}
+          </p>
         </section>
 
-        <Button className="w-full" onClick={exportScreenshot} type="button">
-          <DownloadIcon aria-hidden="true" data-icon="inline-start" />
-          Export screenshot
+        <Button asChild className="mt-auto w-full" variant="outline">
+          <a href={sceneUrl} rel="noopener" target="_blank">
+            <ArrowSquareOutIcon aria-hidden="true" data-icon="inline-start" />
+            Open {activeModel.label} full screen
+          </a>
         </Button>
       </aside>
 
@@ -251,19 +128,24 @@ function App() {
         className="relative h-[58dvh] min-w-0 bg-background md:h-dvh"
         data-scene-stage
       >
-        <Badge
-          className="absolute top-4 right-4 z-10 shadow-sm"
-          variant="secondary"
-        >
-          {stats.fps.toFixed(0)} FPS
-        </Badge>
-        <p
-          aria-live="polite"
-          className="pointer-events-none absolute top-4 left-4 z-10 font-heading font-semibold text-3xl text-white drop-shadow-md md:text-4xl"
-        >
-          {selectedModelLabel}
-        </p>
-        <SceneRenderer onStats={setStats} spec={spec} />
+        {/* Each model app draws its own title and HUD, so the shell stays out
+            of the viewport apart from the load state. */}
+        {isSceneReady ? null : (
+          <p
+            aria-live="polite"
+            className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center text-muted-foreground text-sm"
+          >
+            Loading {activeModel.label}…
+          </p>
+        )}
+        {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: onLoad here is the frame's resource-load event, not a user interaction. */}
+        <iframe
+          className="h-full w-full border-0"
+          key={selectedModel}
+          onLoad={() => setIsSceneReady(true)}
+          src={sceneUrl}
+          title={`${activeModel.label} four elements scene`}
+        />
       </section>
     </main>
   );

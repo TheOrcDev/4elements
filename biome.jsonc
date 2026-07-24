@@ -1,4 +1,13 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["ultracite/biome/core", "ultracite/biome/react"]
+  "extends": ["ultracite/biome/core", "ultracite/biome/react"],
+  "files": {
+    // Each model app is the artifact under test — kept exactly as the model
+    // wrote it, so it is neither linted nor formatted to this repo's standards.
+    "includes": [
+      "!apps/opus-5",
+      "!apps/kimi-k3",
+      "!apps/playground/public/models"
+    ]
+  }
 }

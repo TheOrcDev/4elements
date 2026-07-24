@@ -1,6 +1,6 @@
 # Contributing
 
-ElementBench is early, so the best contributions are small, visible, and reproducible.
+4 Elements is early, so the best contributions are small, visible, and reproducible.
 
 ## Development
 
@@ -12,49 +12,56 @@ pnpm dev
 Before opening a pull request, run:
 
 ```sh
+pnpm check
 pnpm typecheck
 pnpm build
 ```
 
-## Adding a New Model
+## Adding a model
 
-1. **Generate specs** — copy the prompt from [`examples/GENERATION_PROMPT.md`](examples/GENERATION_PROMPT.md) and paste it into the model you want to benchmark. It will output four JSON blocks (Fire, Air, Earth, Water).
+A model's entry is a complete, self-contained web app that renders fire, water, earth and air in real time. Give the model the brief, keep whatever it produces, and wire it in.
 
-2. **Save the JSON files**:
+1. **Put the app in `apps/<model-id>/`** — a Vite app with its own `package.json`. Keep the model's code exactly as generated; do not reformat it or port it onto another model's abstractions. Its dependencies are its own, including the Three.js version.
+
+2. **Point its build at the playground.** In `apps/<model-id>/vite.config.js`:
+
+   ```js
+   base: './',
+   build: {
+     outDir: '../playground/public/models/<model-id>',
+     emptyOutDir: true,
+   },
    ```
-   examples/elements/fire/<model-id>.json
-   examples/elements/air/<model-id>.json
-   examples/elements/earth/<model-id>.json
-   examples/elements/water/<model-id>.json
+
+   The relative `base` matters — the app is served from a subdirectory, so rooted asset URLs will 404.
+
+3. **Exclude it from linting** in `biome.jsonc`, alongside the existing entries:
+
+   ```jsonc
+   "!apps/<model-id>/**"
    ```
 
-3. **Register in `packages/benchmarks/src/index.ts`**:
-   - Add `"<model-id>"` to the `ModelName` union (line 4).
-   - Define four spec constants from your JSON files.
-   - Add an entry to `benchmarkSpecs` that wraps each with `sceneSpecSchema.parse()`.
+4. **Register it in the playground** — add an entry to `modelOptions` in `apps/playground/src/main.tsx` with a label, the `<model-id>` value, a one-line summary, and its controls.
 
-4. **Add to the UI in `apps/playground/src/main.tsx`**:
-   - Append `{ label: "Model Name", value: "<model-id>" }` to `modelOptions`.
+5. **Build it with the others** — add it to `build:models` in the root `package.json`, and to `models` in `tests/visual/smoke.mjs`.
 
-5. **Verify**:
+6. **Verify:**
+
    ```sh
-   pnpm typecheck
-   pnpm dev
-   # open http://localhost:5174/?element=Fire&model=<model-id>
+   pnpm build
+   pnpm preview
+   pnpm test:visual
    ```
 
-## Scene Specs
+   Then open `http://localhost:4173/?model=<model-id>`.
 
-Scene specs should stay deterministic and validate against `packages/scene-schema`.
+## What makes a good entry
 
-Good reference scenes:
+- It runs at an interactive frame rate on a laptop GPU.
+- All four elements are present and identifiable.
+- It is the model's own work, kept intact — that is the thing being compared.
+- It cleans up after itself well enough to survive being switched away from and back to.
 
-- load quickly,
-- keep object counts modest,
-- use explicit seeds,
-- show the visual vocabulary of the prompt,
-- avoid custom code inside the spec.
+## The playground
 
-## Renderer Changes
-
-Prefer adding small schema-backed primitives over adding arbitrary script hooks. The benchmark is most useful when every model output can be validated, replayed, and compared.
+The shell stays deliberately thin: pick a model, render it, get out of the way. It draws nothing over the viewport except a load state, because each model app owns its title, HUD and element navigation. Changes to the shell should follow this repo's standards and use shadcn components with semantic Tailwind tokens.
