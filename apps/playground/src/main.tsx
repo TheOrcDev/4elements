@@ -6,6 +6,7 @@ import { createRoot } from "react-dom/client";
 import { GithubStars } from "@/components/github-stars";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import "./styles.css";
 
@@ -20,6 +21,20 @@ type ModelName =
   | "terra-ultra"
   | "luna-extra-high";
 
+type ModelProvider = "openai" | "anthropic" | "grok" | "other";
+
+interface ProviderOption {
+  label: string;
+  value: ModelProvider;
+}
+
+const providerOptions: readonly ProviderOption[] = [
+  { label: "OpenAI", value: "openai" },
+  { label: "Anthropic", value: "anthropic" },
+  { label: "Grok", value: "grok" },
+  { label: "Other", value: "other" },
+] as const;
+
 interface ModelOption {
   controls: string;
   /** Wall-clock time the model took to produce its app. */
@@ -28,6 +43,7 @@ interface ModelOption {
   effort: string;
   effortDetail: string;
   label: string;
+  provider: ModelProvider;
   summary: string;
   value: ModelName;
 }
@@ -36,6 +52,7 @@ const modelOptions: readonly ModelOption[] = [
   {
     label: "Opus 5",
     value: "opus-5",
+    provider: "anthropic",
     effort: "Max",
     effortDetail: "Thinking effort: max",
     duration: "47m",
@@ -46,6 +63,7 @@ const modelOptions: readonly ModelOption[] = [
   {
     label: "Kimi K3",
     value: "kimi-k3",
+    provider: "other",
     effort: "Max",
     effortDetail: "reasoning_effort: max",
     duration: "70m",
@@ -56,6 +74,7 @@ const modelOptions: readonly ModelOption[] = [
   {
     label: "Grok 4.5",
     value: "grok-4.5",
+    provider: "grok",
     effort: "High",
     effortDetail: "reasoning_effort: high",
     duration: "5m 37s",
@@ -67,6 +86,7 @@ const modelOptions: readonly ModelOption[] = [
   {
     label: "Fable 5",
     value: "fable-5",
+    provider: "anthropic",
     effort: "Max",
     effortDetail: "Thinking effort: max",
     duration: "16m",
@@ -78,6 +98,7 @@ const modelOptions: readonly ModelOption[] = [
   {
     label: "Sol Ultra",
     value: "sol-ultra",
+    provider: "openai",
     effort: "Ultra",
     effortDetail: "Effort tier: ultra",
     duration: "25m",
@@ -89,6 +110,7 @@ const modelOptions: readonly ModelOption[] = [
   {
     label: "Terra Ultra",
     value: "terra-ultra",
+    provider: "openai",
     effort: "Ultra",
     effortDetail: "Effort tier: ultra",
     duration: "8m 41s",
@@ -99,6 +121,7 @@ const modelOptions: readonly ModelOption[] = [
   {
     label: "Luna Extra High",
     value: "luna-extra-high",
+    provider: "openai",
     effort: "Extra High",
     effortDetail: "Effort tier: extra high",
     duration: "8m 46s",
@@ -115,6 +138,16 @@ function isModelName(value: string): value is ModelName {
   return modelOptions.some((model) => model.value === value);
 }
 
+function isModelProvider(value: string): value is ModelProvider {
+  return providerOptions.some((provider) => provider.value === value);
+}
+
+function getModelProvider(model: ModelName): ModelProvider {
+  return (
+    modelOptions.find((option) => option.value === model)?.provider ?? "other"
+  );
+}
+
 function App() {
   const [modelQuery, setModelQuery] = useQueryState("model", {
     defaultValue: defaultModel,
@@ -125,6 +158,14 @@ function App() {
     modelOptions.find((model) => model.value === selectedModel) ??
     modelOptions[0];
   const [isSceneReady, setIsSceneReady] = useState(false);
+  // Follows the selected model, so a deep link opens on the right provider tab,
+  // but can be moved on its own to browse other providers.
+  const [selectedProvider, setSelectedProvider] = useState<ModelProvider>(() =>
+    getModelProvider(selectedModel)
+  );
+  const filteredModelOptions = modelOptions.filter(
+    (model) => model.provider === selectedProvider
+  );
 
   const sceneUrl = `${import.meta.env.BASE_URL}models/${selectedModel}/index.html`;
 
@@ -132,6 +173,13 @@ function App() {
     if (isModelName(model)) {
       setIsSceneReady(false);
       setModelQuery(model);
+      setSelectedProvider(getModelProvider(model));
+    }
+  };
+
+  const filterByProvider = (provider: string) => {
+    if (isModelProvider(provider)) {
+      setSelectedProvider(provider);
     }
   };
 
@@ -154,6 +202,15 @@ function App() {
 
         <section className="flex flex-col gap-3">
           <h2 className="font-semibold text-sm">Model</h2>
+          <Tabs onValueChange={filterByProvider} value={selectedProvider}>
+            <TabsList aria-label="Model provider filter">
+              {providerOptions.map((provider) => (
+                <TabsTrigger key={provider.value} value={provider.value}>
+                  {provider.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
           <ToggleGroup
             aria-label="Model selector"
             className="grid w-full grid-cols-2"
@@ -165,7 +222,7 @@ function App() {
             value={selectedModel}
             variant="outline"
           >
-            {modelOptions.map((model) => (
+            {filteredModelOptions.map((model) => (
               <ToggleGroupItem
                 className="w-full min-w-0 shrink truncate px-2 normal-case tracking-normal"
                 key={model.value}
