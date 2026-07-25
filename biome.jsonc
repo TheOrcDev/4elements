@@ -10,6 +10,7 @@
       "!apps/grok-4.5",
       "!apps/fable-5",
       "!apps/sol-ultra",
+      "!apps/terra-ultra",
       "!apps/playground/public/models"
     ]
   }

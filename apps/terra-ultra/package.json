@@ -1,0 +1,18 @@
+{
+  "name": "@4elements/terra-ultra",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Terra Ultra — Elemental Sanctum, a procedural Three.js form for each classical element",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4177"
+  },
+  "dependencies": {
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.7"
+  }
+}

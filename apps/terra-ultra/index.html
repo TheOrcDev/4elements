@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#070a16" />
+    <title>Four Elements — An Elemental Sanctum</title>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene" aria-label="Interactive 3D Four Elements scene"></canvas>
+
+      <div class="grain" aria-hidden="true"></div>
+      <div class="vignette" aria-hidden="true"></div>
+
+      <header class="site-header">
+        <a class="brand" href="#top" aria-label="Four Elements home">
+          <span class="brand-mark">◈</span>
+          <span>Elemental <b>Sanctum</b></span>
+        </a>
+        <div class="status"><span class="status-dot"></span> LIVE ORBIT</div>
+      </header>
+
+      <main id="top" class="interface">
+        <section class="hero-copy" aria-live="polite">
+          <p class="eyebrow">01 — The elemental plane</p>
+          <h1>Four forces.<br /><em>One living world.</em></h1>
+          <p class="hero-description">Each force has a pulse. Move through the sanctum and feel its energy shift beneath your hands.</p>
+          <div class="hero-actions">
+            <button id="explore-button" class="primary-button" type="button">
+              <span>Explore the elements</span><i>↘</i>
+            </button>
+            <p class="drag-hint"><span class="drag-icon">⌁</span> Drag to orbit · Scroll to draw closer</p>
+          </div>
+        </section>
+
+        <section class="focus-card" id="focus-card" aria-live="polite">
+          <div class="focus-topline"><span id="element-index">01</span><span id="element-state">AWAKENED</span></div>
+          <h2 id="element-name">Fire</h2>
+          <p id="element-description">An untamed flame, forever ascending. Desire made visible.</p>
+          <div class="focus-meter"><span>RESonance</span><div><i id="meter-fill"></i></div><b id="meter-value">92%</b></div>
+        </section>
+
+        <nav class="element-nav" aria-label="Choose an element">
+          <button class="element-button is-active" data-element="fire" type="button"><span class="element-glyph">△</span><span>Fire</span><small>01</small></button>
+          <button class="element-button" data-element="air" type="button"><span class="element-glyph">⌇</span><span>Air</span><small>02</small></button>
+          <button class="element-button" data-element="water" type="button"><span class="element-glyph">▽</span><span>Water</span><small>03</small></button>
+          <button class="element-button" data-element="earth" type="button"><span class="element-glyph">◒</span><span>Earth</span><small>04</small></button>
+        </nav>
+      </main>
+
+      <footer class="site-footer"><span>FOUR ELEMENTS / 2026</span><span class="footer-center">SELECT A FORCE</span><span>∞ 24° 06′ N</span></footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

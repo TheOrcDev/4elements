@@ -11,7 +11,13 @@ import "./styles.css";
 
 const REPO = "TheOrcDev/4elements";
 
-type ModelName = "opus-5" | "kimi-k3" | "grok-4.5" | "fable-5" | "sol-ultra";
+type ModelName =
+  | "opus-5"
+  | "kimi-k3"
+  | "grok-4.5"
+  | "fable-5"
+  | "sol-ultra"
+  | "terra-ultra";
 
 interface ModelOption {
   controls: string;
@@ -78,6 +84,16 @@ const modelOptions: readonly ModelOption[] = [
       "A field-guide study of the four elements, each with its own bloom-lit Three.js composition, reached from a guide along the bottom of the frame.",
     controls:
       "Keys 1–4 or the field guide to select an element, arrow keys to move between them, Esc or O for the overview, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Terra Ultra",
+    value: "terra-ultra",
+    effort: "Ultra",
+    effortDetail: "Effort tier: ultra",
+    duration: "8m 41s",
+    summary:
+      "A sanctum giving each element its own procedural form: ascending embers over a pulsing core, orbiting wind ribbons, a refractive sapphire orb ringed by waves, and levitating faceted stone veined with crystal.",
+    controls: "Drag to orbit, scroll to zoom, and use the element controls.",
   },
 ] as const;
 
