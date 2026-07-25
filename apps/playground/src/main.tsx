@@ -17,7 +17,8 @@ type ModelName =
   | "grok-4.5"
   | "fable-5"
   | "sol-ultra"
-  | "terra-ultra";
+  | "terra-ultra"
+  | "luna-extra-high";
 
 interface ModelOption {
   controls: string;
@@ -94,6 +95,17 @@ const modelOptions: readonly ModelOption[] = [
     summary:
       "A sanctum giving each element its own procedural form: ascending embers over a pulsing core, orbiting wind ribbons, a refractive sapphire orb ringed by waves, and levitating faceted stone veined with crystal.",
     controls: "Drag to orbit, scroll to zoom, and use the element controls.",
+  },
+  {
+    label: "Luna Extra High",
+    value: "luna-extra-high",
+    effort: "Extra High",
+    effortDetail: "Effort tier: extra high",
+    duration: "8m 46s",
+    summary:
+      "A field-guide atlas holding all four specimens in one grid, each its own live geometry, with a side panel selecting the active force and reading out its state, energy and range.",
+    controls:
+      "Select a force from the panel to change specimen, drag to orbit, scroll to zoom, reset view to recentre.",
   },
 ] as const;
 

@@ -11,6 +11,8 @@
       "!apps/fable-5",
       "!apps/sol-ultra",
       "!apps/terra-ultra",
+      "!apps/luna-extra-high",
+      "!apps/terra-ultra",
       "!apps/playground/public/models"
     ]
   }

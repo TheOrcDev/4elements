@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#080b0d" />
+    <meta name="description" content="An interactive three-dimensional atlas of the four classical elements." />
+    <title>Elemental Atlas — Four Forces</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Elemental Atlas home">
+          <span class="brand-mark"><span></span><span></span><span></span><span></span></span>
+          <span class="brand-copy"><strong>ELEMENTAL</strong><small>ATLAS / 04</small></span>
+        </a>
+        <div class="topbar-center">
+          <span class="status-dot"></span>
+          <span>LIVE SPECIMEN VIEWER</span>
+        </div>
+        <div class="topbar-meta">
+          <span class="topbar-time">FIELD NOTE 001</span>
+          <span class="topbar-divider"></span>
+          <span class="topbar-code">EA—04—X</span>
+        </div>
+      </header>
+
+      <main class="app-main" id="top">
+        <section class="visual-panel">
+          <div class="panel-kicker visual-kicker"><span class="kicker-line"></span> THE PRIMARY FIELD</div>
+          <div class="visual-title">
+            <div>
+              <span class="eyebrow">A STUDY IN MATTER &amp; MOTION</span>
+              <h1>Four forces.<br /><em>One living system.</em></h1>
+            </div>
+            <div class="frame-readout"><small>FRAME</small><strong id="frame-number">01</strong><span>/ 04</span></div>
+          </div>
+
+          <div class="scene-shell" id="scene-shell">
+            <canvas id="scene-canvas" aria-label="Interactive three-dimensional representation of fire, air, water and earth"></canvas>
+            <div class="scene-corner scene-corner-tl"></div>
+            <div class="scene-corner scene-corner-br"></div>
+            <div class="scene-tag scene-tag-top"><span class="tag-pulse"></span><span id="scene-tag">ACTIVE / FIRE</span></div>
+            <div class="scene-crosshair scene-crosshair-a"></div>
+            <div class="scene-crosshair scene-crosshair-b"></div>
+            <div class="scene-help"><span class="mouse-icon"></span><span>DRAG TO ORBIT</span><span class="help-separator"></span><span>SCROLL TO ZOOM</span></div>
+            <div class="scene-axis"><span>Y</span><i></i><span>Z</span></div>
+          </div>
+
+          <div class="visual-footer">
+            <div class="footer-status"><span class="status-dot"></span><span>RENDERING IN REAL TIME</span></div>
+            <div class="footer-note">A DIGITAL FIELD GUIDE TO THE CLASSICAL QUARTET</div>
+            <div class="footer-coordinates"><span id="coordinate-x">X 00.00</span><span id="coordinate-y">Y 00.00</span><span id="coordinate-z">Z 00.00</span></div>
+          </div>
+        </section>
+
+        <aside class="control-panel">
+          <div class="panel-intro">
+            <div class="panel-kicker"><span class="kicker-line"></span> SELECT A FORCE</div>
+            <p class="panel-description">Four archetypes. Four distinct signatures. Explore the matter that makes the world move.</p>
+          </div>
+
+          <div class="element-list" id="element-list" role="tablist" aria-label="Choose an element"></div>
+
+          <div class="inspector-card">
+            <div class="inspector-head">
+              <div><span class="inspector-label">CURRENT SPECIMEN</span><span class="inspector-index" id="inspector-index">01 / 04</span></div>
+              <span class="inspector-symbol" id="inspector-symbol">✦</span>
+            </div>
+            <div class="inspector-title-row"><h2 id="inspector-title">FIRE</h2><span class="inspector-state">ACTIVE</span></div>
+            <p class="inspector-copy" id="inspector-copy">A reaction with no fixed shape — heat, light and appetite folded into one restless form.</p>
+            <div class="color-row" id="color-row"></div>
+            <div class="specimen-stats">
+              <div><span>STATE</span><strong id="stat-state">PLASMA</strong></div>
+              <div><span>ENERGY</span><strong id="stat-energy">98.4%</strong></div>
+              <div><span>RANGE</span><strong id="stat-range">∞ / WILD</strong></div>
+            </div>
+          </div>
+
+          <div class="panel-bottom">
+            <div class="legend"><span class="legend-ring"></span><span>LIVE GEOMETRY</span><span class="legend-divider"></span><span>60 FPS TARGET</span></div>
+            <button class="reset-button" id="reset-view" type="button"><span>↻</span> RESET VIEW</button>
+          </div>
+        </aside>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
