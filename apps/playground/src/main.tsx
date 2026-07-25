@@ -19,7 +19,8 @@ type ModelName =
   | "fable-5"
   | "sol-ultra"
   | "terra-ultra"
-  | "luna-extra-high";
+  | "luna-extra-high"
+  | "gpt-5.5";
 
 type ModelProvider = "openai" | "anthropic" | "grok" | "other";
 
@@ -129,6 +130,17 @@ const modelOptions: readonly ModelOption[] = [
       "A field-guide atlas holding all four specimens in one grid, each its own live geometry, with a side panel selecting the active force and reading out its state, energy and range.",
     controls:
       "Select a force from the panel to change specimen, drag to orbit, scroll to zoom, reset view to recentre.",
+  },
+  {
+    label: "GPT 5.5",
+    value: "gpt-5.5",
+    provider: "openai",
+    effort: "Extra High",
+    effortDetail: "Effort tier: extra high",
+    duration: "9m 59s",
+    summary:
+      "Four plinths strung along one lit path, each holding an element built from custom shader materials and instanced point systems, composited through an unreal bloom pass.",
+    controls: "Pick an element to focus it, drag to orbit, scroll to zoom.",
   },
 ] as const;
 

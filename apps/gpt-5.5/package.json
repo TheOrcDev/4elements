@@ -1,0 +1,17 @@
+{
+  "name": "@4elements/gpt-5.5",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "GPT 5.5 Extra High — Four Elements in Three.js",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4179"
+  },
+  "dependencies": {
+    "three": "^0.179.0",
+    "vite": "^7.0.6"
+  },
+  "devDependencies": {}
+}

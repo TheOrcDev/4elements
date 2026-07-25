@@ -10,6 +10,7 @@ const models = [
   "sol-ultra",
   "terra-ultra",
   "luna-extra-high",
+  "gpt-5.5",
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },

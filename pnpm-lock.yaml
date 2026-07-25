@@ -40,6 +40,15 @@ importers:
         specifier: ^7.1.0
         version: 7.3.6(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(yaml@2.8.3)
 
+  apps/gpt-5.5:
+    dependencies:
+      three:
+        specifier: ^0.179.0
+        version: 0.179.1
+      vite:
+        specifier: ^7.0.6
+        version: 7.3.6(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(yaml@2.8.3)
+
   apps/grok-4.5:
     dependencies:
       three:
@@ -3528,6 +3537,9 @@ packages:
 
   three@0.178.0:
     resolution: {integrity: sha512-ybFIB0+x8mz0wnZgSGy2MO/WCO6xZhQSZnmfytSPyNpM0sBafGRVhdaj+erYh5U+RhQOAg/eXqw5uVDiM2BjhQ==}
+
+  three@0.179.1:
+    resolution: {integrity: sha512-5y/elSIQbrvKOISxpwXCR4sQqHtGiOI+MKLc3SsBdDXA2hz3Mdp3X59aUp8DyybMa34aeBwbFTpdoLJaUDEWSw==}
 
   three@0.180.0:
     resolution: {integrity: sha512-o+qycAMZrh+TsE01GqWUxUIKR1AL0S8pq7zDkYOQw8GqfX8b8VoCKYUoHbhiX5j+7hr8XsuHDVU6+gkQJQKg9w==}
@@ -7071,6 +7083,8 @@ snapshots:
   three@0.172.0: {}
 
   three@0.178.0: {}
+
+  three@0.179.1: {}
 
   three@0.180.0: {}
 

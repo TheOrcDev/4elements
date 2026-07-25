@@ -12,6 +12,7 @@
 | Fable 5 | Max | 16m | [`apps/fable-5`](apps/fable-5) |
 | Terra Ultra | Ultra | 8m 41s | [`apps/terra-ultra`](apps/terra-ultra) |
 | Luna Extra High | Extra High | 8m 46s | [`apps/luna-extra-high`](apps/luna-extra-high) |
+| GPT 5.5 | Extra High | 9m 59s | [`apps/gpt-5.5`](apps/gpt-5.5) |
 | Sol Ultra | Ultra | 25m | [`apps/sol-ultra`](apps/sol-ultra) |
 
 Every model ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5 and Fable 5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Terra Ultra, Sol Ultra and Luna Extra High name their tier in the model name itself. Time to build is wall-clock from the brief to a working app.
@@ -27,6 +28,8 @@ Every model ran at the highest reasoning setting it offers, so the times are com
 **Terra Ultra** builds a sanctum where each element has its own procedural form — ascending embers over a pulsing core, orbiting wind ribbons, a refractive sapphire orb ringed by waves, and levitating faceted stone veined with crystal.
 
 **Luna Extra High** lays all four specimens out as an atlas, each its own live geometry in a grid, with a side panel selecting the active force and reading out its state, energy and range.
+
+**GPT 5.5** strings four plinths along one lit path, each holding an element built from custom shader materials and instanced point systems, composited through an unreal bloom pass.
 
 **Sol Ultra** presents the elements as a field guide, each with its own bloom-lit composition. It currently does not get past its own loading veil — see [Known issues](#known-issues).
 
@@ -113,6 +116,7 @@ apps/fable-5          Fable 5's Four Elements app
 apps/sol-ultra        Sol Ultra's Four Elements app
 apps/terra-ultra      Terra Ultra's Four Elements app
 apps/luna-extra-high  Luna Extra High's Four Elements app
+apps/gpt-5.5          GPT 5.5's Four Elements app
 tests/visual          Playwright smoke test and generated screenshots
 ```
 

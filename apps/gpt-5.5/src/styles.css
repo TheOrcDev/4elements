@@ -1,0 +1,122 @@
+:root {
+  color: #f8fbff;
+  background: #030407;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  min-width: 320px;
+}
+
+#scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(79, 106, 137, 0.18), transparent 32rem),
+    radial-gradient(circle at 14% 20%, rgba(231, 81, 36, 0.12), transparent 22rem),
+    radial-gradient(circle at 84% 78%, rgba(79, 135, 103, 0.13), transparent 24rem),
+    #030407;
+}
+
+.brand {
+  position: fixed;
+  top: clamp(16px, 3vw, 34px);
+  left: clamp(18px, 4vw, 52px);
+  z-index: 2;
+  pointer-events: none;
+  font-size: clamp(1.05rem, 1.8vw, 1.5rem);
+  font-weight: 760;
+  letter-spacing: 0;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.68);
+}
+
+.brand span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+}
+
+.element-index {
+  position: fixed;
+  right: clamp(12px, 3vw, 34px);
+  bottom: clamp(12px, 3vw, 34px);
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, auto));
+  gap: 8px;
+  max-width: calc(100vw - 24px);
+}
+
+.element-index a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  color: rgba(248, 251, 255, 0.82);
+  background: rgba(5, 7, 11, 0.46);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.34);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+  backdrop-filter: blur(14px);
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.element-index a:hover,
+.element-index a:focus-visible {
+  border-color: rgba(255, 255, 255, 0.42);
+  color: #fff;
+  background: rgba(19, 24, 31, 0.66);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 640px) {
+  .brand {
+    left: 16px;
+    top: 14px;
+  }
+
+  .element-index {
+    right: 50%;
+    bottom: 12px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: calc(100vw - 24px);
+    transform: translateX(50%);
+  }
+
+  .element-index a {
+    min-width: 0;
+    height: 34px;
+    padding: 0 6px;
+    font-size: 0.72rem;
+  }
+}
