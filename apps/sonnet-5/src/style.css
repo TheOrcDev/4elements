@@ -1,0 +1,217 @@
+:root {
+  --fire: #ff6a2b;
+  --water: #2fb8e8;
+  --air: #bfeeff;
+  --earth: #b08a5a;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #04060a;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#scene-root {
+  position: fixed;
+  inset: 0;
+}
+
+#scene-root canvas {
+  display: block;
+}
+
+.label-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.element-label {
+  pointer-events: none;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: var(--label-color, #fff);
+  text-shadow: 0 0 12px var(--label-color, #fff), 0 0 2px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  user-select: none;
+  opacity: 0.9;
+}
+
+#vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 45%, rgba(2, 3, 6, 0.75) 100%);
+}
+
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  background: rgba(3, 4, 8, 0.86);
+  cursor: pointer;
+  transition: opacity 0.9s ease, visibility 0.9s ease;
+}
+
+#intro.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#intro h1 {
+  margin: 0;
+  font-size: clamp(32px, 7vw, 64px);
+  font-weight: 300;
+  letter-spacing: 0.35em;
+  color: #f4f2ec;
+  text-shadow: 0 0 40px rgba(255, 180, 120, 0.25);
+}
+
+#intro .subtitle {
+  margin: 0;
+  font-size: clamp(13px, 2vw, 16px);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #9aa0ac;
+}
+
+#intro .subtitle .fire {
+  color: var(--fire);
+}
+#intro .subtitle .water {
+  color: var(--water);
+}
+#intro .subtitle .air {
+  color: var(--air);
+}
+#intro .subtitle .earth {
+  color: var(--earth);
+}
+
+#intro .hint {
+  margin-top: 18px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #666d78;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+#controls-hint {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  text-align: center;
+  transition: opacity 0.6s ease;
+}
+
+#info-panel {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 10;
+  max-width: 300px;
+  padding: 18px 20px;
+  border-radius: 10px;
+  background: rgba(10, 12, 18, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-left: 3px solid var(--panel-color, #fff);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transform: translateY(14px);
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+#info-panel.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+#info-panel h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--panel-color, #fff);
+  text-shadow: 0 0 18px var(--panel-color, #fff);
+}
+
+#info-panel p {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #c7cad1;
+}
+
+#info-panel button {
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #e8e9ec;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+#info-panel button:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+@media (max-width: 640px) {
+  #info-panel {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    max-width: none;
+  }
+
+  #controls-hint {
+    display: none;
+  }
+}

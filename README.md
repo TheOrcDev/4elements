@@ -10,6 +10,7 @@
 | Kimi K3 | Max | 70m | [`apps/kimi-k3`](apps/kimi-k3) |
 | Grok 4.5 | High | 5m 37s | [`apps/grok-4.5`](apps/grok-4.5) |
 | Fable 5 | Max | 16m | [`apps/fable-5`](apps/fable-5) |
+| Sonnet 5 | Max | 17m | [`apps/sonnet-5`](apps/sonnet-5) |
 | Terra Ultra | Ultra | 8m 41s | [`apps/terra-ultra`](apps/terra-ultra) |
 | Luna Extra High | Extra High | 8m 46s | [`apps/luna-extra-high`](apps/luna-extra-high) |
 | GPT 5.5 | Extra High | 9m 59s | [`apps/gpt-5.5`](apps/gpt-5.5) |
@@ -24,6 +25,8 @@ Every model ran at the highest reasoning setting it offers, so the times are com
 **Grok 4.5** holds one stage with GPU particle flames, a vortex field with wind ribbons, a multi-wave water surface with caustics, and displaced rock with crystal spikes, finished with unreal bloom and ACES tone mapping.
 
 **Fable 5** stands the four elements on lit plinths in one scene, on custom GLSL shaders with GPU particles and bloom post-processing.
+
+**Sonnet 5** sets the four elements against a starfield, each on its own shader material and particle system, composited through an unreal bloom pass.
 
 **Terra Ultra** builds a sanctum where each element has its own procedural form — ascending embers over a pulsing core, orbiting wind ribbons, a refractive sapphire orb ringed by waves, and levitating faceted stone veined with crystal.
 
@@ -113,6 +116,7 @@ apps/opus-5           Opus 5's Four Elements app
 apps/kimi-k3          Kimi K3's Four Elements app
 apps/grok-4.5         Grok 4.5's Four Elements app
 apps/fable-5          Fable 5's Four Elements app
+apps/sonnet-5         Sonnet 5's Four Elements app
 apps/sol-ultra        Sol Ultra's Four Elements app
 apps/terra-ultra      Terra Ultra's Four Elements app
 apps/luna-extra-high  Luna Extra High's Four Elements app

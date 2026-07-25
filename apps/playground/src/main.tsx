@@ -20,7 +20,8 @@ type ModelName =
   | "sol-ultra"
   | "terra-ultra"
   | "luna-extra-high"
-  | "gpt-5.5";
+  | "gpt-5.5"
+  | "sonnet-5";
 
 type ModelProvider = "openai" | "anthropic" | "grok" | "other";
 
@@ -141,6 +142,18 @@ const modelOptions: readonly ModelOption[] = [
     summary:
       "Four plinths strung along one lit path, each holding an element built from custom shader materials and instanced point systems, composited through an unreal bloom pass.",
     controls: "Pick an element to focus it, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Sonnet 5",
+    value: "sonnet-5",
+    provider: "anthropic",
+    effort: "Max",
+    effortDetail: "Thinking effort: max",
+    duration: "17m",
+    summary:
+      "The four elements set against a starfield, each on its own shader material and particle system, composited through an unreal bloom pass.",
+    controls:
+      "Click to begin, click an element to focus it, drag to orbit, scroll to zoom.",
   },
 ] as const;
 
