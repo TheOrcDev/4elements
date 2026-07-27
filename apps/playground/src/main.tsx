@@ -1,4 +1,5 @@
 import { ArrowSquareOutIcon } from "@phosphor-icons/react";
+import { Analytics } from "@vercel/analytics/react";
 import { useQueryState } from "nuqs";
 import { NuqsAdapter } from "nuqs/adapters/react";
 import { StrictMode, useState } from "react";
@@ -334,6 +335,7 @@ createRoot(rootElement).render(
   <StrictMode>
     <NuqsAdapter>
       <App />
+      <Analytics />
     </NuqsAdapter>
   </StrictMode>
 );
