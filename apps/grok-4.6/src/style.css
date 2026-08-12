@@ -1,0 +1,278 @@
+:root {
+  --ink: #e8e6df;
+  --muted: rgba(232, 230, 223, 0.62);
+  --glass: rgba(8, 10, 16, 0.55);
+  --line: rgba(255, 255, 255, 0.12);
+  --fire: #ff6a1a;
+  --air: #b7e3ff;
+  --water: #2ad0ff;
+  --earth: #c4a574;
+  font-family: Outfit, system-ui, sans-serif;
+  color: var(--ink);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #05060a;
+}
+
+#scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#loader {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 22px;
+  background: #05060a;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#loader.is-gone {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#loader p {
+  margin: 0;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.loader-mark {
+  width: 72px;
+  height: 72px;
+  position: relative;
+}
+
+.loader-mark .ember {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  filter: blur(0.4px);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.loader-mark .fire {
+  top: 4px;
+  left: 27px;
+  background: var(--fire);
+  box-shadow: 0 0 18px var(--fire);
+}
+
+.loader-mark .air {
+  top: 27px;
+  left: 4px;
+  background: var(--air);
+  box-shadow: 0 0 18px var(--air);
+  animation-delay: 0.2s;
+}
+
+.loader-mark .water {
+  top: 27px;
+  right: 4px;
+  background: var(--water);
+  box-shadow: 0 0 18px var(--water);
+  animation-delay: 0.4s;
+}
+
+.loader-mark .earth {
+  bottom: 4px;
+  left: 27px;
+  background: var(--earth);
+  box-shadow: 0 0 18px var(--earth);
+  animation-delay: 0.6s;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(0.82);
+    opacity: 0.65;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+
+#title {
+  position: fixed;
+  top: 28px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+#title h1 {
+  margin: 0;
+  font-family: Cinzel, serif;
+  font-weight: 700;
+  font-size: clamp(28px, 4vw, 46px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-shadow: 0 8px 40px rgba(0, 0, 0, 0.65);
+}
+
+#dock {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+}
+
+#dock button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 500 13px/1 Outfit, system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+#dock button:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+#dock button.is-active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+#dock button[data-view='fire'].is-active {
+  color: #ffd7b0;
+  box-shadow: inset 0 0 0 1px rgba(255, 106, 26, 0.45);
+}
+
+#dock button[data-view='air'].is-active {
+  color: #eaf6ff;
+  box-shadow: inset 0 0 0 1px rgba(183, 227, 255, 0.45);
+}
+
+#dock button[data-view='water'].is-active {
+  color: #d8f7ff;
+  box-shadow: inset 0 0 0 1px rgba(42, 208, 255, 0.45);
+}
+
+#dock button[data-view='earth'].is-active {
+  color: #f0e2c6;
+  box-shadow: inset 0 0 0 1px rgba(196, 165, 116, 0.45);
+}
+
+.glyph {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.glyph.all {
+  background: conic-gradient(var(--fire), var(--air), var(--water), var(--earth), var(--fire));
+}
+
+.glyph.fire {
+  background: var(--fire);
+}
+
+.glyph.air {
+  background: var(--air);
+}
+
+.glyph.water {
+  background: var(--water);
+}
+
+.glyph.earth {
+  background: var(--earth);
+}
+
+#legend {
+  position: fixed;
+  left: 24px;
+  bottom: 28px;
+  z-index: 5;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+#legend p {
+  margin: 0 0 4px;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 1.4em;
+  padding: 1px 5px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  font: 500 11px/1.4 Outfit, system-ui, sans-serif;
+  color: var(--ink);
+}
+
+@media (max-width: 780px) {
+  #legend {
+    display: none;
+  }
+
+  #dock {
+    width: calc(100% - 24px);
+    justify-content: space-between;
+    overflow: auto;
+  }
+
+  #dock button {
+    padding: 10px 12px;
+    font-size: 11px;
+  }
+
+  #title {
+    top: 18px;
+  }
+}

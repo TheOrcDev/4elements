@@ -14,6 +14,7 @@
       "!apps/luna-extra-high",
       "!apps/gpt-5.5",
       "!apps/sonnet-5",
+      "!apps/grok-4.6",
       "!apps/terra-ultra",
       "!apps/playground/public/models"
     ]

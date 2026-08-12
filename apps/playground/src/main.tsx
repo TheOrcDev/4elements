@@ -22,7 +22,8 @@ type ModelName =
   | "terra-ultra"
   | "luna-extra-high"
   | "gpt-5.5"
-  | "sonnet-5";
+  | "sonnet-5"
+  | "grok-4.6";
 
 type ModelProvider = "openai" | "anthropic" | "grok" | "other";
 
@@ -155,6 +156,18 @@ const modelOptions: readonly ModelOption[] = [
       "The four elements set against a starfield, each on its own shader material and particle system, composited through an unreal bloom pass.",
     controls:
       "Click to begin, click an element to focus it, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Grok 4.6",
+    value: "grok-4.6",
+    provider: "grok",
+    effort: "High",
+    effortDetail: "reasoning_effort: high",
+    duration: "4m 26s",
+    summary:
+      "A cinematic sanctum holding all four elements, with a dock for focusing each one in turn.",
+    controls:
+      "Dock buttons or keys 1–4 to focus an element, 0 for the overview, drag to orbit, scroll to zoom.",
   },
 ] as const;
 

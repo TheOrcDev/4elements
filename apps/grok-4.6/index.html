@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Four Elements</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Outfit:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+
+    <div id="loader">
+      <div class="loader-mark">
+        <span class="ember fire"></span>
+        <span class="ember air"></span>
+        <span class="ember water"></span>
+        <span class="ember earth"></span>
+      </div>
+      <p>Gathering the elements</p>
+    </div>
+
+    <header id="title">
+      <p class="eyebrow">A living 3D sanctum</p>
+      <h1>The Four Elements</h1>
+    </header>
+
+    <nav id="dock" aria-label="Focus an element">
+      <button data-view="overview" class="is-active">
+        <span class="glyph all"></span>
+        All
+      </button>
+      <button data-view="fire">
+        <span class="glyph fire"></span>
+        Fire
+      </button>
+      <button data-view="air">
+        <span class="glyph air"></span>
+        Air
+      </button>
+      <button data-view="water">
+        <span class="glyph water"></span>
+        Water
+      </button>
+      <button data-view="earth">
+        <span class="glyph earth"></span>
+        Earth
+      </button>
+    </nav>
+
+    <aside id="legend">
+      <p><kbd>1</kbd>–<kbd>4</kbd> focus &nbsp; <kbd>0</kbd> overview</p>
+      <p>Drag to orbit · Scroll to zoom</p>
+    </aside>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
