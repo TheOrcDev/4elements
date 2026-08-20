@@ -32,7 +32,7 @@ export function TabsList({
   return (
     <div
       className={cn(
-        "grid min-h-10 w-full grid-cols-4 gap-1 rounded-sm border bg-muted p-1",
+        "grid min-h-10 w-full auto-cols-fr grid-flow-col gap-1 rounded-sm border bg-muted p-1",
         className
       )}
       data-slot="tabs-list"
@@ -58,7 +58,7 @@ export function TabsTrigger({
   return (
     <button
       className={cn(
-        "min-w-0 rounded-xs px-2 font-semibold text-muted-foreground text-sm outline-none transition-colors hover:text-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 data-[state=active]:bg-background data-[state=active]:text-foreground",
+        "min-w-0 truncate rounded-xs px-1.5 font-semibold text-muted-foreground text-xs outline-none transition-colors hover:text-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 data-[state=active]:bg-background data-[state=active]:text-foreground",
         className
       )}
       data-slot="tabs-trigger"

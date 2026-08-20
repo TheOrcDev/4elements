@@ -24,9 +24,10 @@ type ModelName =
   | "gpt-5.5"
   | "sonnet-5"
   | "grok-4.6"
-  | "glm-5.2";
+  | "glm-5.2"
+  | "gemini-3.7-flash";
 
-type ModelProvider = "openai" | "anthropic" | "grok" | "other";
+type ModelProvider = "openai" | "anthropic" | "google" | "grok" | "other";
 
 interface ProviderOption {
   label: string;
@@ -36,6 +37,7 @@ interface ProviderOption {
 const providerOptions: readonly ProviderOption[] = [
   { label: "OpenAI", value: "openai" },
   { label: "Anthropic", value: "anthropic" },
+  { label: "Google", value: "google" },
   { label: "Grok", value: "grok" },
   { label: "Other", value: "other" },
 ] as const;
@@ -181,6 +183,18 @@ const modelOptions: readonly ModelOption[] = [
       "An invocation of the four elements on one stage, each raised from its own shader material and particle system, composited through an unreal bloom pass.",
     controls:
       "Keys 1–5 or click an element to focus it, All for the full view, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Gemini 3.7 Flash",
+    value: "gemini-3.7-flash",
+    provider: "google",
+    effort: "High",
+    effortDetail: "thinking_level: high",
+    duration: "28m 20s",
+    summary:
+      "A nexus holding the four elements plus a fifth fusion form, each on its own TypeScript shader module, with a camera controller, post-processing chain and generated audio.",
+    controls:
+      "Use the overlay to move between elements, drag to orbit, scroll to zoom.",
   },
 ] as const;
 

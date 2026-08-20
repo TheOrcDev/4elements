@@ -14,6 +14,7 @@ const models = [
   "sonnet-5",
   "grok-4.6",
   "glm-5.2",
+  "gemini-3.7-flash",
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },

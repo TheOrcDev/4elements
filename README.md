@@ -17,8 +17,9 @@
 | GLM 5.2 | Max | 8m 27s | [`apps/glm-5.2`](apps/glm-5.2) |
 | GPT 5.5 | Extra High | 9m 59s | [`apps/gpt-5.5`](apps/gpt-5.5) |
 | Sol Ultra | Ultra | 25m | [`apps/sol-ultra`](apps/sol-ultra) |
+| Gemini 3.7 Flash | High | 28m 20s | [`apps/gemini-3.7-flash`](apps/gemini-3.7-flash) |
 
-Every model ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5 and Fable 5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Terra Ultra, Sol Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. Time to build is wall-clock from the brief to a working app.
+Every model ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5 and Fable 5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Terra Ultra, Sol Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. Gemini 3.7 Flash uses [`thinking_level`](https://ai.google.dev/gemini-api/docs/gemini-3) at `high`, the top of its `low` / `high` range. Time to build is wall-clock from the brief to a working app.
 
 **Opus 5** puts all four elements on one stage, each on its own custom GLSL shader: a volumetric raymarched flame, a refracting swell, ridged terrain with magma in the cracks, and 50k particles integrating a curl field.
 
@@ -39,6 +40,8 @@ Every model ran at the highest reasoning setting it offers, so the times are com
 **Luna Extra High** lays all four specimens out as an atlas, each its own live geometry in a grid, with a side panel selecting the active force and reading out its state, energy and range.
 
 **GPT 5.5** strings four plinths along one lit path, each holding an element built from custom shader materials and instanced point systems, composited through an unreal bloom pass.
+
+**Gemini 3.7 Flash** builds a nexus holding the four elements plus a fifth fusion form, each on its own TypeScript shader module, with a camera controller, post-processing chain and generated audio.
 
 **Sol Ultra** presents the elements as a field guide, each with its own bloom-lit composition. It currently does not get past its own loading veil — see [Known issues](#known-issues).
 
@@ -125,6 +128,7 @@ apps/grok-4.6         Grok 4.6's Four Elements app
 apps/fable-5          Fable 5's Four Elements app
 apps/sonnet-5         Sonnet 5's Four Elements app
 apps/glm-5.2          GLM 5.2's Four Elements app
+apps/gemini-3.7-flash Gemini 3.7 Flash's Four Elements app
 apps/sol-ultra        Sol Ultra's Four Elements app
 apps/terra-ultra      Terra Ultra's Four Elements app
 apps/luna-extra-high  Luna Extra High's Four Elements app
