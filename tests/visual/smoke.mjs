@@ -13,6 +13,7 @@ const models = [
   "gpt-5.5",
   "sonnet-5",
   "grok-4.6",
+  "glm-5.2",
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },

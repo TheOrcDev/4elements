@@ -23,7 +23,8 @@ type ModelName =
   | "luna-extra-high"
   | "gpt-5.5"
   | "sonnet-5"
-  | "grok-4.6";
+  | "grok-4.6"
+  | "glm-5.2";
 
 type ModelProvider = "openai" | "anthropic" | "grok" | "other";
 
@@ -168,6 +169,18 @@ const modelOptions: readonly ModelOption[] = [
       "A cinematic sanctum holding all four elements, with a dock for focusing each one in turn.",
     controls:
       "Dock buttons or keys 1–4 to focus an element, 0 for the overview, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "GLM 5.2",
+    value: "glm-5.2",
+    provider: "other",
+    effort: "Max",
+    effortDetail: "Effort tier: max",
+    duration: "8m 27s",
+    summary:
+      "An invocation of the four elements on one stage, each raised from its own shader material and particle system, composited through an unreal bloom pass.",
+    controls:
+      "Keys 1–5 or click an element to focus it, All for the full view, drag to orbit, scroll to zoom.",
   },
 ] as const;
 

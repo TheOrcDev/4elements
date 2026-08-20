@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Four Elements · Fire · Water · Earth · Air</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+
+    <div id="ui">
+      <header id="title">
+        <h1>The Four Elements</h1>
+        <p>An interactive invocation of fire, water, earth &amp; air</p>
+      </header>
+
+      <nav id="elements-nav">
+        <button data-element="fire" class="active">
+          <span class="glyph" style="--c: #ff7a3d">◉</span>
+          <span class="label">Fire</span>
+        </button>
+        <button data-element="water">
+          <span class="glyph" style="--c: #4aa8ff">◉</span>
+          <span class="label">Water</span>
+        </button>
+        <button data-element="earth">
+          <span class="glyph" style="--c: #9bc26b">◉</span>
+          <span class="label">Earth</span>
+        </button>
+        <button data-element="air">
+          <span class="glyph" style="--c: #cfe6ff">◉</span>
+          <span class="label">Air</span>
+        </button>
+        <button data-element="all">
+          <span class="glyph" style="--c: #ffffff">✦</span>
+          <span class="label">All</span>
+        </button>
+      </nav>
+
+      <div id="hint">
+        <span>Drag to orbit · Scroll to zoom · Press 1–5 or click to focus</span>
+      </div>
+
+      <div id="loading">
+        <div class="spinner"></div>
+        <span>Summoning the elements…</span>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

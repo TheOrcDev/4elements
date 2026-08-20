@@ -1,0 +1,18 @@
+{
+  "name": "@4elements/glm-5.2",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "GLM 5.2 — an interactive Three.js showcase of the four elements: fire, water, earth, and air.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4182"
+  },
+  "dependencies": {
+    "three": "^0.167.1"
+  },
+  "devDependencies": {
+    "vite": "^5.4.2"
+  }
+}

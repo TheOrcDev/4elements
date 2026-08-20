@@ -14,10 +14,11 @@
 | Sonnet 5 | Max | 17m | [`apps/sonnet-5`](apps/sonnet-5) |
 | Terra Ultra | Ultra | 8m 41s | [`apps/terra-ultra`](apps/terra-ultra) |
 | Luna Extra High | Extra High | 8m 46s | [`apps/luna-extra-high`](apps/luna-extra-high) |
+| GLM 5.2 | Max | 8m 27s | [`apps/glm-5.2`](apps/glm-5.2) |
 | GPT 5.5 | Extra High | 9m 59s | [`apps/gpt-5.5`](apps/gpt-5.5) |
 | Sol Ultra | Ultra | 25m | [`apps/sol-ultra`](apps/sol-ultra) |
 
-Every model ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5 and Fable 5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Terra Ultra, Sol Ultra and Luna Extra High name their tier in the model name itself. Time to build is wall-clock from the brief to a working app.
+Every model ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5 and Fable 5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Terra Ultra, Sol Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. Time to build is wall-clock from the brief to a working app.
 
 **Opus 5** puts all four elements on one stage, each on its own custom GLSL shader: a volumetric raymarched flame, a refracting swell, ridged terrain with magma in the cracks, and 50k particles integrating a curl field.
 
@@ -28,6 +29,8 @@ Every model ran at the highest reasoning setting it offers, so the times are com
 **Grok 4.5** holds one stage with GPU particle flames, a vortex field with wind ribbons, a multi-wave water surface with caustics, and displaced rock with crystal spikes, finished with unreal bloom and ACES tone mapping.
 
 **Fable 5** stands the four elements on lit plinths in one scene, on custom GLSL shaders with GPU particles and bloom post-processing.
+
+**GLM 5.2** raises the four elements on one stage, each from its own shader material and particle system, composited through an unreal bloom pass.
 
 **Sonnet 5** sets the four elements against a starfield, each on its own shader material and particle system, composited through an unreal bloom pass.
 
@@ -121,6 +124,7 @@ apps/grok-4.5         Grok 4.5's Four Elements app
 apps/grok-4.6         Grok 4.6's Four Elements app
 apps/fable-5          Fable 5's Four Elements app
 apps/sonnet-5         Sonnet 5's Four Elements app
+apps/glm-5.2          GLM 5.2's Four Elements app
 apps/sol-ultra        Sol Ultra's Four Elements app
 apps/terra-ultra      Terra Ultra's Four Elements app
 apps/luna-extra-high  Luna Extra High's Four Elements app

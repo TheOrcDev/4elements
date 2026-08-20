@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "pnpm build:models && vite --host 0.0.0.0",
     "build": "pnpm build:models && tsc -p tsconfig.json && vite build",
-    "build:models": "pnpm --dir ../opus-5 build && pnpm --dir ../kimi-k3 build && pnpm --dir ../grok-4.5 build && pnpm --dir ../fable-5 build && pnpm --dir ../sol-ultra build && pnpm --dir ../terra-ultra build && pnpm --dir ../luna-extra-high build && pnpm --dir ../gpt-5.5 build && pnpm --dir ../sonnet-5 build && pnpm --dir ../grok-4.6 build",
+    "build:models": "pnpm --dir ../opus-5 build && pnpm --dir ../kimi-k3 build && pnpm --dir ../grok-4.5 build && pnpm --dir ../fable-5 build && pnpm --dir ../sol-ultra build && pnpm --dir ../terra-ultra build && pnpm --dir ../luna-extra-high build && pnpm --dir ../gpt-5.5 build && pnpm --dir ../sonnet-5 build && pnpm --dir ../grok-4.6 build && pnpm --dir ../glm-5.2 build",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc -p tsconfig.json"
   },
