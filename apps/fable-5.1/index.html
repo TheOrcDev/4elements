@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Four Elements</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+    <div id="ui">
+      <header class="title">
+        <h1>Four Elements</h1>
+        <p>Drag to orbit · scroll to zoom · pick an element to fly to it</p>
+      </header>
+      <nav class="elements">
+        <button data-focus="overview" class="active">Overview</button>
+        <button data-focus="fire" style="--c: #ff7a2a">Fire</button>
+        <button data-focus="water" style="--c: #3cb0ff">Water</button>
+        <button data-focus="air" style="--c: #d8f1ff">Air</button>
+        <button data-focus="earth" style="--c: #7dff5a">Earth</button>
+      </nav>
+      <div id="fps"></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

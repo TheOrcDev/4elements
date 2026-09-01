@@ -15,6 +15,7 @@ const models = [
   "grok-4.6",
   "glm-5.2",
   "gemini-3.7-flash",
+  "fable-5.1",
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },
@@ -28,9 +29,11 @@ const failures = [];
 
 try {
   for (const viewport of viewports) {
-    const page = await browser.newPage({ viewport });
-
     for (const model of models) {
+      // A fresh page per model. Each scene holds a live WebGL context and the
+      // browser caps how many may exist at once, so reusing one page across
+      // every model starves whichever ones come last.
+      const page = await browser.newPage({ viewport });
       const pageErrors = [];
       page.on("pageerror", (error) => pageErrors.push(String(error)));
 
@@ -47,7 +50,7 @@ try {
 
       // The model app runs in its own document, so reach through the frame.
       const frame = page.frameLocator("[data-scene-stage] iframe");
-      await frame.locator("canvas").first().waitFor({ timeout: 20_000 });
+      await frame.locator("canvas").first().waitFor({ timeout: 40_000 });
       await page.waitForTimeout(2500);
 
       const canvas = await page
@@ -89,10 +92,8 @@ try {
       console.log(
         `${viewport.name} ${model}: canvas ${canvas?.width}x${canvas?.height}, errors ${pageErrors.length}`
       );
-      page.removeAllListeners("pageerror");
+      await page.close();
     }
-
-    await page.close();
   }
 } finally {
   await browser.close();

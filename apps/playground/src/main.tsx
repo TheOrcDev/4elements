@@ -25,7 +25,8 @@ type ModelName =
   | "sonnet-5"
   | "grok-4.6"
   | "glm-5.2"
-  | "gemini-3.7-flash";
+  | "gemini-3.7-flash"
+  | "fable-5.1";
 
 type ModelProvider = "openai" | "anthropic" | "google" | "grok" | "other";
 
@@ -195,6 +196,18 @@ const modelOptions: readonly ModelOption[] = [
       "A nexus holding the four elements plus a fifth fusion form, each on its own TypeScript shader module, with a camera controller, post-processing chain and generated audio.",
     controls:
       "Use the overlay to move between elements, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Fable 5.1",
+    value: "fable-5.1",
+    provider: "anthropic",
+    effort: "Max",
+    effortDetail: "Thinking effort: max",
+    duration: "39m 1s",
+    summary:
+      "One environment holding all four elements, each on its own shader module over a shared noise field, with an overview you can fly back out to.",
+    controls:
+      "Pick an element to fly to it, Overview to pull back, drag to orbit, scroll to zoom.",
   },
 ] as const;
 

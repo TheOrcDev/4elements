@@ -1,0 +1,18 @@
+{
+  "name": "@4elements/fable-5.1",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Fable 5.1 — Four Elements in Three.js",
+  "scripts": {
+    "dev": "vite --port 5184 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --port 4184"
+  },
+  "dependencies": {
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "vite": "^8.2.2"
+  }
+}
