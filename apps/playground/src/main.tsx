@@ -26,7 +26,8 @@ type ModelName =
   | "grok-4.6"
   | "glm-5.2"
   | "gemini-3.7-flash"
-  | "fable-5.1";
+  | "fable-5.1"
+  | "gemini-3.8-flash";
 
 type ModelProvider = "openai" | "anthropic" | "google" | "grok" | "other";
 
@@ -208,6 +209,18 @@ const modelOptions: readonly ModelOption[] = [
       "One environment holding all four elements, each on its own shader module over a shared noise field, with an overview you can fly back out to.",
     controls:
       "Pick an element to fly to it, Overview to pull back, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Gemini 3.8 Flash",
+    value: "gemini-3.8-flash",
+    provider: "google",
+    effort: "High",
+    effortDetail: "thinking_level: high",
+    duration: "35m 56s",
+    summary:
+      "Four elements ringing a central catalyst they channel energy beams into, each its own shader module, with a convergence view, cinematic orbit and generated audio.",
+    controls:
+      "Pick an element or Convergence to change view, space to cast a surge, drag to orbit, scroll to zoom.",
   },
 ] as const;
 

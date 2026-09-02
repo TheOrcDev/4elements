@@ -16,6 +16,7 @@ const models = [
   "glm-5.2",
   "gemini-3.7-flash",
   "fable-5.1",
+  "gemini-3.8-flash",
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },
@@ -39,7 +40,10 @@ try {
 
       const modelUrl = new URL(targetUrl);
       modelUrl.searchParams.set("model", model);
-      await page.goto(modelUrl.toString(), { waitUntil: "networkidle" });
+      // Not networkidle: these scenes animate continuously and the analytics
+      // beacon never resolves locally, so the network never goes quiet. The
+      // canvas wait below is the real readiness check.
+      await page.goto(modelUrl.toString(), { waitUntil: "domcontentloaded" });
 
       const selectedModel = new URL(page.url()).searchParams.get("model");
       if (selectedModel !== model) {

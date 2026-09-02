@@ -1,0 +1,20 @@
+{
+  "name": "@4elements/gemini-3.8-flash",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Gemini 3.8 Flash — Four Elements in Three.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4185"
+  },
+  "dependencies": {
+    "lil-gui": "^0.21.0",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.185.4",
+    "vite": "^8.2.2"
+  }
+}

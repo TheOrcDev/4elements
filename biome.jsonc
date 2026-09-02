@@ -17,6 +17,7 @@
       "!apps/sonnet-5",
       "!apps/glm-5.2",
       "!apps/gemini-3.7-flash",
+      "!apps/gemini-3.8-flash",
       "!apps/grok-4.6",
       "!apps/playground/public/models"
     ]

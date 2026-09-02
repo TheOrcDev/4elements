@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Four Elements • 3D Convergence</title>
+  <link rel="stylesheet" href="/src/style.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>" />
+</head>
+<body>
+  <div id="canvas-container"></div>
+  <div id="element-tooltip">Element</div>
+
+  <div id="ui-overlay">
+    <!-- Header -->
+    <header class="header-bar">
+      <div class="title-container">
+        <h1><span>✦</span> FOUR ELEMENTS <span>✦</span></h1>
+        <p>Volumetric 3D Simulation • WebGL & GLSL</p>
+      </div>
+
+      <!-- Quick Elements Switcher -->
+      <nav class="nav-buttons">
+        <button class="nav-btn active" data-element="all">
+          <span>⚡</span> Convergence
+        </button>
+        <button class="nav-btn" data-element="fire">
+          <span>🔥</span> Fire
+        </button>
+        <button class="nav-btn" data-element="water">
+          <span>💧</span> Water
+        </button>
+        <button class="nav-btn" data-element="earth">
+          <span>🌿</span> Earth
+        </button>
+        <button class="nav-btn" data-element="air">
+          <span>🌪️</span> Air
+        </button>
+      </nav>
+
+      <!-- Action Controls -->
+      <div class="action-controls">
+        <button id="btn-surge" class="action-btn" title="Trigger high-energy elemental burst">
+          <span>💥</span> Cast Surge
+        </button>
+        <button id="btn-tour" class="action-btn" title="Toggle automatic cinematic camera tour">
+          <span>🎥</span> Cinematic Orbit
+        </button>
+        <button id="btn-audio" class="action-btn" title="Procedural Web Audio synthesizer">
+          <span>🔇</span> Sound: Off
+        </button>
+      </div>
+    </header>
+
+    <!-- Footer Information Bar -->
+    <footer class="footer-bar">
+      <div class="element-info-card" id="info-card">
+        <span class="card-badge badge-all" id="card-badge">Quad-Convergence</span>
+        <h2 id="card-title">The Primal Nexus</h2>
+        <p id="card-desc">
+          The four primordial forces of reality held in cosmic equilibrium at the sacred altar. Fire, Water, Earth, and Air channel continuous energy beams into the central catalyst matrix.
+        </p>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">Equilibrium</span>
+            <span class="stat-value" id="stat-1">100% Balanced</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Harmonics</span>
+            <span class="stat-value" id="stat-2">432 Hz Core</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Particles</span>
+            <span class="stat-value" id="stat-3">3,800 Active</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hints-box">
+        <span><span class="hint-pill">Drag:</span> Orbit 3D</span>
+        <span><span class="hint-pill">Scroll:</span> Zoom</span>
+        <span><span class="hint-pill">Click Orb:</span> Focus & Surge</span>
+        <span><span class="hint-pill">Spacebar:</span> Surge</span>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
