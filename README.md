@@ -17,6 +17,7 @@
 | GLM 5.2 | Max | 8m 27s | [`apps/glm-5.2`](apps/glm-5.2) |
 | GPT 5.5 | Extra High | 9m 59s | [`apps/gpt-5.5`](apps/gpt-5.5) |
 | Fable 5.1 | Max | 39m 1s | [`apps/fable-5.1`](apps/fable-5.1) |
+| GPT-6 Astra | Ultra | 21m 52s | [`apps/gpt-6-astra`](apps/gpt-6-astra) |
 | Sol Ultra | Ultra | 25m | [`apps/sol-ultra`](apps/sol-ultra) |
 | Gemini 3.8 Flash | High | 35m 56s | [`apps/gemini-3.8-flash`](apps/gemini-3.8-flash) |
 | Gemini 3.7 Flash | High | 28m 20s | [`apps/gemini-3.7-flash`](apps/gemini-3.7-flash) |
@@ -49,17 +50,11 @@ Every model ran at the highest reasoning setting it offers, so the times are com
 
 **Gemini 3.7 Flash** builds a nexus holding the four elements plus a fifth fusion form, each on its own TypeScript shader module, with a camera controller, post-processing chain and generated audio.
 
-**Sol Ultra** presents the elements as a field guide, each with its own bloom-lit composition. It currently does not get past its own loading veil — see [Known issues](#known-issues).
+**GPT-6 Astra** frames the elements as an editorial observatory, with a card index, an atmosphere slider driving element intensity, and pause and reset over a live FPS readout.
+
+**Sol Ultra** presents the elements as a field guide, each with its own bloom-lit composition.
 
 Each app's own README documents how that model built its scenes.
-
-## Known issues
-
-**Sol Ultra stays on its loading veil.** It builds, mounts a correctly sized canvas and acquires a live WebGL context, but never reveals the scene. This reproduces standalone, outside the playground, so it is not an artefact of being framed.
-
-`ElementalExperience` lifts the veil by applying `.is-ready`, which it does on the second pass through its render loop. That class is never applied, so the loop is not getting that far. An earlier, separate fault — `#root` having no height, which collapsed the canvas to zero — has been fixed upstream and is no longer the cause.
-
-The app is left as the model wrote it rather than patched, since what it produced is the result being measured.
 
 ## How it works
 
@@ -141,6 +136,7 @@ apps/sol-ultra        Sol Ultra's Four Elements app
 apps/terra-ultra      Terra Ultra's Four Elements app
 apps/luna-extra-high  Luna Extra High's Four Elements app
 apps/gpt-5.5          GPT 5.5's Four Elements app
+apps/gpt-6-astra      GPT-6 Astra's Four Elements app
 tests/visual          Playwright smoke test and generated screenshots
 ```
 

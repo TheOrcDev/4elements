@@ -27,7 +27,8 @@ type ModelName =
   | "glm-5.2"
   | "gemini-3.7-flash"
   | "fable-5.1"
-  | "gemini-3.8-flash";
+  | "gemini-3.8-flash"
+  | "gpt-6-astra";
 
 type ModelProvider = "openai" | "anthropic" | "google" | "grok" | "other";
 
@@ -221,6 +222,18 @@ const modelOptions: readonly ModelOption[] = [
       "Four elements ringing a central catalyst they channel energy beams into, each its own shader module, with a convergence view, cinematic orbit and generated audio.",
     controls:
       "Pick an element or Convergence to change view, space to cast a surge, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "GPT-6 Astra",
+    value: "gpt-6-astra",
+    provider: "openai",
+    effort: "Ultra",
+    effortDetail: "Effort tier: ultra",
+    duration: "21m 52s",
+    summary:
+      "An observatory framing the four elements as an editorial study, with a card index, an atmosphere slider driving element intensity, and pause and reset over a live FPS readout.",
+    controls:
+      "Keys 1–4 or the cards to focus an element, Esc to return, space to pause, drag to orbit, scroll to zoom.",
   },
 ] as const;
 
