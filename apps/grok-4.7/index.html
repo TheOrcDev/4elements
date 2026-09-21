@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Four Elements</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <header>
+      <p class="eyebrow">Natural forces</p>
+      <h1>Four Elements</h1>
+      <div class="detail">
+        <h2 id="name">All four</h2>
+        <p id="copy">
+          Fire, water, earth, and air, each alive in the same dark chamber.
+        </p>
+      </div>
+    </header>
+    <p class="hint" id="hint">Drag to orbit · Scroll to move closer · Click an element</p>
+    <nav id="nav" aria-label="Elements">
+      <button type="button" data-id="overview" class="active">All</button>
+      <button type="button" data-id="fire"><i></i>Fire</button>
+      <button type="button" data-id="water"><i></i>Water</button>
+      <button type="button" data-id="earth"><i></i>Earth</button>
+      <button type="button" data-id="air"><i></i>Air</button>
+    </nav>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

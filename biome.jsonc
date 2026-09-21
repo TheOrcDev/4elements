@@ -20,6 +20,7 @@
       "!apps/gemini-3.7-flash",
       "!apps/gemini-3.8-flash",
       "!apps/grok-4.6",
+      "!apps/grok-4.7",
       "!apps/playground/public/models"
     ]
   }

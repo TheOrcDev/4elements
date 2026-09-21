@@ -18,6 +18,7 @@ const models = [
   "fable-5.1",
   "gemini-3.8-flash",
   "gpt-6-astra",
+  "grok-4.7",
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },

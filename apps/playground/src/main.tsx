@@ -28,7 +28,8 @@ type ModelName =
   | "gemini-3.7-flash"
   | "fable-5.1"
   | "gemini-3.8-flash"
-  | "gpt-6-astra";
+  | "gpt-6-astra"
+  | "grok-4.7";
 
 type ModelProvider = "openai" | "anthropic" | "google" | "grok" | "other";
 
@@ -234,6 +235,18 @@ const modelOptions: readonly ModelOption[] = [
       "An observatory framing the four elements as an editorial study, with a card index, an atmosphere slider driving element intensity, and pause and reset over a live FPS readout.",
     controls:
       "Keys 1–4 or the cards to focus an element, Esc to return, space to pause, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Grok 4.7",
+    value: "grok-4.7",
+    provider: "grok",
+    effort: "Extra High",
+    effortDetail: "Effort tier: extra high",
+    duration: "29m 15s",
+    summary:
+      "All four elements alive in one dark chamber, each raised on its own pedestal from custom GLSL materials.",
+    controls:
+      "Pick an element or All to change view, click an element to focus it, drag to orbit, scroll to move closer.",
   },
 ] as const;
 

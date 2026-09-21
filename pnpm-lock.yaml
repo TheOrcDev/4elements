@@ -218,6 +218,16 @@ importers:
         specifier: ^8.2.0
         version: 8.2.1(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.8.3)
 
+  apps/grok-4.7:
+    dependencies:
+      three:
+        specifier: ^0.180.0
+        version: 0.180.0
+    devDependencies:
+      vite:
+        specifier: ^7.0.0
+        version: 7.3.6(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.33.0)(yaml@2.8.3)
+
   apps/kimi-k3:
     dependencies:
       three:
