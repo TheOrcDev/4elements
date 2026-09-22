@@ -21,6 +21,7 @@ const models = [
   "grok-4.7",
   "gpt-6-sol",
   "gpt-6-luna",
+  "opus-5.5",
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },

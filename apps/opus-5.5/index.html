@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#05070d" />
+    <meta name="description" content="Fire, Air, Water and Earth — the four classical elements rendered in real time with Three.js." />
+    <title>Elementa — The Four Elements</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <canvas id="scene" aria-label="Real-time 3D scene of the four classical elements"></canvas>
+
+    <div class="ui" id="ui">
+      <header class="brand">
+        <h1>Elementa</h1>
+        <p>The four classical elements</p>
+      </header>
+
+      <aside class="info" id="info" aria-live="polite" aria-hidden="true">
+        <div class="info__glyph" id="info-glyph"></div>
+        <p class="info__eyebrow" id="info-eyebrow"></p>
+        <h2 class="info__name" id="info-name"></h2>
+        <p class="info__greek" id="info-greek"></p>
+        <p class="info__motto" id="info-motto"></p>
+        <p class="info__text" id="info-text"></p>
+        <dl class="info__facts">
+          <div><dt>Qualities</dt><dd id="info-qualities"></dd></div>
+          <div><dt>Platonic solid</dt><dd id="info-solid"></dd></div>
+        </dl>
+        <div class="info__nav">
+          <button class="chip" data-step="-1" aria-label="Previous element">‹</button>
+          <button class="chip chip--wide" data-focus="all">Back to the sanctum <kbd>Esc</kbd></button>
+          <button class="chip" data-step="1" aria-label="Next element">›</button>
+        </div>
+      </aside>
+
+      <nav class="dock" id="dock" aria-label="Choose an element"></nav>
+
+      <div class="toolbar" role="toolbar" aria-label="View options">
+        <button class="icon-btn" id="btn-sound" aria-pressed="false" title="Ambient sound (S)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="wave" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" /><path class="mute" d="M16 9.5l5 5M21 9.5l-5 5" /></svg>
+        </button>
+        <button class="icon-btn" id="btn-rotate" aria-pressed="true" title="Auto-orbit when idle (R)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.35-5.66" /><path d="M20 4.5v4h-4" /></svg>
+        </button>
+        <button class="icon-btn" id="btn-ui" title="Hide interface (H)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" /><circle cx="12" cy="12" r="3" /></svg>
+        </button>
+        <button class="icon-btn" id="btn-full" title="Fullscreen (F)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
+        </button>
+      </div>
+
+      <p class="hint" id="hint">Drag to orbit · Scroll to zoom<br />Click an element or press <kbd>1</kbd>–<kbd>4</kbd></p>
+    </div>
+
+    <div class="tooltip" id="tooltip" role="status"></div>
+
+    <div class="loader" id="loader" aria-live="polite">
+      <div class="loader__ring" id="loader-glyphs"></div>
+      <p class="loader__title">Elementa</p>
+      <p class="loader__status" id="loader-status">Summoning the elements…</p>
+      <div class="loader__bar"><span id="loader-bar"></span></div>
+    </div>
+
+    <noscript>This experience needs JavaScript and WebGL 2.</noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

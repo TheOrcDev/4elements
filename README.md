@@ -7,6 +7,7 @@
 | Model | Reasoning | Time to build | App |
 | --- | --- | --- | --- |
 | Opus 5 | Max | 47m | [`apps/opus-5`](apps/opus-5) |
+| Opus 5.5 | Max | 1h 48m | [`apps/opus-5.5`](apps/opus-5.5) |
 | Kimi K3 | Max | 70m | [`apps/kimi-k3`](apps/kimi-k3) |
 | Grok 4.7 | Extra High | 29m 15s | [`apps/grok-4.7`](apps/grok-4.7) |
 | Grok 4.6 | High | 4m 26s | [`apps/grok-4.6`](apps/grok-4.6) |
@@ -25,9 +26,11 @@
 | Gemini 3.8 Flash | High | 35m 56s | [`apps/gemini-3.8-flash`](apps/gemini-3.8-flash) |
 | Gemini 3.7 Flash | High | 28m 20s | [`apps/gemini-3.7-flash`](apps/gemini-3.7-flash) |
 
-Every model ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5, Fable 5, Fable 5.1 and Sonnet 5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Grok 4.7 ran at extra high, above that range. Terra Ultra, Sol Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. Both Gemini entries use [`thinking_level`](https://ai.google.dev/gemini-api/docs/gemini-3) at `high`, the top of their `low` / `high` range. Time to build is wall-clock from the brief to a working app.
+Every model ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5, Opus 5.5, Fable 5, Fable 5.1 and Sonnet 5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Grok 4.7 ran at extra high, above that range. Terra Ultra, Sol Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. Both Gemini entries use [`thinking_level`](https://ai.google.dev/gemini-api/docs/gemini-3) at `high`, the top of their `low` / `high` range. Time to build is wall-clock from the brief to a working app.
 
 **Opus 5** puts all four elements on one stage, each on its own custom GLSL shader: a volumetric raymarched flame, a refracting swell, ridged terrain with magma in the cracks, and 50k particles integrating a curl field.
+
+**Opus 5.5** builds a sanctum of the four classical elements, each paired with its Platonic solid and its qualities, on its own camera rig, sky, lighting, post-processing and soundscape.
 
 **Kimi K3** builds four procedural elemental worlds you move between, each with its own shaders, GPU particles and bloom pass.
 
@@ -132,6 +135,7 @@ The smoke test loads each model on desktop and mobile viewports, confirms the UR
 ```txt
 apps/playground       Vite React shell: model selector and viewport
 apps/opus-5           Opus 5's Four Elements app
+apps/opus-5.5         Opus 5.5's Four Elements app
 apps/kimi-k3          Kimi K3's Four Elements app
 apps/grok-4.5         Grok 4.5's Four Elements app
 apps/grok-4.6         Grok 4.6's Four Elements app

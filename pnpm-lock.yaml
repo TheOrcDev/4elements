@@ -278,6 +278,22 @@ importers:
         specifier: ^8.1.5
         version: 8.1.5(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.8.3)
 
+  apps/opus-5.5:
+    dependencies:
+      '@fontsource-variable/inter':
+        specifier: ^5.3.0
+        version: 5.3.0
+      '@fontsource/cinzel':
+        specifier: ^5.3.0
+        version: 5.3.0
+      three:
+        specifier: ^0.186.0
+        version: 0.186.0
+    devDependencies:
+      vite:
+        specifier: ^8.3.0
+        version: 8.3.0(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.8.3)
+
   apps/playground:
     dependencies:
       '@fontsource-variable/geist':
@@ -1156,6 +1172,9 @@ packages:
 
   '@fontsource-variable/geist@5.2.8':
     resolution: {integrity: sha512-cJ6m9e+8MQ5dCYJsLylfZrgBh6KkG4bOLckB35Tr9J/EqdkEM6QllH5PxqP1dhTvFup+HtMRPuz9xOjxXJggxw==}
+
+  '@fontsource-variable/inter@5.3.0':
+    resolution: {integrity: sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==}
 
   '@fontsource-variable/noto-sans@5.2.10':
     resolution: {integrity: sha512-wyFgKkFu7jki5kEL8qv7avjQ8rxHX0J/nhLWvbR9T0hOH1HRKZEvb9EW9lMjZfWHHfEzKkYf5J+NadwgCS7TXA==}
@@ -5970,6 +5989,8 @@ snapshots:
   '@floating-ui/utils@0.2.12': {}
 
   '@fontsource-variable/geist@5.2.8': {}
+
+  '@fontsource-variable/inter@5.3.0': {}
 
   '@fontsource-variable/noto-sans@5.2.10': {}
 

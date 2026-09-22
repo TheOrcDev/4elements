@@ -6,6 +6,7 @@
     // wrote it, so it is neither linted nor formatted to this repo's standards.
     "includes": [
       "!apps/opus-5",
+      "!apps/opus-5.5",
       "!apps/kimi-k3",
       "!apps/grok-4.5",
       "!apps/fable-5",

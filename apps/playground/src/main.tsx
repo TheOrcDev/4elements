@@ -31,7 +31,8 @@ type ModelName =
   | "gpt-6-astra"
   | "grok-4.7"
   | "gpt-6-sol"
-  | "gpt-6-luna";
+  | "gpt-6-luna"
+  | "opus-5.5";
 
 type ModelProvider = "openai" | "anthropic" | "google" | "grok" | "other";
 
@@ -273,6 +274,18 @@ const modelOptions: readonly ModelOption[] = [
       "An atlas of field notes on the four elements, each a live specimen with its own reading of the qualities that define it.",
     controls:
       "Pick an element from the index or use the arrow keys, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Opus 5.5",
+    value: "opus-5.5",
+    provider: "anthropic",
+    effort: "Max",
+    effortDetail: "Thinking effort: max",
+    duration: "1h 48m",
+    summary:
+      "A sanctum of the four classical elements, each paired with its Platonic solid and its qualities, built on its own camera rig, sky, lighting, post-processing and soundscape.",
+    controls:
+      "Click an element or press 1–4 to focus it, Esc to return to the sanctum, drag to orbit, scroll to zoom.",
   },
 ] as const;
 
