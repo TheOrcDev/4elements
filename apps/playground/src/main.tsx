@@ -29,7 +29,8 @@ type ModelName =
   | "fable-5.1"
   | "gemini-3.8-flash"
   | "gpt-6-astra"
-  | "grok-4.7";
+  | "grok-4.7"
+  | "gpt-6-sol";
 
 type ModelProvider = "openai" | "anthropic" | "google" | "grok" | "other";
 
@@ -247,6 +248,18 @@ const modelOptions: readonly ModelOption[] = [
       "All four elements alive in one dark chamber, each raised on its own pedestal from custom GLSL materials.",
     controls:
       "Pick an element or All to change view, click an element to focus it, drag to orbit, scroll to move closer.",
+  },
+  {
+    label: "GPT-6 Sol",
+    value: "gpt-6-sol",
+    provider: "openai",
+    effort: "Extra High",
+    effortDetail: "Effort tier: extra high",
+    duration: "7m 6s",
+    summary:
+      "An editorial collection of the four forces under their Latin names, each card holding its own live 3D form you can drag, opening into a detail view of its qualities.",
+    controls:
+      "Drag a form to explore it in 3D, open a card for its detail view, Escape to close.",
   },
 ] as const;
 

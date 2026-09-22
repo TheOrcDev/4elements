@@ -15,6 +15,7 @@
       "!apps/luna-extra-high",
       "!apps/gpt-5.5",
       "!apps/gpt-6-astra",
+      "!apps/gpt-6-sol",
       "!apps/sonnet-5",
       "!apps/glm-5.2",
       "!apps/gemini-3.7-flash",
