@@ -30,7 +30,8 @@ type ModelName =
   | "gemini-3.8-flash"
   | "gpt-6-astra"
   | "grok-4.7"
-  | "gpt-6-sol";
+  | "gpt-6-sol"
+  | "gpt-6-luna";
 
 type ModelProvider = "openai" | "anthropic" | "google" | "grok" | "other";
 
@@ -260,6 +261,18 @@ const modelOptions: readonly ModelOption[] = [
       "An editorial collection of the four forces under their Latin names, each card holding its own live 3D form you can drag, opening into a detail view of its qualities.",
     controls:
       "Drag a form to explore it in 3D, open a card for its detail view, Escape to close.",
+  },
+  {
+    label: "GPT-6 Luna",
+    value: "gpt-6-luna",
+    provider: "openai",
+    effort: "Extra High",
+    effortDetail: "Effort tier: extra high",
+    duration: "10m 31s",
+    summary:
+      "An atlas of field notes on the four elements, each a live specimen with its own reading of the qualities that define it.",
+    controls:
+      "Pick an element from the index or use the arrow keys, drag to orbit, scroll to zoom.",
   },
 ] as const;
 

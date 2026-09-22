@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#090b10" />
+    <meta name="description" content="An interactive, real-time 3D atlas of the four classical elements." />
+    <title>Primordia — Atlas of Elements</title>
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Primordia home">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="brand-copy"><strong>PRIMORDIA</strong><small>ATLAS OF ELEMENTS</small></span>
+        </a>
+        <div class="top-center"><span class="live-dot"></span> A STUDY OF THE FUNDAMENTAL</div>
+        <div class="top-right"><span class="edition">FIELD NOTES <b>№ 004</b></span><span class="top-divider"></span><span class="render-status"><i></i> REALTIME</span></div>
+      </header>
+
+      <main class="main-layout">
+        <aside class="element-rail" aria-label="Choose an element">
+          <div class="rail-label">ELEMENTS</div>
+          <div class="rail-list" role="group" aria-label="Element selection">
+            <button class="rail-item is-active" data-element="fire" aria-label="Select fire" aria-pressed="true"><span class="rail-symbol">✳</span><span class="rail-index">01</span><span class="rail-tooltip">Fire</span></button>
+            <button class="rail-item" data-element="air" aria-label="Select air" aria-pressed="false"><span class="rail-symbol">〰</span><span class="rail-index">02</span><span class="rail-tooltip">Air</span></button>
+            <button class="rail-item" data-element="water" aria-label="Select water" aria-pressed="false"><span class="rail-symbol">◒</span><span class="rail-index">03</span><span class="rail-tooltip">Water</span></button>
+            <button class="rail-item" data-element="earth" aria-label="Select earth" aria-pressed="false"><span class="rail-symbol">⬡</span><span class="rail-index">04</span><span class="rail-tooltip">Earth</span></button>
+          </div>
+          <div class="rail-bottom"><span class="rail-line"></span><span>4<br />FORCES</span></div>
+        </aside>
+
+        <section class="view-column" aria-label="Interactive 3D element viewer">
+          <div class="viewer-frame">
+            <div class="viewer-topline"><span class="specimen-tag"><i></i> LIVE SPECIMEN</span><span class="view-coordinates">34° 12' N &nbsp;·&nbsp; 02° 08' E</span></div>
+            <canvas id="scene" aria-label="Interactive real-time three-dimensional element model"></canvas>
+            <div class="viewer-vignette"></div>
+            <div class="viewer-caption"><span class="caption-rule"></span><span id="model-caption">A LIVING FLAME · FORM IN MOTION</span></div>
+            <div class="viewer-controls">
+              <button id="rotate-toggle" class="icon-control" aria-pressed="true" title="Pause automatic rotation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9a7 7 0 0 1 11.7-2L20 12M4 12l2.7 5a7 7 0 0 0 11.7-2"/></svg></button>
+              <button id="reset-view" class="icon-control" title="Reset view"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.64-6.36L3 8"/><path d="M3 3v5h5"/></svg></button>
+              <button id="fullscreen-toggle" class="icon-control" title="Enter fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+            </div>
+            <div class="drag-hint"><span class="drag-icon"><span></span></span> DRAG TO ORBIT <b>·</b> SCROLL TO ZOOM</div>
+          </div>
+          <div class="stage-footer"><span class="stage-label">FIG. <b id="stage-number">01</b> <i>/</i> 04</span><span class="stage-bar"><i id="stage-progress"></i></span><span class="stage-mode">WEBGL <i>·</i> 60 FPS TARGET</span></div>
+        </section>
+
+        <aside class="info-panel" aria-live="polite">
+          <div class="info-overline"><span id="info-index">01</span><span class="overline-dash"></span><span id="info-category">THE TRANSFORMER</span></div>
+          <div class="title-wrap"><h1 id="element-title">Fire<span class="title-period">.</span></h1><p id="element-subtitle">THE FIRST SPARK</p></div>
+          <p class="element-description" id="element-description">A force that consumes and creates in the same breath. Fire is change made visible — restless, radiant, impossible to hold.</p>
+          <div class="info-rule"></div>
+          <div class="property-list">
+            <div class="property-row"><span>ESSENCE</span><b id="property-essence">TRANSFORMATION</b></div>
+            <div class="property-row"><span>POLARITY</span><b id="property-polarity">EXPANSIVE</b></div>
+            <div class="property-row"><span>STATE</span><b id="property-state">INCANDESCENT</b></div>
+          </div>
+          <div class="color-signature"><span>FIELD SIGNATURE</span><div class="signature-line"><i id="signature-fill"></i></div><span class="signature-value" id="signature-value">EMBER / 01</span></div>
+          <div class="panel-footer"><span class="footer-mark">✳</span><span id="element-quote">“From stillness, a spark.”</span></div>
+        </aside>
+      </main>
+
+      <footer class="bottom-bar"><span>PRIMORDIA <i>©</i> 2026</span><span class="bottom-center">AN INTERACTIVE ELEMENTAL STUDY</span><span>BUILT TO BE <b>FELT</b></span></footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

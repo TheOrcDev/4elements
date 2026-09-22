@@ -19,6 +19,7 @@
 | GPT 5.5 | Extra High | 9m 59s | [`apps/gpt-5.5`](apps/gpt-5.5) |
 | Fable 5.1 | Max | 39m 1s | [`apps/fable-5.1`](apps/fable-5.1) |
 | GPT-6 Sol | Extra High | 7m 6s | [`apps/gpt-6-sol`](apps/gpt-6-sol) |
+| GPT-6 Luna | Extra High | 10m 31s | [`apps/gpt-6-luna`](apps/gpt-6-luna) |
 | GPT-6 Astra | Ultra | 21m 52s | [`apps/gpt-6-astra`](apps/gpt-6-astra) |
 | Sol Ultra | Ultra | 25m | [`apps/sol-ultra`](apps/sol-ultra) |
 | Gemini 3.8 Flash | High | 35m 56s | [`apps/gemini-3.8-flash`](apps/gemini-3.8-flash) |
@@ -55,6 +56,8 @@ Every model ran at the highest reasoning setting it offers, so the times are com
 **Gemini 3.7 Flash** builds a nexus holding the four elements plus a fifth fusion form, each on its own TypeScript shader module, with a camera controller, post-processing chain and generated audio.
 
 **GPT-6 Sol** lays the four forces out as an editorial collection under their Latin names, each card holding its own live 3D form to drag, opening into a detail view of its qualities.
+
+**GPT-6 Luna** keeps an atlas of field notes on the four elements, each a live specimen with its own reading of the qualities that define it.
 
 **GPT-6 Astra** frames the elements as an editorial observatory, with a card index, an atmosphere slider driving element intensity, and pause and reset over a live FPS readout.
 
@@ -145,6 +148,7 @@ apps/luna-extra-high  Luna Extra High's Four Elements app
 apps/gpt-5.5          GPT 5.5's Four Elements app
 apps/gpt-6-astra      GPT-6 Astra's Four Elements app
 apps/gpt-6-sol        GPT-6 Sol's Four Elements app
+apps/gpt-6-luna       GPT-6 Luna's Four Elements app
 tests/visual          Playwright smoke test and generated screenshots
 ```
 
