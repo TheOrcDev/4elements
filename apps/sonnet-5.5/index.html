@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#04060d" />
+    <meta
+      name="description"
+      content="Fire, Water, Air and Earth — four real-time procedural elements rendered with Three.js."
+    />
+    <title>The Four Elements — Fire · Water · Air · Earth</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2306081a'/%3E%3Cpath d='M16 5 21 13H11Z' fill='%23ff7a2f'/%3E%3Cpath d='M16 27 11 19H21Z' fill='%2339c5ff'/%3E%3Cpath d='M6 16 12 11V21Z' fill='%2374d26a'/%3E%3Cpath d='M26 16 20 11V21Z' fill='%23c9d8ff'/%3E%3C/svg%3E"
+    />
+  </head>
+  <body>
+    <canvas id="scene" tabindex="0" aria-label="Interactive 3D scene of the four elements"></canvas>
+
+    <div id="labels" aria-hidden="false"></div>
+
+    <div id="ui">
+      <header class="brand">
+        <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M24 5 33 20H15Z" class="m-fire" />
+          <path d="M24 43 15 28H33Z" class="m-water" />
+          <path d="M5 24 20 15V33Z" class="m-earth" />
+          <path d="M43 24 28 15V33Z" class="m-air" />
+        </svg>
+        <div>
+          <h1>The Four Elements</h1>
+          <p>Fire · Water · Air · Earth</p>
+        </div>
+      </header>
+
+      <div class="tools">
+        <button id="btn-orbit" class="tool on" title="Toggle auto-orbit (O)" aria-pressed="true">
+          <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5" /></svg>
+          <span>Auto-orbit</span>
+        </button>
+        <button id="btn-full" class="tool" title="Fullscreen (F)">
+          <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
+          <span>Fullscreen</span>
+        </button>
+      </div>
+
+      <section id="caption" class="caption" aria-live="polite">
+        <span class="cap-kicker">Element</span>
+        <h2 id="cap-title">Overview</h2>
+        <p id="cap-tag" class="cap-tag"></p>
+        <p id="cap-text" class="cap-text"></p>
+      </section>
+
+      <nav class="dock" aria-label="Choose an element">
+        <button class="dock-btn active" data-view="all" style="--c: #b9a6ff">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="2.2" /></svg>
+          <span>Overview</span><kbd>1</kbd>
+        </button>
+        <button class="dock-btn" data-view="fire" style="--c: #ff7a2f">
+          <svg viewBox="0 0 24 24"><path d="M12 3 21 19H3Z" /></svg>
+          <span>Fire</span><kbd>2</kbd>
+        </button>
+        <button class="dock-btn" data-view="water" style="--c: #39c5ff">
+          <svg viewBox="0 0 24 24"><path d="M12 21 3 5h18Z" /></svg>
+          <span>Water</span><kbd>3</kbd>
+        </button>
+        <button class="dock-btn" data-view="air" style="--c: #c9d8ff">
+          <svg viewBox="0 0 24 24"><path d="M12 3 21 19H3ZM7.2 13.2h9.6" /></svg>
+          <span>Air</span><kbd>4</kbd>
+        </button>
+        <button class="dock-btn" data-view="earth" style="--c: #74d26a">
+          <svg viewBox="0 0 24 24"><path d="M12 21 3 5h18ZM7.2 10.8h9.6" /></svg>
+          <span>Earth</span><kbd>5</kbd>
+        </button>
+      </nav>
+
+      <p class="hint">
+        Drag to orbit · Scroll to zoom · Right-drag to pan · <b>Press &amp; hold</b> an element to unleash it
+      </p>
+    </div>
+
+    <div id="loader">
+      <div class="loader-inner">
+        <svg class="loader-mark" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M24 5 33 20H15Z" class="m-fire" />
+          <path d="M24 43 15 28H33Z" class="m-water" />
+          <path d="M5 24 20 15V33Z" class="m-earth" />
+          <path d="M43 24 28 15V33Z" class="m-air" />
+        </svg>
+        <p id="loader-text">Gathering the elements…</p>
+      </div>
+    </div>
+
+    <noscript><p style="padding: 2rem">This experience needs JavaScript and WebGL.</p></noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

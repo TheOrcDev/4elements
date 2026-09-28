@@ -22,6 +22,7 @@ const models = [
   "gpt-6-sol",
   "gpt-6-luna",
   "opus-5.5",
+  "sonnet-5.5",
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },
@@ -95,8 +96,12 @@ try {
         failures.push(`${viewport.name} ${model}: ${pageErrors.join(" | ")}`);
       }
 
+      // A screenshot waits for the next frame, and headless Chromium renders
+      // WebGL in software. The heaviest scenes (Sonnet 5.5 on mobile) manage
+      // one or two frames a second there, which overruns the 30s default.
       await page.screenshot({
         path: `tests/visual/${viewport.name}-${model}.png`,
+        timeout: 90_000,
       });
       console.log(
         `${viewport.name} ${model}: canvas ${canvas?.width}x${canvas?.height}, errors ${pageErrors.length}`

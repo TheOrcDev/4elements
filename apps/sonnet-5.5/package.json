@@ -1,0 +1,21 @@
+{
+  "name": "@4elements/sonnet-5.5",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Fire, Water, Air and Earth — a real-time Three.js showcase built with Vite",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4191"
+  },
+  "dependencies": {
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "vite": "^8.3.1"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
+}

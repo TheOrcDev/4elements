@@ -32,7 +32,8 @@ type ModelName =
   | "grok-4.7"
   | "gpt-6-sol"
   | "gpt-6-luna"
-  | "opus-5.5";
+  | "opus-5.5"
+  | "sonnet-5.5";
 
 type ModelProvider = "openai" | "anthropic" | "google" | "grok" | "other";
 
@@ -286,6 +287,18 @@ const modelOptions: readonly ModelOption[] = [
       "A sanctum of the four classical elements, each paired with its Platonic solid and its qualities, built on its own camera rig, sky, lighting, post-processing and soundscape.",
     controls:
       "Click an element or press 1–4 to focus it, Esc to return to the sanctum, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Sonnet 5.5",
+    value: "sonnet-5.5",
+    provider: "anthropic",
+    effort: "Max",
+    effortDetail: "Thinking effort: max",
+    duration: "1h 6m 1s",
+    summary:
+      "Four procedural shrines on a moonlit plaza: a raymarched flame, a refractive water orb over a reflecting pool, a cyclone of wind streaks, and a floating earth island with a grass meadow, tied together by a central nexus crystal.",
+    controls:
+      "Use the dock or press 1–5 to fly between shrines, press and hold a shrine to unleash it, Esc for the overview, drag to orbit, scroll to zoom.",
   },
 ] as const;
 
