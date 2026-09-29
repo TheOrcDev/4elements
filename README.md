@@ -22,12 +22,13 @@
 | Fable 5.1 | Max | 39m 1s | [`apps/fable-5.1`](apps/fable-5.1) |
 | GPT-6 Sol | Extra High | 7m 6s | [`apps/gpt-6-sol`](apps/gpt-6-sol) |
 | GPT-6 Luna | Extra High | 10m 31s | [`apps/gpt-6-luna`](apps/gpt-6-luna) |
+| GPT-6.1 Sol | Ultra | 13m 22s | [`apps/gpt-6.1-sol`](apps/gpt-6.1-sol) |
 | GPT-6 Astra | Ultra | 21m 52s | [`apps/gpt-6-astra`](apps/gpt-6-astra) |
 | Sol Ultra | Ultra | 25m | [`apps/sol-ultra`](apps/sol-ultra) |
 | Gemini 3.8 Flash | High | 35m 56s | [`apps/gemini-3.8-flash`](apps/gemini-3.8-flash) |
 | Gemini 3.7 Flash | High | 28m 20s | [`apps/gemini-3.7-flash`](apps/gemini-3.7-flash) |
 
-Every model ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5, Opus 5.5, Fable 5, Fable 5.1, Sonnet 5 and Sonnet 5.5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Grok 4.7 ran at extra high, above that range. Terra Ultra, Sol Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. Both Gemini entries use [`thinking_level`](https://ai.google.dev/gemini-api/docs/gemini-3) at `high`, the top of their `low` / `high` range. Time to build is wall-clock from the brief to a working app.
+Every model ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5, Opus 5.5, Fable 5, Fable 5.1, Sonnet 5 and Sonnet 5.5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Grok 4.7 ran at extra high, above that range. Terra Ultra, Sol Ultra, GPT-6.1 Sol Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. Both Gemini entries use [`thinking_level`](https://ai.google.dev/gemini-api/docs/gemini-3) at `high`, the top of their `low` / `high` range. Time to build is wall-clock from the brief to a working app.
 
 **Opus 5** puts all four elements on one stage, each on its own custom GLSL shader: a volumetric raymarched flame, a refracting swell, ridged terrain with magma in the cracks, and 50k particles integrating a curl field.
 
@@ -64,6 +65,8 @@ Every model ran at the highest reasoning setting it offers, so the times are com
 **GPT-6 Sol** lays the four forces out as an editorial collection under their Latin names, each card holding its own live 3D form to drag, opening into a detail view of its qualities.
 
 **GPT-6 Luna** keeps an atlas of field notes on the four elements, each a live specimen with its own reading of the qualities that define it.
+
+**GPT-6.1 Sol** shows four procedural sculptures one at a time on a shared plinth, each beside its Latin name, qualities and a reference reading, with intensity and motion sliders, a PNG snapshot and an optional procedural ambience.
 
 **GPT-6 Astra** frames the elements as an editorial observatory, with a card index, an atmosphere slider driving element intensity, and pause and reset over a live FPS readout.
 
@@ -157,6 +160,7 @@ apps/gpt-5.5          GPT 5.5's Four Elements app
 apps/gpt-6-astra      GPT-6 Astra's Four Elements app
 apps/gpt-6-sol        GPT-6 Sol's Four Elements app
 apps/gpt-6-luna       GPT-6 Luna's Four Elements app
+apps/gpt-6.1-sol      GPT-6.1 Sol's Four Elements app
 tests/visual          Playwright smoke test and generated screenshots
 ```
 

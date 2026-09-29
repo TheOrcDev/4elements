@@ -33,7 +33,8 @@ type ModelName =
   | "gpt-6-sol"
   | "gpt-6-luna"
   | "opus-5.5"
-  | "sonnet-5.5";
+  | "sonnet-5.5"
+  | "gpt-6.1-sol";
 
 type ModelProvider = "openai" | "anthropic" | "google" | "grok" | "other";
 
@@ -275,6 +276,18 @@ const modelOptions: readonly ModelOption[] = [
       "An atlas of field notes on the four elements, each a live specimen with its own reading of the qualities that define it.",
     controls:
       "Pick an element from the index or use the arrow keys, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "GPT-6.1 Sol",
+    value: "gpt-6.1-sol",
+    provider: "openai",
+    effort: "Ultra",
+    effortDetail: "Effort tier: ultra",
+    duration: "13m 22s",
+    summary:
+      "Four procedural sculptures shown one at a time on a shared plinth, each beside its Latin name, qualities and a reference reading, with intensity and motion sliders, a PNG snapshot and an optional procedural ambience.",
+    controls:
+      "Pick a card or press 1–4 to switch sculpture, drag to orbit, scroll to zoom, Space to pause.",
   },
   {
     label: "Opus 5.5",

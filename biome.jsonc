@@ -18,6 +18,7 @@
       "!apps/gpt-6-astra",
       "!apps/gpt-6-sol",
       "!apps/gpt-6-luna",
+      "!apps/gpt-6.1-sol",
       "!apps/sonnet-5",
       "!apps/sonnet-5.5",
       "!apps/glm-5.2",
