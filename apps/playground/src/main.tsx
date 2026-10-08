@@ -34,7 +34,8 @@ type ModelName =
   | "gpt-6-luna"
   | "opus-5.5"
   | "sonnet-5.5"
-  | "gpt-6.1-sol";
+  | "gpt-6.1-sol"
+  | "haiku-5.5";
 
 type ModelProvider = "openai" | "anthropic" | "google" | "grok" | "other";
 
@@ -52,6 +53,8 @@ const providerOptions: readonly ProviderOption[] = [
 ] as const;
 
 interface ModelOption {
+  /** Other models the run delegated to, when it did not work alone. */
+  builtWith?: string;
   controls: string;
   /** Wall-clock time the model took to produce its app. */
   duration: string;
@@ -313,6 +316,19 @@ const modelOptions: readonly ModelOption[] = [
     controls:
       "Use the dock or press 1–5 to fly between shrines, press and hold a shrine to unleash it, Esc for the overview, drag to orbit, scroll to zoom.",
   },
+  {
+    label: "Haiku 5.5",
+    value: "haiku-5.5",
+    provider: "anthropic",
+    effort: "Ultra",
+    effortDetail: "Effort tier: ultra",
+    duration: "3h 32m",
+    builtWith: "20+ Opus 5.5 subagents",
+    summary:
+      "Each element is its own scene with its own camera and lighting: a raymarched flame over a hearth, a streamline vortex with travelling light pulses, a Gerstner ocean with foam and sun glitter, and a stratified butte under soft shadows.",
+    controls:
+      "Use the pills or press 1–4 to switch element, drag to orbit, scroll to zoom, Space to pause, A for auto-orbit, R to reset the camera.",
+  },
 ] as const;
 
 const defaultModel: ModelName = "opus-5";
@@ -433,6 +449,14 @@ function App() {
               </dt>
               <dd className="font-medium text-sm">{activeModel.duration}</dd>
             </div>
+            {activeModel.builtWith ? (
+              <div className="col-span-2 flex flex-col gap-0.5">
+                <dt className="font-bold text-muted-foreground text-xs uppercase tracking-normal">
+                  Built with
+                </dt>
+                <dd className="font-medium text-sm">{activeModel.builtWith}</dd>
+              </div>
+            ) : null}
           </dl>
           <p className="text-muted-foreground text-sm">{activeModel.summary}</p>
         </section>

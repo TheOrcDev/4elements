@@ -1,0 +1,338 @@
+:root {
+  --ink: #f4efe6;
+  --ink-dim: rgba(244, 239, 230, 0.66);
+  --ink-faint: rgba(244, 239, 230, 0.5);
+  --glass: rgba(12, 13, 18, 0.46);
+  --glass-edge: rgba(255, 255, 255, 0.1);
+  --accent: #ff8a3d;
+  --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* The scenes are dark by design, so the UI stays dark in every OS theme. */
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #07080b;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Bright scenes (air) flip the overlay to dark ink on light glass. */
+:root[data-tone="light"] {
+  --ink: #13202c;
+  --ink-dim: rgba(19, 32, 44, 0.76);
+  --ink-faint: rgba(19, 32, 44, 0.56);
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-edge: rgba(19, 32, 44, 0.12);
+}
+
+:root[data-tone="light"] .title {
+  text-shadow: none;
+}
+
+:root[data-tone="light"] .element-button:hover {
+  background: rgba(19, 32, 44, 0.06);
+}
+
+:root[data-tone="light"] .element-button[aria-current="true"] {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(19, 32, 44, 0.12);
+}
+
+:root[data-tone="light"] .toolbar button:hover {
+  border-color: rgba(19, 32, 44, 0.3);
+}
+
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  display: block;
+  touch-action: none;
+  outline: none;
+}
+
+/* Fade-through-black used when switching elements. */
+#fade {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms ease;
+  z-index: 5;
+}
+
+#fade.on {
+  opacity: 1;
+}
+
+#loader {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: #07080b;
+  color: var(--ink-dim);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  z-index: 10;
+  transition: opacity 700ms ease, visibility 700ms;
+}
+
+#loader.done {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader-mark {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 18px var(--accent);
+  animation: pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(0.55);
+    opacity: 0.5;
+  }
+}
+
+.title {
+  position: fixed;
+  top: clamp(20px, 4vh, 40px);
+  left: clamp(20px, 4vw, 48px);
+  pointer-events: none;
+  z-index: 2;
+  max-width: min(520px, calc(100vw - 40px));
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 28px rgba(0, 0, 0, 0.6);
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.title h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(3rem, 8vw, 5.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  transition: color 500ms ease;
+  color: var(--accent);
+}
+
+.blurb {
+  margin: 0.8rem 0 0;
+  max-width: 34ch;
+  font-size: clamp(0.92rem, 1.5vw, 1.02rem);
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+.elements {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(64px, 11vh, 92px);
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 999px;
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  z-index: 3;
+}
+
+.element-button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 1rem 0.6rem 0.8rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-dim);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+
+.element-button:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.element-button:focus-visible,
+.toolbar button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.element-button[aria-current="true"] {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--swatch, #888);
+  box-shadow: 0 0 12px var(--swatch, #888);
+}
+
+.element-button kbd {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  color: var(--ink-faint);
+  border: 1px solid var(--glass-edge);
+  border-radius: 6px;
+  padding: 0 0.35em;
+  line-height: 1.5;
+}
+
+.toolbar {
+  position: fixed;
+  top: clamp(20px, 4vh, 40px);
+  right: clamp(20px, 4vw, 48px);
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+
+.toolbar button {
+  appearance: none;
+  white-space: nowrap;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-edge);
+  background: var(--glass);
+  color: var(--ink-dim);
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: color 200ms ease, border-color 200ms ease;
+}
+
+.toolbar button:hover {
+  color: var(--ink);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.toolbar button[aria-pressed="true"] {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
+.hint {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.unsupported {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+  color: var(--ink-dim);
+  line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+  .toolbar {
+    top: auto;
+    bottom: 128px;
+    right: 50%;
+    gap: 6px;
+    transform: translateX(50%);
+  }
+
+  .toolbar button {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
+  }
+
+  .title {
+    top: 16px;
+    left: 20px;
+    right: 20px;
+  }
+
+  .title h1 {
+    font-size: 2.6rem;
+  }
+
+  .blurb {
+    display: none;
+  }
+
+  .elements {
+    bottom: 66px;
+    width: calc(100vw - 24px);
+    justify-content: space-between;
+  }
+
+  .element-button {
+    padding: 0.55rem 0.6rem;
+    gap: 0.4rem;
+    font-size: 0.84rem;
+  }
+
+  .element-button kbd,
+  .hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #fade,
+  .title h1,
+  .element-button,
+  .loader-mark {
+    transition: none;
+    animation: none;
+  }
+}

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Fire, air, water and earth as real-time 3D scenes built with Three.js." />
+    <meta name="theme-color" content="#07080b" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='9' r='6' fill='%23ff8a3d'/%3E%3C/svg%3E"
+    />
+    <title>Four Elements</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <canvas id="scene" aria-label="Interactive 3D view of the selected element"></canvas>
+
+    <div id="fade" aria-hidden="true"></div>
+
+    <div id="loader" role="status">
+      <span class="loader-mark" aria-hidden="true"></span>
+      <span>Kindling the elements…</span>
+    </div>
+
+    <header class="title">
+      <p class="eyebrow">Four Elements</p>
+      <h1 id="element-name">Fire</h1>
+      <p id="element-blurb" class="blurb">Heat, light and motion, rising from a single hearth.</p>
+    </header>
+
+    <nav class="elements" aria-label="Choose an element">
+      <button type="button" class="element-button" data-element="fire" aria-keyshortcuts="1">
+        <span class="swatch" aria-hidden="true"></span><span class="label">Fire</span><kbd>1</kbd>
+      </button>
+      <button type="button" class="element-button" data-element="air" aria-keyshortcuts="2">
+        <span class="swatch" aria-hidden="true"></span><span class="label">Air</span><kbd>2</kbd>
+      </button>
+      <button type="button" class="element-button" data-element="water" aria-keyshortcuts="3">
+        <span class="swatch" aria-hidden="true"></span><span class="label">Water</span><kbd>3</kbd>
+      </button>
+      <button type="button" class="element-button" data-element="earth" aria-keyshortcuts="4">
+        <span class="swatch" aria-hidden="true"></span><span class="label">Earth</span><kbd>4</kbd>
+      </button>
+    </nav>
+
+    <div class="toolbar" role="toolbar" aria-label="Scene controls">
+      <button type="button" id="btn-pause" aria-pressed="false" aria-keyshortcuts="Space">Pause</button>
+      <button type="button" id="btn-rotate" aria-pressed="false" aria-keyshortcuts="A">Auto-orbit</button>
+      <button type="button" id="btn-reset" aria-keyshortcuts="R">Reset view</button>
+    </div>
+
+    <p class="hint" id="hint">Drag to orbit · Scroll to zoom · 1–4 switch element · Space pause</p>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

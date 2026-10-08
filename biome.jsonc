@@ -21,6 +21,7 @@
       "!apps/gpt-6.1-sol",
       "!apps/sonnet-5",
       "!apps/sonnet-5.5",
+      "!apps/haiku-5.5",
       "!apps/glm-5.2",
       "!apps/gemini-3.7-flash",
       "!apps/gemini-3.8-flash",
