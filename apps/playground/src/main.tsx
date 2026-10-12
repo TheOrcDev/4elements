@@ -35,9 +35,16 @@ type ModelName =
   | "opus-5.5"
   | "sonnet-5.5"
   | "gpt-6.1-sol"
-  | "haiku-5.5";
+  | "haiku-5.5"
+  | "muse-wonder";
 
-type ModelProvider = "openai" | "anthropic" | "google" | "grok" | "other";
+type ModelProvider =
+  | "openai"
+  | "anthropic"
+  | "google"
+  | "grok"
+  | "meta"
+  | "other";
 
 interface ProviderOption {
   label: string;
@@ -49,6 +56,7 @@ const providerOptions: readonly ProviderOption[] = [
   { label: "Anthropic", value: "anthropic" },
   { label: "Google", value: "google" },
   { label: "Grok", value: "grok" },
+  { label: "Meta", value: "meta" },
   { label: "Other", value: "other" },
 ] as const;
 
@@ -58,7 +66,10 @@ interface ModelOption {
   controls: string;
   /** Wall-clock time the model took to produce its app. */
   duration: string;
-  /** Highest reasoning setting the model offers, and what it is called there. */
+  /**
+   * Reasoning setting the run used, and what it is called there. That is the
+   * highest the model offers unless effortDetail says otherwise.
+   */
   effort: string;
   effortDetail: string;
   label: string;
@@ -328,6 +339,18 @@ const modelOptions: readonly ModelOption[] = [
       "Each element is its own scene with its own camera and lighting: a raymarched flame over a hearth, a streamline vortex with travelling light pulses, a Gerstner ocean with foam and sun glitter, and a stratified butte under soft shadows.",
     controls:
       "Use the pills or press 1–4 to switch element, drag to orbit, scroll to zoom, Space to pause, A for auto-orbit, R to reset the camera.",
+  },
+  {
+    label: "Muse Wonder",
+    value: "muse-wonder",
+    provider: "meta",
+    effort: "High",
+    effortDetail: "reasoning effort: high, one below its top setting, xhigh",
+    duration: "3m 44s",
+    summary:
+      "Four shader orbs on glowing pedestals under one starfield: a plasma ball wrapped in flame particles, a fresnel wave shell with orbiting droplets, a low-poly planet with crystals and pines, and a glass core inside a tornado of wind particles, all through an unreal bloom pass.",
+    controls:
+      "Use the dock or press 1–5 to switch view (1 is all four), click an orb to focus it, Esc for the overview, Auto Tour to cycle, drag to orbit, scroll to zoom.",
   },
 ] as const;
 

@@ -28,8 +28,9 @@
 | Sol Ultra | Ultra | 25m | [`apps/sol-ultra`](apps/sol-ultra) |
 | Gemini 3.8 Flash | High | 35m 56s | [`apps/gemini-3.8-flash`](apps/gemini-3.8-flash) |
 | Gemini 3.7 Flash | High | 28m 20s | [`apps/gemini-3.7-flash`](apps/gemini-3.7-flash) |
+| Muse Wonder | High | 3m 44s, one API call with no tools | [`apps/muse-wonder`](apps/muse-wonder) |
 
-Every model ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5, Opus 5.5, Fable 5, Fable 5.1, Sonnet 5 and Sonnet 5.5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Grok 4.7 ran at extra high, above that range. Terra Ultra, Sol Ultra, GPT-6.1 Sol Ultra, Haiku 5.5 Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. Both Gemini entries use [`thinking_level`](https://ai.google.dev/gemini-api/docs/gemini-3) at `high`, the top of their `low` / `high` range. Time to build is wall-clock from the brief to a working app.
+Every model except Muse Wonder ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5, Opus 5.5, Fable 5, Fable 5.1, Sonnet 5 and Sonnet 5.5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Grok 4.7 ran at extra high, above that range. Terra Ultra, Sol Ultra, GPT-6.1 Sol Ultra, Haiku 5.5 Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. Both Gemini entries use [`thinking_level`](https://ai.google.dev/gemini-api/docs/gemini-3) at `high`, the top of their `low` / `high` range. Muse Wonder ran at reasoning effort `high`, one step below `xhigh`, the top of its `minimal` / `low` / `medium` / `high` / `xhigh` range. Time to build is wall-clock from the brief to a working app.
 
 **Opus 5** puts all four elements on one stage, each on its own custom GLSL shader: a volumetric raymarched flame, a refracting swell, ridged terrain with magma in the cracks, and 50k particles integrating a curl field.
 
@@ -74,6 +75,8 @@ Every model ran at the highest reasoning setting it offers, so the times are com
 **GPT-6 Astra** frames the elements as an editorial observatory, with a card index, an atmosphere slider driving element intensity, and pause and reset over a live FPS readout.
 
 **Sol Ultra** presents the elements as a field guide, each with its own bloom-lit composition.
+
+**Muse Wonder** wrote its whole app in a single reply through Vercel AI Gateway, with no tools to run or test it, and the app built and ran on the first try. It sets four shader orbs on glowing pedestals under one starfield: a noise-displaced plasma ball wrapped in flame particles, a fresnel wave shell with orbiting droplets, a low-poly planet with crystals and pines, and a glass core inside a tornado of wind particles, all through an unreal bloom pass, with a dock, info panels and an auto-tour.
 
 Each app's own README documents how that model built its scenes.
 
@@ -165,6 +168,7 @@ apps/gpt-6-astra      GPT-6 Astra's Four Elements app
 apps/gpt-6-sol        GPT-6 Sol's Four Elements app
 apps/gpt-6-luna       GPT-6 Luna's Four Elements app
 apps/gpt-6.1-sol      GPT-6.1 Sol's Four Elements app
+apps/muse-wonder      Muse Wonder's Four Elements app
 tests/visual          Playwright smoke test and generated screenshots
 ```
 

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#05060a" />
+    <meta name="description" content="Elementa — fire, water, earth and air rendered as living 3D shader orbs in Three.js." />
+    <title>ELEMENTA — The Four Elements in 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="scene-container" aria-label="Interactive 3D scene of the four elements"></div>
+
+    <div class="vignette" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><span></span></div>
+        <div class="brand-text">
+          <h1>ELEMENTA</h1>
+          <p>Fire · Water · Earth · Air — living 3D orbs</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="tourBtn" class="ghost-btn" type="button" aria-pressed="false">▶&nbsp; Auto Tour</button>
+        <button id="resetBtn" class="ghost-btn" type="button">⟲&nbsp; Reset View</button>
+      </div>
+    </header>
+
+    <aside id="panel" class="panel" aria-live="polite"></aside>
+
+    <nav class="dock" aria-label="Choose an element">
+      <button class="orb-btn active" type="button" data-mode="all" style="--c:#e8ecff">
+        <span class="dot dot-all"></span>All Four
+      </button>
+      <button class="orb-btn" type="button" data-mode="fire" style="--c:#ff7a1a">
+        <span class="dot" style="background:#ff7a1a;box-shadow:0 0 14px #ff7a1a"></span>Fire
+      </button>
+      <button class="orb-btn" type="button" data-mode="water" style="--c:#38bdf8">
+        <span class="dot" style="background:#38bdf8;box-shadow:0 0 14px #38bdf8"></span>Water
+      </button>
+      <button class="orb-btn" type="button" data-mode="earth" style="--c:#4ade80">
+        <span class="dot" style="background:#4ade80;box-shadow:0 0 14px #4ade80"></span>Earth
+      </button>
+      <button class="orb-btn" type="button" data-mode="air" style="--c:#a5f3fc">
+        <span class="dot" style="background:#a5f3fc;box-shadow:0 0 14px #a5f3fc"></span>Air
+      </button>
+    </nav>
+
+    <div class="hint">Drag to orbit · Scroll to zoom · Click an orb to focus · Keys 1–5 switch</div>
+
+    <div id="loader" class="loader">
+      <div class="loader-ring"></div>
+      <p>Summoning the elements…</p>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
