@@ -425,9 +425,16 @@ function App() {
         <section className="flex flex-col gap-3">
           <h2 className="font-semibold text-sm">Model</h2>
           <Tabs onValueChange={filterByProvider} value={selectedProvider}>
-            <TabsList aria-label="Model provider filter">
+            <TabsList
+              aria-label="Model provider filter"
+              className="grid-flow-row grid-cols-3"
+            >
               {providerOptions.map((provider) => (
-                <TabsTrigger key={provider.value} value={provider.value}>
+                <TabsTrigger
+                  className="py-1.5"
+                  key={provider.value}
+                  value={provider.value}
+                >
                   {provider.label}
                 </TabsTrigger>
               ))}
