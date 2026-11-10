@@ -29,9 +29,10 @@
 | Sol Ultra | Ultra | 25m | [`apps/sol-ultra`](apps/sol-ultra) |
 | Gemini 3.8 Flash | High | 35m 56s | [`apps/gemini-3.8-flash`](apps/gemini-3.8-flash) |
 | Gemini 3.7 Flash | High | 28m 20s | [`apps/gemini-3.7-flash`](apps/gemini-3.7-flash) |
+| Gemini 4 Argon | High | 5m | [`apps/gemini-4-argon`](apps/gemini-4-argon) |
 | Muse Wonder | High | 3m 44s, one API call with no tools | [`apps/muse-wonder`](apps/muse-wonder) |
 
-Every model except Muse Wonder ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5, Opus 5.5, Fable 5, Fable 5.1, Fable 5.2, Sonnet 5 and Sonnet 5.5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Grok 4.7 ran at extra high, above that range. Terra Ultra, Sol Ultra, GPT-6.1 Sol Ultra, Haiku 5.5 Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. Both Gemini entries use [`thinking_level`](https://ai.google.dev/gemini-api/docs/gemini-3) at `high`, the top of their `low` / `high` range. Muse Wonder ran at reasoning effort `high`, one step below `xhigh`, the top of its `minimal` / `low` / `medium` / `high` / `xhigh` range. Time to build is wall-clock from the brief to a working app.
+Every model except Muse Wonder ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5, Opus 5.5, Fable 5, Fable 5.1, Fable 5.2, Sonnet 5 and Sonnet 5.5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Grok 4.7 ran at extra high, above that range. Terra Ultra, Sol Ultra, GPT-6.1 Sol Ultra, Haiku 5.5 Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. The Gemini entries use [`thinking_level`](https://ai.google.dev/gemini-api/docs/gemini-3) at `high`, the top of their `low` / `high` range. Muse Wonder ran at reasoning effort `high`, one step below `xhigh`, the top of its `minimal` / `low` / `medium` / `high` / `xhigh` range. Time to build is wall-clock from the brief to a working app.
 
 **Opus 5** puts all four elements on one stage, each on its own custom GLSL shader: a volumetric raymarched flame, a refracting swell, ridged terrain with magma in the cracks, and 50k particles integrating a curl field.
 
@@ -68,6 +69,8 @@ Every model except Muse Wonder ran at the highest reasoning setting it offers, s
 **Gemini 3.8 Flash** rings a central catalyst with the four elements, each channelling an energy beam into it, with a convergence view, cinematic orbit and generated audio.
 
 **Gemini 3.7 Flash** builds a nexus holding the four elements plus a fifth fusion form, each on its own TypeScript shader module, with a camera controller, post-processing chain and generated audio.
+
+**Gemini 4 Argon** puts all four elements on one polished stage: shader flames with rising embers, a wavy blue water orb with bubbles and ripple rings, a crystal earth cluster in dust, and spiral wind ribbons with mist particles, composited through unreal bloom.
 
 **GPT-6 Sol** lays the four forces out as an editorial collection under their Latin names, each card holding its own live 3D form to drag, opening into a detail view of its qualities.
 
@@ -164,6 +167,7 @@ apps/sonnet-5         Sonnet 5's Four Elements app
 apps/glm-5.2          GLM 5.2's Four Elements app
 apps/gemini-3.7-flash Gemini 3.7 Flash's Four Elements app
 apps/gemini-3.8-flash Gemini 3.8 Flash's Four Elements app
+apps/gemini-4-argon   Gemini 4 Argon's Four Elements app
 apps/sol-ultra        Sol Ultra's Four Elements app
 apps/terra-ultra      Terra Ultra's Four Elements app
 apps/luna-extra-high  Luna Extra High's Four Elements app

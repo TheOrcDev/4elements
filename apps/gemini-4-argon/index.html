@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Four Elements</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Instrument+Sans:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene"></canvas>
+      <header class="brand">
+        <p class="brand__name">Four Elements</p>
+        <p class="brand__line">Fire · Water · Earth · Air</p>
+      </header>
+      <nav class="legend" aria-label="Elements">
+        <button type="button" data-element="fire" class="legend__item legend__item--fire">
+          Fire
+        </button>
+        <button type="button" data-element="water" class="legend__item legend__item--water">
+          Water
+        </button>
+        <button type="button" data-element="earth" class="legend__item legend__item--earth">
+          Earth
+        </button>
+        <button type="button" data-element="air" class="legend__item legend__item--air">
+          Air
+        </button>
+      </nav>
+      <p class="hint">Drag to orbit · Scroll to zoom</p>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

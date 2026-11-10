@@ -27,6 +27,7 @@ const models = [
   "haiku-5.5",
   "muse-wonder",
   "fable-5.2",
+  "gemini-4-argon",
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },

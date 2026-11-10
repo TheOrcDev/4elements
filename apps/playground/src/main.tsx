@@ -37,7 +37,8 @@ type ModelName =
   | "gpt-6.1-sol"
   | "haiku-5.5"
   | "muse-wonder"
-  | "fable-5.2";
+  | "fable-5.2"
+  | "gemini-4-argon";
 
 type ModelProvider =
   | "openai"
@@ -365,6 +366,18 @@ const modelOptions: readonly ModelOption[] = [
       "One dusk scene on a mirror-flat film of water: a raymarched pyre, a ray-traced column of open sea, a levitating monolith split around an amethyst geode and a volumetric tornado under its own storm cloud, each lighting, reflecting in and rippling the same water, with camera flights, a tour and a procedural soundscape.",
     controls:
       "Click an element or press 1–4 to fly to it, 0 or Esc for the overview, drag to orbit, scroll to zoom, T for the tour, M for sound, Q for quality, ? for every key.",
+  },
+  {
+    label: "Gemini 4 Argon",
+    value: "gemini-4-argon",
+    provider: "google",
+    effort: "High",
+    effortDetail: "thinking_level: high",
+    duration: "5m",
+    summary:
+      "All four elements on one polished stage: shader flames with rising embers, a wavy blue water orb with bubbles and ripple rings, a crystal earth cluster in dust, and spiral wind ribbons with mist particles, composited through unreal bloom.",
+    controls:
+      "Click an element name to focus it, drag to orbit, scroll to zoom.",
   },
 ] as const;
 
