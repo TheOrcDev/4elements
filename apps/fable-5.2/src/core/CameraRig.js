@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { ELEMENTS } from './layout.js';
+import { shared } from './shared.js';
 
 // Orbit camera with eased flights between an overview and one framing per element.
 // A view is { target, azimuth, elevation, distance, ... }: the camera sits at
@@ -24,23 +25,41 @@ export const VIEWS = {
   // right), so the scene has a front and no flight between views crosses an element.
   // Each is shot from low over the film and far enough back to hold the element's
   // reflection, which is half the picture.
-  // Fire is seen from inside the ring against the open dusk, from the tip of the flame down
-  // to the bright foot of its reflection. The sea stands a few metres behind the camera, so
-  // this view cannot back off along its line. An upright window needs more height than
-  // 15.5 m give above a caption: there the camera turns into the gap between the sea and the
-  // vortex, where the ring leaves 19 m, and its swing is kept short (the sea is near).
+  // Fire is seen from inside the ring against the open dusk, from the tip of the flame in its
+  // gusts down through the bright part of its reflection. That takes a frame some 13 m tall,
+  // and the ring has room for it only in the gap between the sea and the vortex, where it
+  // leaves 19 m: the camera stands there, beside the sea rather than in front of it, and its
+  // swing is kept short on that side (the sea is near). (Turned further toward the vortex, its
+  // cloud starts to reach into the frame, and costs the frame its volume pass.) An upright
+  // window stands a little further back in the same gap, its swing shorter still.
   fire: {
-    target: [0, 2.5, -10], azimuth: 6 * DEG, elevation: 2.5 * DEG, distance: 15.5, limit: 15.5, sway: 0.22,
-    top: 7.6, upright: { azimuth: 16 * DEG, distance: 19, sway: 0.035 },
+    target: [0, 2.5, -10], azimuth: 16 * DEG, elevation: 2.5 * DEG, distance: 19.5, sway: 0.22,
+    top: 8.4, upright: { distance: 20, sway: 0.035 },
   },
   // Water from outside, low enough to look into it, the pyre glowing through it.
   water: { target: [0, 1.4, 10], azimuth: 18 * DEG, elevation: 2.5 * DEG, distance: 12.5, fit: 10.5, sway: 0.3 },
-  // Earth from the same side, the moon over the camera's shoulder, the pyre small beyond it.
-  earth: { target: [-10, 2.0, 0], azimuth: -15 * DEG, elevation: 3 * DEG, distance: 16, fit: 13.5, sway: 0.2 },
-  // Air needs room: from outside the ring, far enough back for the whole funnel, its cloud
-  // and its reflection, lit from the side by the afterglow.
-  air: { target: [10, 6.0, 0], azimuth: 17 * DEG, elevation: 2 * DEG, distance: 24, sway: 0.15 },
+  // Earth from the same side, the moon over the camera's shoulder, the pyre small beyond it,
+  // low enough in the frame for the geode's reflection. (Beyond 17 m from the rock the
+  // element draws its lighter set: the view stays inside that.)
+  earth: { target: [-10, 1.6, 0], azimuth: -15 * DEG, elevation: 3 * DEG, distance: 16.5, fit: 13.5, sway: 0.2 },
+  // Air needs room: from outside the ring, far enough back for the whole funnel and its cloud,
+  // lit from the side by the afterglow. Aimed 3.5 m behind the funnel and swung toward the
+  // sea, so that the sea and the rock stand wholly outside the left edge of a landscape frame
+  // (where the caption is) instead of sliced by it; the swing is kept short for the same reason.
+  air: { target: [10, 6.3, -3.5], azimuth: 10 * DEG, elevation: 2 * DEG, distance: 25.5, sway: 0.1 },
 };
+
+// The moon stands low over the horizon (shared.uMoonDiscDir). The overview's idle orbit looks
+// toward it for a while; there it dips toward the film (by MOON_DIP at most) so that the disc
+// sits a fifth of the way down the frame, below the interface's top row, instead of on the
+// edge. The dip fades in and out over the azimuths in MOON_NEAR..MOON_FAR either side.
+const MOON_AZ = Math.atan2(-shared.uMoonDiscDir.value.x, -shared.uMoonDiscDir.value.z);
+const MOON_EL = 6.5 * DEG;      // the camera's elevation that puts the disc there
+const MOON_DIP = 4.5 * DEG;
+const MOON_BACK = 0.1;          // share of its distance the camera also backs off at the full dip (a lower camera
+                                // sees the near elements taller: this keeps the vortex's cloud inside the frame)
+const MOON_NEAR = 30 * DEG, MOON_FAR = 58 * DEG;
+const MOON_RATE = 0.8 * DEG;    // rad/s, the fastest the dip moves (when the orbit starts inside it)
 
 // Flights steer round the elements instead of through them: [radius, height] of the upright
 // cylinder about each element's axis that the camera is kept out of while it is being flown.
@@ -109,9 +128,11 @@ export class CameraRig {
     // visitor's own moves and the swing never fight. `rate` eases it in and out.
     this.sway = { phase: 0, rate: 0, turn: 0, rise: 0 };
     this.swayReach = 0.3;          // radians either side, for the view being shown (see _resolve)
+    this.dip = 0;                  // how far the overview's orbit has dipped toward the film to frame the moon (rad)
+    this.dipBack = 0;              // and how far it has backed off with it (m)
     this._grab = new THREE.Spherical();
     c.addEventListener('start', () => {
-      this.flight = null; this.idle = 0; this.userMoved = true;
+      this.flight = null; this.idle = 0; this.userMoved = true; this.dip = 0; this.dipBack = 0;
       this._grab.setFromVector3(this._a.copy(camera.position).sub(c.target));
     });
     // After the visitor lets go, the swing starts afresh around wherever they left the camera.
@@ -216,6 +237,7 @@ export class CameraRig {
     this.camera.lookAt(this.controls.target);
     this.flight = null;
     this.userMoved = false;
+    this.dip = 0; this.dipBack = 0;
     this._resetSway();
     this.controls.update();
   }
@@ -247,6 +269,7 @@ export class CameraRig {
     this.flight = f;
     this.userMoved = false;
     this.idle = 0;
+    this.dip = 0; this.dipBack = 0;
     this._resetSway();
     return f.duration;
   }
@@ -260,7 +283,9 @@ export class CameraRig {
     this._s0.set(lerp(f.r0, f.r1, k) * (1 + lift), lerp(f.phi0, f.phi1, k) - lift * 0.25, f.theta0 + f.dTheta * k);
     this._s0.makeSafe();
     position.setFromSpherical(this._s0).add(target);
-    if (f.over) position.y += f.over.rise * bump(t, f.over.at);
+    // The lift over an element follows the eased progress, like everything else: it rises and
+    // settles with the camera's own speed instead of finishing after the camera has stopped.
+    if (f.over) position.y += f.over.rise * bump(k, f.over.at);
     // Both ends of a flight are where they are (the fire view stands right in front of the
     // sea): the steering fades in after the start and out again before the end.
     if (steer) this._steerClear(position, smoothstep(t, 0, 0.3) * smoothstep(1 - t, 0, 0.3), f.over && f.over.id);
@@ -295,19 +320,57 @@ export class CameraRig {
       }
       before.copy(p);
     }
-    if (!over) return;
+    if (!over) { this._planSight(f); return; }
     // Lift the path by enough to clear the element's own footprint, most where it needs it most.
+    // (`at` and the samples are in eased progress, which is what drives the lift.)
     const [radius, height] = KEEP_OUT[over.id];
     const inside = [];
     let at = 0.5, rise = 0;
     for (let i = 1, n = SAMPLES * 4; i < n; i++) {
       this._flightPoint(f, i / n, p, target, false);
       if (Math.hypot(p.x - over.position[0], p.z - over.position[2]) > 0.7 * radius || p.y >= height) continue;
-      inside.push(i / n, height - p.y);
-      if (height - p.y > rise) { rise = height - p.y; at = i / n; }
+      const k = f.ease(i / n);
+      inside.push(k, height - p.y);
+      if (height - p.y > rise) { rise = height - p.y; at = k; }
     }
     for (let i = 0; i < inside.length; i += 2) rise = Math.max(rise, inside[i + 1] / Math.max(bump(inside[i], at), 0.2));
     f.over = { id: over.id, at, rise: Math.min(rise, 10) };
+  }
+
+  /**
+   * A route that passes behind another element would, for a moment, show it standing in front
+   * of the element being flown to (a phone's fly-in to the fire comes in behind the sea): lift
+   * the route by enough that the line of sight to the subject's foot clears the other's top.
+   */
+  _planSight(f) {
+    if (!KEEP_OUT[this.viewId]) return;                 // only on the way in to an element
+    const p = this._c, target = this._a;
+    const foot = this._d.set(f.toTarget.x, 0.6, f.toTarget.z);
+    const near = (e, v) => Math.hypot(v.x - e.position[0], v.z - e.position[2]) < KEEP_OUT[e.id][0];
+    const others = ELEMENTS.filter((e) => KEEP_OUT[e.id] && !near(e, f.fromTarget) && !near(e, f.toTarget));
+    const need = [];
+    let at = 0.5, most = 0;
+    for (let i = 1; i < SAMPLES; i++) {
+      // The subject matters once the camera is closing in on it; before that the lift is free to rise.
+      if (f.ease(i / SAMPLES) < 0.35) continue;
+      this._flightPoint(f, i / SAMPLES, p, target, false);
+      const sx = foot.x - p.x, sz = foot.z - p.z;
+      for (const e of others) {
+        const [radius, height] = KEEP_OUT[e.id];
+        // The element's body is about 0.6 of its keep-out radius, its top 2 m below the keep-out's.
+        const s = THREE.MathUtils.clamp(((e.position[0] - p.x) * sx + (e.position[2] - p.z) * sz) / (sx * sx + sz * sz || 1), 0, 0.9);
+        if (Math.hypot(p.x + s * sx - e.position[0], p.z + s * sz - e.position[2]) > 0.6 * radius) continue;
+        const lift = (height - 1.7 - (p.y + (foot.y - p.y) * s)) / (1 - s);
+        if (lift <= 0) continue;
+        const k = f.ease(i / SAMPLES);
+        need.push(k, lift);
+        if (lift > most) { most = lift; at = k; }
+      }
+    }
+    if (!most) return;
+    let rise = most;
+    for (let i = 0; i < need.length; i += 2) rise = Math.max(rise, need[i + 1] / Math.max(bump(need[i], at), 0.2));
+    f.over = { id: null, at: Math.min(at, 0.85), rise: Math.min(rise, 4) };
   }
 
   /** How long a flight should take: see FLIGHT_SPEED and FLIGHT_TURN. */
@@ -339,8 +402,33 @@ export class CameraRig {
       // Close-ups only sway: a full orbit would carry the camera through the neighbours.
       c.autoRotate = drifting && this.viewId === 'overview';
       this._sway(dt, drifting && this.viewId !== 'overview');
+      if (c.autoRotate) this._moonDip(dt);
     }
     c.update(dt);
+  }
+
+  /**
+   * While the overview orbits, lower it toward the film as it turns to face the moon (see
+   * MOON_DIP), and raise it again as it turns away. Like the sway it is an offset to wherever
+   * the camera stands: a camera the visitor has raised high, where the moon is out of the
+   * frame anyway, is left alone, and only what was dipped is given back.
+   */
+  _moonDip(dt) {
+    const c = this.controls;
+    this._s0.setFromVector3(this._a.copy(this.camera.position).sub(c.target));
+    const off = Math.abs(wrapAngle(this._s0.theta - MOON_AZ));
+    const elevation = Math.PI / 2 - this._s0.phi + this.dip;           // where the camera would be without the dip
+    const want = (1 - smoothstep(off, MOON_NEAR, MOON_FAR)) * (1 - smoothstep(elevation, 15 * DEG, 20 * DEG))
+      * THREE.MathUtils.clamp(elevation - MOON_EL, 0, MOON_DIP);
+    const step = THREE.MathUtils.clamp(want - this.dip, -MOON_RATE * dt, MOON_RATE * dt);
+    if (Math.abs(step) < 1e-7) return;
+    const phi = THREE.MathUtils.clamp(this._s0.phi + step, c.minPolarAngle, c.maxPolarAngle);
+    this.dip += phi - this._s0.phi;
+    this._s0.phi = phi;
+    const back = (this.dip / MOON_DIP) * MOON_BACK * (this._s0.radius - this.dipBack);
+    this._s0.radius += back - this.dipBack;
+    this.dipBack = back;
+    this.camera.position.setFromSpherical(this._s0).add(c.target);
   }
 
   _resetSway() {

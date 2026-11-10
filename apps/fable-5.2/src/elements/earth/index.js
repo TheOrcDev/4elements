@@ -136,6 +136,13 @@ export default class EarthElement {
     this._rng = ctx.rng(4711);
     this._nextStreamRipple = 0;
     this._nextShoreRipple = 2;
+    // The sand a stream heaps on the island runs on down the heap and into the film at the
+    // shore below it, on the same bearing: world x, z of that spot, and when it next slumps in.
+    this._landings = this.streams.filter((s) => s.landing.radius > 0).map((s, i) => {
+      const bearing = Math.atan2(s.landing.z, s.landing.x);
+      const r = this.rubble.shoreAt(bearing) + 0.12;
+      return { stream: s, x: ctx.origin.x + Math.cos(bearing) * r, z: ctx.origin.z + Math.sin(bearing) * r, next: 1 + 0.4 * i };
+    });
 
     // Level of detail is chosen while a frame is being drawn, not in update(): by then the
     // camera is where that frame is seen from (update() runs before the camera moves, and not
@@ -191,7 +198,7 @@ export default class EarthElement {
     const grass = this.flora.grass;
     if (grass) grass.geometry.instanceCount = Math.floor(grass.userData.full * q.grass * left(FAR_GRASS));
     this.sand.setDensity(q.sand * left(FAR_SAND));
-    this.rubble.setPebbleDensity(q.pebbles, left(FAR_PEBBLES));
+    this.rubble.setPebbleDensity(q.pebbles, left(FAR_PEBBLES), left(0));
   }
 
   update(dt, t) {
@@ -226,6 +233,15 @@ export default class EarthElement {
         }
       }
     }
+    // Where a stream lands on the island, its sand reaches the water at the shore below every
+    // second or two while it pours (the fall takes about 0.6 s).
+    for (let i = 0; i < this._landings.length; i++) {
+      const l = this._landings[i];
+      if (t < l.next) continue;
+      l.next = t + 1 + this._rng();
+      const flow = streamFlow(l.stream.seed, t - 0.6);
+      if (flow > 0.15) this.ctx.ripples.drop(l.x, l.z, 0.3, 0.012 * flow);
+    }
     // Grains trickle off the heap into the water all round its shore, and now and then a
     // handful slumps in: slow rings leave the island one at a time. (The film's grid is some
     // nine centimetres to the cell: a ring has to start a few cells wide to travel at all.)
@@ -245,9 +261,18 @@ export default class EarthElement {
   }
 
   dispose() {
+    const { properties } = this.ctx.renderer;
     this.group.traverse((o) => {
       if (o.geometry) o.geometry.dispose();
-      if (o.material) o.material.dispose();
+      if (o.isInstancedMesh) o.dispose();
+      if (o.material) {
+        // three's standard material reads a small BRDF table that three makes on first use
+        // and never frees (a texture outside every scene), so it goes with the rock's
+        // materials. (Should anything still need it, three simply uploads it again.)
+        const brdf = properties.get(o.material).uniforms?.dfgLUT?.value;
+        if (brdf) brdf.dispose();
+        o.material.dispose();
+      }
     });
   }
 }

@@ -170,6 +170,18 @@ export class Sky {
     const pmrem = new THREE.PMREMGenerator(renderer);
     const env = pmrem.fromCubemap(cubeRT.texture).texture;
     pmrem.dispose();
+    // Kept for dispose(): a cube target's texture does not point back to its target, and
+    // disposing the texture alone leaves the target's GPU objects behind.
+    if (this.cubeTarget) this.cubeTarget.dispose();
+    this.cubeTarget = cubeRT;
     return { cube: cubeRT.texture, pmrem: env };
+  }
+
+  /** Frees the sky's mesh and the environment cube (the PMREM made from it goes with scene.environment). */
+  dispose() {
+    this.mesh.geometry.dispose();
+    this.material.dispose();
+    if (this.cubeTarget) this.cubeTarget.dispose();
+    this.cubeTarget = null;
   }
 }

@@ -45,9 +45,10 @@ import { buildCloudField, CLOUD_GRID, CLOUD_MIN, CLOUD_SIZE, CLOUD_NEG, CLOUD_PO
 const SPRAY_R = 3.8;          // reach of the mist around the foot, m
 const SPRAY_H = 1.6;          // height of the bowl of spray
 const VEIL_REACH = 0.62;      // the sheath of thin vapour ends this many funnel radii outside the wall
-const HORN_FADE = [8.5, 9.9]; // the funnel's own lumps and sheath fade out between these heights: above, the cloud's take over
-const DISC_SPIN = 0.13;       // rad/s, turn rate of the cloud
-const FRAY = 0.12;            // how deep the wind tears into the skin of the funnel's wall, in the units its lumps are measured in (R^(7/8) m)
+const HORN_FADE = [9.1, 10.3]; // the funnel's own lumps and sheath fade out between these heights: above, the cloud's take over
+const DISC_SPIN = 0.05;       // rad/s, turn rate of the cloud
+const WEAR_DRIFT = 0.035;     // rad/s by which the fine billows worn into it turn faster still: the skin churns over the body
+const FRAY = 0.17;            // how deep the wind tears into the skin of the funnel's wall, in the units its lumps are measured in (R^(7/8) m)
 const FRAY_OUT = 0.5;         // share of that by which the wall is first swollen, so that the funnel keeps its girth
 
 // ---- bounds of the funnel ----
@@ -67,7 +68,10 @@ function outerRadius(y) {
   if (y < SPRAY_H) { const ys = Math.max(y, 1e-3); r = Math.max(r, 0.45 + ys ** 0.75 + 2 * (0.07 + 0.16 * ys)); }
   const R = radiusAt(y);
   const fade = 1 - smooth(HORN_FADE[0], HORN_FADE[1], y);
-  const amp = 1.05 * (0.2 * 1.1 + FRAY * FRAY_OUT) * R ** 0.875 * fade;
+  // (the lumps move the surface along its normal: where the wall leans, that reaches further out
+  // across the horizontal, by 1 / cos of the lean)
+  const slope = (hornAt(y + 0.01) - hornAt(Math.max(y - 0.01, 0))) / (y + 0.01 - Math.max(y - 0.01, 0));
+  const amp = 1.05 * (0.2 * 1.1 + FRAY * FRAY_OUT) * R ** 0.875 * fade * Math.sqrt(1 + slope * slope);
   return Math.max(r, hornAt(y) * (1 + 0.07 * fade) + Math.max(amp, VEIL_REACH * R * fade));
 }
 
@@ -116,6 +120,7 @@ const float SPRAY_D = 2.4;        // extinction scale of the spray, 1/m
 const float MIST_Q = 3.0;         // m^2/s: the spray is drawn in more slowly than the specks
 const float VEIL_REACH = ${f(VEIL_REACH)};
 const float DISC_SPIN = ${f(DISC_SPIN)};
+const float WEAR_DRIFT = ${f(WEAR_DRIFT)};
 const float STALL_Y = 8.85;       // the updraft begins to stall here, on its way into the cloud
 const float CAP_STALL = 3.0;      // s/m added to the climb above that
 const float NOISE_RATE = 0.06;    // noise periods per second of travel along the wind
@@ -132,6 +137,7 @@ const float SIGMA_CLOUD = 7.0;    // extinction of the cloud, 1/m: the eye stops
 const float SOFT_CLOUD = 0.1;     // width of the cloud's skin on its crown, m
 const float SOFT_LOW = 0.14;      // down at its base
 const float SOFT_WISP = 0.42;     // and of its wisps (scud, streamers), which are thinner than that: the eye sees through them
+const float FRINGE = 0.4;         // depth below the cloud's surface over which its vapour thickens from torn tufts to solid, m
 const float GRAIN = 0.21;         // noise periods per metre for the cloud's fine structure (its cells are 1.2 m and 0.4 m across)
 const vec2 ERODE = vec2(0.16, 0.05);   // how deep that structure is worn into the modelled surface, m (coarse, fine)
 const float TAP = 0.28;           // how far toward a light the cloud's field is read again, m
@@ -152,12 +158,15 @@ const float FLASH_CLOUD = 5.3;    // the same light inside the cloud, where it i
 const float FLASH_LAMP = 7.0;     // and what a channel some way off throws on the funnel's wall (falls off as 1 / (FLASH_LAMP_D2 + d^2))
 const float FLASH_LAMP_D2 = 6.2;
 const float FLASH_KNEE = 0.8;     // a stroke of intensity w lights the vapour as w / (1 + FLASH_KNEE w), see flashLevel
+const float FLASH_TOP = 0.9;      // where a channel down the core leaves the cloud, the base around it lights up
+const float FLASH_SHOULDER = 0.8; // the funnel's own answer to a stroke rises in proportion up to here, and then ever more slowly
+const float FLASH_SOFT = 0.45;
 const float RELIEF = 0.55;        // how far the slope of a bump turns the funnel's surface toward or away from a light (a cosine per unit slope)
 const float WRAP = 0.45;          // how far light creeps round the terminator of the funnel (a cosine)
 const float SEEP = 0.14;          // share of the light that soaks through a body's skin whatever way it faces
-const float LINING = 0.8;         // light let through by the thin edge of a body that stands against it, relative to its lit face
-const float HAZE = 0.45;          // density of the outermost skin of the funnel's wall, relative to its depths
-const float HAZE_DEPTH = 0.16;    // how deep that skin is, in wall radii: the limb is seen through, the body is not
+const float LINING = 0.45;        // light let through by the thin edge of a body that stands against it, relative to its lit face
+const float HAZE = 0.35;          // density of the outermost skin of the funnel's wall, relative to its depths
+const float HAZE_DEPTH = 0.22;    // how deep that skin is, in wall radii: the limb is seen through, the body is not
 const float FRAY = ${f(FRAY)};
 const float FRAY_OUT = ${f(FRAY_OUT)};
 const vec3 ALBEDO = vec3(0.86, 0.91, 1.0);     // of the funnel's vapour (the cloud's light is used as it comes)
@@ -196,6 +205,10 @@ float beyond(vec3 rd, vec3 L) { return smoothstep(-0.25, 0.6, dot(rd, L)); }
 // fills the cloud with light rather than burning its core white, and the long tail of a
 // strike stays worth looking at.
 float flashLevel(float w) { return w / (1.0 + FLASH_KNEE * w); }
+
+// A soft shoulder on the funnel's lit wall at the peak of a strong stroke: it keeps its
+// texture, and the channel inside stays the brightest thing in sight.
+float flashShoulder(float x) { return min(x, FLASH_SHOULDER) + FLASH_SOFT * log(1.0 + max(x - FLASH_SHOULDER, 0.0) / FLASH_SOFT); }
 
 // The funnel's smooth body at one point.
 struct Shape {
@@ -325,7 +338,8 @@ void main() {
   float quality = clamp(uQuality, 0.3, 1.3) * (mirror ? 0.8 : 1.0);
   // (a ray that has to find the cloud and then skims its rough skin needs more steps than one
   // through the funnel)
-  int maxSteps = meetsCloud ? max(int(56.0 * quality), mirror ? 18 : 20) : max(int(40.0 * quality), 12);
+  // (in the reflection, which is small, blurred and bent, the cloud's skin is found in fewer)
+  int maxSteps = meetsCloud ? (mirror ? max(int(38.0 * quality), 16) : max(int(56.0 * quality), 20)) : max(int(40.0 * quality), 12);
   // Dither for the march: interleaved gradient noise, moved on by the golden ratio each frame
   // so that the eye averages away what the trapezoid rule below leaves of the stepping.
   float dither = fract(ign(floor(gl_FragCoord.xy)) + mod(uFrame, 256.0) * 0.61803);
@@ -377,8 +391,13 @@ void main() {
   vec2 levelC = discTurn * level;
   vec3 tapSun = vec3(levelC.x, 0.0, levelC.y) * CLOUD_INV * TAP;
   vec3 tapUp = vec3(0.0, CLOUD_INV.y * TAP, 0.0);
-  // (and the same two for the fine structure, in the noise)
-  vec3 fineSun = vec3(levelC.x, 0.0, levelC.y) * (GRAIN * TAP_FINE);
+  // The fine billows worn into the surface turn a little faster than the body that carries
+  // them: the ray in their frame.
+  mat2 wearTurn = rot2(-uTime * (DISC_SPIN + WEAR_DRIFT));
+  vec2 roW = wearTurn * ro.xz, rdW = wearTurn * rd.xz;
+  vec2 levelW = wearTurn * level;
+  // (and the same two taps for the fine structure, in the noise)
+  vec3 fineSun = vec3(levelW.x, 0.0, levelW.y) * (GRAIN * TAP_FINE);
   vec3 fineUp = vec3(0.0, GRAIN * TAP_FINE, 0.0);
   // (the crown stands high: it catches the band of afterglow from further up than the funnel does)
   vec2 kSun = normalize(vec2(1.0, 0.14));
@@ -405,6 +424,7 @@ void main() {
   bool locked = false;                        // true while the samples sit at fixed depths below a surface
   int seek = 0;                               // short steps left to find a surface that was aimed at and missed
   bool entered = false;                       // true while the ray is inside one body of cloud
+  int hit = -1;                               // the step at which the ray first met vapour
   float farSun = 0.0, farSky = 0.0;           // what stands between that body and the lights, further out
 
   for (int i = 0; i < maxSteps; i++) {
@@ -420,7 +440,11 @@ void main() {
     // that are left once half of them are spent: a long ray then gets coarser instead of
     // being cut off part-way.
     float progress = float(i) / float(maxSteps);
-    float reachEnd = (tFar - t) / float(maxSteps - i) * smoothstep(0.45, 0.85, progress);
+    // (once in the vapour, the steps are counted from where the ray first met it: how far a
+    // ray had to come to get there must not show on the surface it finds, or the outline of
+    // whichever bound it entered by is drawn on the vapour)
+    float spent = hit < 0 ? 0.0 : float(i - hit) / float(maxSteps - hit);
+    float reachEnd = (tFar - t) / float(maxSteps - i) * smoothstep(0.45, 0.85, spent);
 
     // ---- empty space: conservative distance to the nearest place that can hold vapour ----
     Shape s;
@@ -446,7 +470,7 @@ void main() {
       ringW = 0.07 + 0.16 * ys;
       dSpray = min(max((s.ra - ringR - 2.0 * ringW) * 0.5, y - SPRAY_H), max(s.ra - SPRAY_R, y - 0.6));
     }
-    float fCloud = -1.0, softC = 0.2, worn = 0.0, wear = 0.0, lodG = 0.0, wisp = 0.0, near = 1.0;
+    float fCloud = -1.0, softC = 0.2, worn = 0.0, wear = 0.0, lodG = 0.0, wisp = 0.0, near = 1.0, tuft = 1.0;
     // (from far away the cloud's steps lengthen a little faster than the funnel's: its skin is as wide as the pixels by then)
     float stepC = stepScale + 0.012 * max(t - 20.0, 0.0) / quality;
     vec3 pT = roT + rdT * t, pG = vec3(0.0);
@@ -454,10 +478,10 @@ void main() {
     if (inCloud) {
       vec2 cell = textureLod(uCloud, pT, 0.0).rg;
       fCloud = cell.r * CLOUD_RANGE - CLOUD_NEG;
-      wisp = cell.g;                                          // scud and streamers: soft, thin, ragged
-      vec2 hC = roC + rdC * t;
+      wisp = cell.g;                                          // scud, streamers, the shelf's edge: soft, thin, ragged
+      vec2 hW = roW + rdW * t;
       float low = smoothstep(11.2, 10.2, y);
-      softC = max(mix(mix(SOFT_CLOUD, SOFT_LOW, low), SOFT_WISP, wisp), 2.0 * pixel);
+      softC = max(mix(mix(SOFT_CLOUD, SOFT_LOW, low), SOFT_WISP, wisp), 2.8 * pixel);
       float hFineC = max(0.4 * softC, 0.02) * stepC;
       // (its field is a true distance: one stride lands just short of the surface, and within
       // a fraction of a fine step of it the cloud is looked at properly)
@@ -472,15 +496,18 @@ void main() {
       if (fCloud > 0.0 && !mirror) {
         // (nothing finer than the march can step through, or it turns to grit along every limb)
         lodG = clamp(log2(max(pixel * 4.0, hFineC * 1.5) * 128.0 * GRAIN), 0.0, 4.0);
-        pG = vec3(hC.x, y - uTime * 0.02, hC.y) * GRAIN + vec3(0.37, 0.11, 0.71);
+        pG = vec3(hW.x, y - uTime * 0.02, hW.y) * GRAIN + vec3(0.37, 0.11, 0.71);
         // Under the base, and in the wisps, it is worn further: ragged, where the crown is firm.
         // And a ray that has spent most of its steps skimming through the worn skin sees less
         // and less of it: the surface as modelled is always found at once.
-        wear = (1.0 + (0.9 - 0.6 * wisp) * smoothstep(10.5, 10.0, y) + 0.3 * wisp) * (1.0 - smoothstep(0.55, 0.8, progress));
+        wear = (1.0 + (0.9 - 0.6 * wisp) * smoothstep(10.5, 10.0, y) + 0.3 * wisp) * (1.0 - smoothstep(0.55, 0.8, spent));
         // (from close by the finest cells are worn in deeper: there is nothing else that fine to see)
         near = 1.0 + smoothstep(18.0, 8.0, t);
-        worn = dot(ERODE * vec2(1.0, near), 1.0 - noiseTexLod(pG, lodG).ga) * wear;
+        vec2 cells = noiseTexLod(pG, lodG).ga;
+        worn = dot(ERODE * vec2(1.0, near), 1.0 - cells) * wear;
         fCloud -= worn;
+        // (the outermost hand's breadth of a billow is torn vapour, thick at the heart of a cell, thin at its rim)
+        tuft = 0.15 + 0.85 * smoothstep(0.3, 0.8, cells.x);
       }
     }
     float dEmpty = min(min(dHorn, dSpray), dCloud);
@@ -489,6 +516,7 @@ void main() {
     vec3 facing = vec3(0.0), lit = vec3(0.0);
     float seg = t - tPrev;
     if (dEmpty <= 0.0) {
+      if (hit < 0) hit = i;
       float soft = softC, sigmaBody = SIGMA_CLOUD, inner = 1.0, thin = 0.0, fieldF = -1e3;
       bool inSpray = false, inVeil = false;
       float sOut = 0.0;
@@ -517,7 +545,8 @@ void main() {
           vec2 nq; float nz, scale, tauY; mat2 unwind;
           flowAt(s, y, nq, nz, scale, unwind, tauY);
           nf = noiseTexLod(vec3(nq, nz), clamp(log2(grain * scale), 0.0, 4.0));
-          lump = saturate((nf.r - 0.5) * 2.4 + 0.5);
+          // (from close by the lumps are softer: they overlap and blur into each other rather than meet at an edge)
+          lump = saturate((nf.r - 0.5) * mix(2.4, 1.75, ragged) + 0.5);
         }
         // ---- the displaced surface: the lumps the wind carries ----
         fieldF = s.field0 + amp * (lump - 0.5) * 2.0;
@@ -525,7 +554,7 @@ void main() {
         // of it and drawn along with the flow, so its outline is ragged rather than turned on
         // a lathe. (The wall is swollen first by half of what that takes away on average, so
         // the funnel is as stout as its radius says.)
-        fieldF += fray * (FRAY_OUT - (sprayNoise ? 0.5 : smoothstep(0.34, 0.74, nf.b * 0.6 + nf.a * 0.4)));
+        fieldF += fray * (FRAY_OUT - (sprayNoise ? 0.5 : smoothstep(0.24, 0.84, nf.b * 0.6 + nf.a * 0.4)));
         inner = 0.55 + 0.9 * lump;                                            // inner structure
         // Thin shells of vapour are dragged around outside the wall: the layer the eye reads depth
         // from. Near the water they thicken into the spray that climbs the rope.
@@ -579,6 +608,9 @@ void main() {
       // skin is haze that thickens inward, so the eye sees a little way into it, and through
       // its limb to whatever is behind.
       dens = smoothstep(0.0, soft, field) * inner;
+      // (the cloud's outline frays over its outermost FRINGE metres: torn tufts, not a cut edge.
+      // From far away, where that is a pixel or two, the soft skin does it instead, see softC)
+      dens *= 1.0 - share * (1.0 - tuft) * smoothstep(30.0, 20.0, t) * (1.0 - smoothstep(0.0, FRINGE, field));
       if (inHorn) {
         float skinDeep = HAZE_DEPTH * s.Rw;
         dens *= 1.0 - s.fade * (1.0 - share) * ragged * (1.0 - HAZE) * (1.0 - smoothstep(0.3 * skinDeep, skinDeep, field));
@@ -590,7 +622,7 @@ void main() {
       // surface somewhere on the way. Go back to where (by linear interpolation) and come in
       // again from there: every pixel then samples the skin at the same depths below the
       // surface, and what it finds there no longer depends on the dither.
-      if (!locked && !mirror && field > 0.0 && fieldLast < 0.0 && progress < 0.8) {
+      if (!locked && !mirror && field > 0.0 && fieldLast < 0.0 && spent < 0.8) {
         float tCross = max(mix(tLast, t, fieldLast / (fieldLast - field)), tLast + 0.004);
         // (clear air up to there: the stretch that is added next begins at the surface, not
         // at wherever the last step happened to land)
@@ -623,7 +655,7 @@ void main() {
       if (inVeil && sOut > 0.0) dt = min(dt, max(s.R * mix(0.45, 0.2, abs(dot(s.q, rd.xz)) / (s.ra * length(rd.xz) + 1e-4)), 0.04) * stepScale);
       if (thin > 0.0 && field < 0.0) dt = min(dt, 0.5 * stepScale);
       if (inSpray) dt = min(dt, (abs(s.ra - ringR) < 2.0 * ringW ? max(0.6 * ringW, 0.06) : clamp(0.1 + 0.14 * s.ra, 0.12, 0.5)) * stepScale);
-      dt *= 1.0 + 2.0 * smoothstep(0.75, 1.0, progress);
+      dt *= 1.0 + 2.0 * smoothstep(0.75, 1.0, spent);
       // Outside the vapour every step is a little longer or shorter than the last, so its error
       // does not add up along the ray.
       // (not in the cloud: its skin is rough, and uneven steps would show there as grit)
@@ -632,7 +664,7 @@ void main() {
 
       // ---- the cloud's light, here ----
       // (what the eye hardly sees any more takes the light of the sample before it)
-      if (share > 0.004 && dens > 0.0 && (trans > 0.15 || !entered)) {
+      if (share > 0.004 && dens > 0.0 && (trans > 0.22 || !entered)) {
         float depth = clamp(fCloud, 0.0, 0.8 * BILLOW);
         // Slope of the field toward the afterglow and upward (metres per metre, about -1 .. 1):
         // of the surface as modelled, and of the finer billows worn into it.
@@ -679,15 +711,16 @@ void main() {
         // Thin vapour throws light on the way it was going; a dense body has scattered it so
         // often that it comes out much the same in every direction.
         float solid = smoothstep(0.1, 0.7, dens);
-        lit = ambient * 0.8;
+        // (a storm cloud at dusk: its shadowed side and its underside sit well down in the exposure)
+        lit = ambient * 0.62;
         // Lit from behind the eye, the outermost skin of a cloud sends little back (the light
         // goes on into it): limbs are dull then, not outlined. Against the light they shine.
         float powder = 1.0 - 0.8 * exp(-11.0 * depth);
         float powderSun = mix(powder, 1.0, smoothstep(0.0, 0.8, muSun));
         float powderMoon = mix(powder, 1.0, smoothstep(0.0, 0.8, muMoon));
-        lit += sunCloud * (((0.44 * mix(min(phaseSun, 2.0), 0.9, solid) + 0.4 * wide * sqrt(wide)) * tSun * powderSun
-                          + (0.1 * mix(phaseGlow, 0.9, solid) + 0.2 * wideGlow * wideGlow) * tGlow) * direct);
-        lit += uMoonColor * ((0.36 * mix(phaseMoon, 0.9, solid) * tMoon * powderMoon + 0.05 * phaseUp * tMoonUp) * direct);
+        lit += sunCloud * (((0.44 * mix(min(phaseSun, 2.0), 0.9, solid) + 0.3 * wide * sqrt(wide)) * tSun * powderSun
+                          + (0.1 * mix(phaseGlow, 0.9, solid) + 0.15 * wideGlow * wideGlow) * tGlow) * direct);
+        lit += uMoonColor * ((0.2 * mix(phaseMoon, 0.9, solid) * tMoon * powderMoon + 0.04 * phaseUp * tMoonUp) * direct);
         // The pyre: from below and from one side.
         vec3 toFire = uFireLightPos - uOrigin - p;
         float fd2 = dot(toFire, toFire);
@@ -706,8 +739,11 @@ void main() {
           float d2 = dot(off, off);
           // (the creases lie nearer the light than the billows round them: they glow, the billows stand dark against them)
           float inner = mirror ? 0.9 : mix(1.45, 0.6, crease);
-          lit += FLASH_TINT * flashLevel(uBoltLo.w) * inner * (FLASH_CLOUD / (2.0 + d2 * 0.35))
-               * through(0.25 * sqrt(d2) + 1.5 * (0.8 * BILLOW - depth));
+          // (and a channel that runs down the core lights the base all round the place it leaves it)
+          vec3 fromTop = p - uBoltHi;
+          float core = abs(ab.y) * inversesqrt(max(dot(ab, ab), 1e-3));
+          lit += FLASH_TINT * flashLevel(uBoltLo.w) * (inner * (FLASH_CLOUD / (2.0 + d2 * 0.35)) * through(0.25 * sqrt(d2))
+               + core * FLASH_TOP / (1.0 + 0.6 * dot(fromTop, fromTop))) * through(1.5 * (0.8 * BILLOW - depth));
         }
       } else lit = litPrev;
       if (field < 0.0) entered = false;
@@ -803,8 +839,9 @@ void main() {
       vec2 nq; float nz, scale, tauY; mat2 unwind;
       flowAt(s, y, nq, nz, scale, unwind, tauY);
       float lod = clamp(log2(grain * scale), 0.0, 5.0);
-      nHere = saturate((noiseTexLod(vec3(nq, nz), lod).r - 0.5) * 2.4 + 0.5);
-      nThere = saturate((noiseTexLod(vec3(nq + unwind * lightAxis.xz * (reach * scale), nz + lightAxis.y * reach * NOISE_RATE * tauY), lod).r - 0.5) * 2.4 + 0.5);
+      float gain = mix(2.4, 1.75, ragged);
+      nHere = saturate((noiseTexLod(vec3(nq, nz), lod).r - 0.5) * gain + 0.5);
+      nThere = saturate((noiseTexLod(vec3(nq + unwind * lightAxis.xz * (reach * scale), nz + lightAxis.y * reach * NOISE_RATE * tauY), lod).r - 0.5) * gain + 0.5);
       // Striations are read from a cylinder in noise space, so they hardly change along the
       // radius: sheets wrapped around the axis, resolved by the pixels rather than by the march.
       vec2 around = unwind * qh;
@@ -821,7 +858,7 @@ void main() {
     // The difference, read as a slope: how much the bumps of the surface lean toward the
     // afterglow (negative) or toward the moon (positive).
     float lean = amp * (nThere - nHere) * 2.0 / reach;
-    float tilt = RELIEF * clamp(lean, -1.2, 1.2) * bodyW;
+    float tilt = RELIEF * (1.0 - 0.25 * ragged) * clamp(lean, -1.2, 1.2) * bodyW;
 
     // ---- light reaching this point ----
     // Each far light is dimmed twice: by the rest of the body on the way in (the chord through
@@ -834,8 +871,9 @@ void main() {
     // surface has already turned dark by itself, instead of cutting a hard line along it.
     vec2 qs = qh * (1.15 * s.Rw);
     // The edge of the body, as the eye meets it: a ramp over the outer half of its width, as
-    // seen (the sine of the angle between the surface and the line of sight).
-    float edge = smoothstep(0.45, 1.0, sqrt(grazing * (2.0 - grazing))) * skinM;
+    // seen (the sine of the angle between the surface and the line of sight), and only as far
+    // as the eye still sees through the vapour there: the lining is as wide as the limb is thin.
+    float edge = smoothstep(0.45, 1.0, sqrt(grazing * (2.0 - grazing))) * skinM * (1.0 - smoothstep(0.5, 0.98, alphaF));
     float litSun = through(sigmaMean * bodyDepth(qs, s.Rw, Rin, sunLit) + sprayM * 0.8)
                  * surfaceLit(dot(nrm, sunLit) - tilt, WRAP, edge * beyond(rd, sunLit), bodyW);
     float litMoon = through(sigmaMean * bodyDepth(qs, s.Rw, Rin, moonDir) + sprayM * 0.4 + airCapCover(p, moonDir) * 2.2)
@@ -864,11 +902,12 @@ void main() {
     // grazes the skin (the limb of a lump, a thin edge) it sees more of it than face on.
     float crease = 0.62 + 0.55 * nHere;
     // (through a hazy skin the eye sees further into the wall, and less of what it sees is skin)
-    light *= mix(1.0, crease * (0.62 + 0.1 * ragged + 0.6 * skinM), bodyW);
+    light *= mix(1.0, crease * (0.72 + 0.1 * ragged + 0.35 * skinM), bodyW);
     // The wind combs the funnel wall into fine striations.
     light *= mix(1.0, 0.74 + 0.52 * streak, bodyW);
     // Spray is drops, not vapour: it throws back more of the light that falls on it.
-    light *= 1.0 + 0.9 * saturate(sprayM / (sprayM + densM * sigmaBody + 0.05));
+    float sprayShare = saturate(sprayM / (sprayM + densM * sigmaBody + 0.05));
+    light *= 1.0 + 0.9 * sprayShare;
 
     // Lightning: a line of light. Where it runs down the core it falls off with distance and
     // is soaked up by the vapour it crosses on the way out, so the funnel glows from within
@@ -882,8 +921,12 @@ void main() {
       vec3 off = ap - ab * clamp(dot(ap, ab) / max(dot(ab, ab), 1e-3), 0.0, 1.0);
       float d2 = dot(off, off);
       float crossed = sigmaBody * (0.3 * sqrt(d2) + 3.5 * amp * max(nHere - 0.3, 0.0)) * bodyW;
-      float lamp = FLASH_LAMP / (FLASH_LAMP_D2 + d2) * surfaceLit(-dot(nrm, off) * inversesqrt(max(d2, 1e-3)), 1.0, 0.0, bodyW);
-      light += FLASH_TINT * (flashLevel(uBoltLo.w) * FLASH_GAIN) * (through(crossed) / (1.0 + d2 * 1.6) + lamp);
+      // (the lamp is for a channel that crawls overhead; one down the core lights the wall from inside)
+      float crawl = 1.0 - abs(ab.y) * inversesqrt(max(dot(ab, ab), 1e-3));
+      float lamp = FLASH_LAMP * mix(0.45, 1.0, crawl) / (FLASH_LAMP_D2 + d2) * surfaceLit(-dot(nrm, off) * inversesqrt(max(d2, 1e-3)), 1.0, 0.0, bodyW);
+      // (spray is whiter than vapour already: the skirt takes less of it)
+      float level = flashShoulder(flashLevel(uBoltLo.w) * FLASH_GAIN) * (1.0 - 0.35 * sprayShare);
+      light += FLASH_TINT * level * (through(crossed) / (1.0 + d2 * 1.6) + lamp);
     }
     colour += light * ALBEDO * alphaF;
   }

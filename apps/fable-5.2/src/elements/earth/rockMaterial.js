@@ -97,6 +97,8 @@ const vec3 GLOW_ON_ROCK = 0.55 * vec3(0.85, 0.62, 0.48) / vec3(1.0, 0.5, 0.24);
 // … and the dusk sky on that side lights what the glow itself cannot reach: the joints and
 // the recessed beds, which would otherwise be black. Irradiance on a face turned squarely to it.
 const vec3 DUSK_FILL = vec3(0.100, 0.150, 0.270);
+const float MENISCUS_GAIN = 0.6;    // its share of that sky (the steep part of the film, at a glancing angle)
+const float MENISCUS_WIDTH = 0.006; // metres
 vec3 earthGlowDir() { return normalize(vec3(uSunDir.x, 0.16, uSunDir.z)); }
 // The lamp keeps its full strength where a face is seen edge-on: from the moonlit side that
 // is the thin warm rim down the flank of the rock, which is all of the afterglow one sees there.
@@ -164,6 +166,26 @@ float hairlineCover(float distPx, float width, float footprint) {
 float hairline(float n, float level, float width, float footprint) {
   float v = n - level;
   return hairlineCover(abs(v) / max(length(vec2(dFdx(v), dFdy(v))), 1e-6), width, footprint);
+}
+
+// Where the film meets a stone it climbs it a few millimetres, curving from level to steep and
+// round the stone, so some part of that meniscus always turns the low sky just over the
+// horizon toward the eye, and the afterglow from well to one side of where one looks: seen
+// from anywhere it is a fine bright line. Its radiance; Vw: from the surface toward the eye.
+vec3 earthMeniscus(vec3 Vw) {
+  vec2 look = -Vw.xz / max(length(Vw.xz), 1e-4);
+  vec2 bearing = look + normalize(uSunDir.xz) * 0.6;           // never shorter than 0.4
+  bearing /= length(bearing);
+  // (A few degrees up: the line is the mean over the curve, of which only a sliver mirrors the horizon itself.)
+  return min(envColor(normalize(vec3(bearing.x, 0.05, bearing.y)), 0.3) * MENISCUS_GAIN, vec3(0.45));
+}
+// The line where something comes out of the water: its coverage of the pixel, a few
+// millimetres of surface wide, so that it narrows with distance as the real one does (and
+// fades instead of aliasing once it is under a pixel). height: of this point above the
+// waterline, metres. footprint: metres of surface under a pixel.
+float earthWaterline(float height, float footprint) {
+  float slope = max(length(vec2(dFdx(height), dFdy(height))), 1e-6);    // metres of height per pixel
+  return hairlineCover(abs(height - 0.002) / slope, MENISCUS_WIDTH, footprint);
 }
 
 // A quartz vein: a thin sheet with unit normal n through the rock, wandering by "wobble".
@@ -446,6 +468,11 @@ const FRAG_SURFACE = /* glsl */ `
   wet = smoothstep(0.09, 0.025, vEarthWorld.y + (nB.r - 0.5) * 0.04);
   albedo = mix(albedo, albedo * albedo * 1.1 + albedo * 0.32, damp) * (1.0 - 0.5 * pool);
   rough = mix(mix(mix(rough, 0.36, wet * wet), 0.06, pool), 0.22, meniscus);
+  // The waterline itself catches the low sky, round every stone and along the whole shore,
+  // brighter where the film climbs higher. (Seen at a glancing angle a pixel spans far more of
+  // the bed one way than the other: the line is drawn as wide as their mean.)
+  float sheen = earthWaterline(clear, sqrt(length(dPdx) * length(dPdy))) * mix(0.35, 1.4, nB.b);
+  if (sheen > 0.0 && uIsMirrorPass < 0.5) emissive += earthMeniscus(Vw) * sheen;
 #elif defined(EARTH_RUBBLE)
   // ---- wet where the film laps the stones, with a dark line of algae at the water itself
   float waterline = vEarthWorld.y + (nB.r - 0.5) * 0.10;
@@ -453,6 +480,9 @@ const FRAG_SURFACE = /* glsl */ `
   albedo = mix(albedo, albedo * albedo * 1.1 + albedo * 0.32, wet);
   albedo = mix(albedo, vec3(0.018, 0.030, 0.018), smoothstep(0.05, 0.0, waterline) * 0.7);
   rough = mix(rough, 0.3, wet * wet);
+  // … and below that line the bright thread of the meniscus, where the stone stands in the film.
+  float sheen = earthWaterline(vEarthWorld.y, sqrt(length(dPdx) * length(dPdy))) * mix(0.35, 1.4, nB.b);
+  if (sheen > 0.0 && uIsMirrorPass < 0.5) emissive += earthMeniscus(Vw) * sheen;
 #endif
 
 #ifndef EARTH_PROXY
@@ -519,6 +549,11 @@ const FRAG_SURFACE = /* glsl */ `
   vec3 d2 = uEarthHeart + vec3(0.0, -1.35, 0.0) - vEarthWorld;
   float shade = max(dot(Nw, normalize(d1)), 0.0) * 2.4 / dot(d1, d1) + max(dot(Nw, normalize(d2)), 0.0) * 0.6 / dot(d2, d2);
   earthOcclusion *= 1.0 - min(shade, 0.8);
+#ifdef EARTH_GRAVEL
+  // Water lying in the shallows mirrors the sky low over the film, as the film itself does
+  // (and, like the film there, the island's own dark stones too: hence only half way).
+  earthOcclusion = mix(earthOcclusion, 1.0, 0.5 * pool);
+#endif
 #if !defined(EARTH_GRAVEL) && !defined(EARTH_SAND)
   // Stones are darkest where they bed into the mound and into each other.
   float lift = vEarthWorld.y - moundHeight(vEarthWorld.xz - uEarthOrigin.xz);

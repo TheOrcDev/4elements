@@ -31,6 +31,8 @@ const TWIST = 24.0;                  // rad, total turn of a parcel between the 
 const TWIST_K = 2.05;                // how quickly the turn rate decays with height
 
 const HORN_Y0 = 7.6;                 // from here up the wall keeps the lean it has: a cone into the cloud
+const FLARE_Y = 8.7;                 // and from here it flares out a little more into the lowering, like a trumpet's bell
+const FLARE_K = 0.22;                // (by FLARE_K (y - FLARE_Y)^2 metres)
 export const HORN_TOP = 10.45;       // where the funnel's own vapour ends, inside the cloud's base
 export const CLOUD_Y = 10.6;         // the heart of the cloud's base (where the lightning crawls)
 // The cloud as the things around it know it: a body of revolution that widens from the
@@ -61,6 +63,8 @@ const float AIR_TWIST = ${f(TWIST)};
 const float AIR_TWIST_K = ${f(TWIST_K)};
 const float CLOUD_Y = ${f(CLOUD_Y)};
 const float HORN_Y0 = ${f(HORN_Y0)};
+const float FLARE_Y = ${f(FLARE_Y)};
+const float FLARE_K = ${f(FLARE_K)};
 const float HORN_TOP = ${f(HORN_TOP)};
 const float CLOUD_FLOOR = ${f(CLOUD_FLOOR)};
 const float CLOUD_R = ${f(CLOUD_R)};
@@ -98,12 +102,14 @@ float airRadius(float y) {
 }
 
 // Radius of the condensation wall at height y: the funnel up to HORN_Y0, then a cone that
-// keeps the lean the wall has there, up into the base of the cloud. slope = d radius / d y.
+// keeps the lean the wall has there, flaring into the base of the cloud. slope = d radius / d y.
 float airHorn(float y, out float slope) {
   float h = clamp(min(y, HORN_Y0) / AIR_H, 0.0, 1.0);
   float h3 = h * h * h;
-  slope = (0.5 + 9.2 * h3) / AIR_H;
-  return 0.36 + 0.5 * h + 2.3 * h3 * h + slope * max(y - HORN_Y0, 0.0);
+  float lean = (0.5 + 9.2 * h3) / AIR_H;
+  float bell = max(y - FLARE_Y, 0.0);
+  slope = lean + 2.0 * FLARE_K * bell;
+  return 0.36 + 0.5 * h + 2.3 * h3 * h + lean * max(y - HORN_Y0, 0.0) + FLARE_K * bell * bell;
 }
 
 // Turn accumulated by a parcel that has climbed to height y.
@@ -186,7 +192,8 @@ export function axisAt(y, t, out) {
 export function hornAt(y) {
   const h = Math.min(Math.max(Math.min(y, HORN_Y0) / FUNNEL_HEIGHT, 0), 1);
   const h3 = h * h * h;
-  return 0.36 + 0.5 * h + 2.3 * h3 * h + (0.5 + 9.2 * h3) / FUNNEL_HEIGHT * Math.max(y - HORN_Y0, 0);
+  const bell = Math.max(y - FLARE_Y, 0);
+  return 0.36 + 0.5 * h + 2.3 * h3 * h + (0.5 + 9.2 * h3) / FUNNEL_HEIGHT * Math.max(y - HORN_Y0, 0) + FLARE_K * bell * bell;
 }
 
 /** Largest horizontal distance the centre line can be from the element's vertical at height y. */

@@ -21,7 +21,7 @@
 | GLM 5.2 | Max | 8m 27s | [`apps/glm-5.2`](apps/glm-5.2) |
 | GPT 5.5 | Extra High | 9m 59s | [`apps/gpt-5.5`](apps/gpt-5.5) |
 | Fable 5.1 | Max | 39m 1s | [`apps/fable-5.1`](apps/fable-5.1) |
-| Fable 5.2 | Max | 13h 10m, with 28 Fable 5.2 subagents; Opus 5.5 led the last 2h 36m | [`apps/fable-5.2`](apps/fable-5.2) |
+| Fable 5.2 | Max | 14h 22m, with 28 Fable 5.2 subagents; Opus 5.5 (9 subagents) led the last 3h 48m | [`apps/fable-5.2`](apps/fable-5.2) |
 | GPT-6 Sol | Extra High | 7m 6s | [`apps/gpt-6-sol`](apps/gpt-6-sol) |
 | GPT-6 Luna | Extra High | 10m 31s | [`apps/gpt-6-luna`](apps/gpt-6-luna) |
 | GPT-6.1 Sol | Ultra | 13m 22s | [`apps/gpt-6.1-sol`](apps/gpt-6.1-sol) |
@@ -54,7 +54,7 @@ Every model except Muse Wonder ran at the highest reasoning setting it offers, s
 
 **Fable 5.1** holds all four elements in one environment, each on its own shader module over a shared noise field, with an overview you can fly back out to.
 
-**Fable 5.2** ran as a team: one session orchestrating 28 subagents of itself through a build, a critique and polish round, a speed round and a whole-scene review, so its time is a team's wall-clock rather than one model working alone, and it leaves out 6h 37m overnight when the session sat idle after its usage credits ran out. Its credits ran out for good during the review's fixes, at 10h 34m: from there the same session continued on Opus 5.5, which completed and checked the remaining fixes with 4 subagents of its own, so the last 2h 36m are Opus 5.5's work. It stands all four elements on one mirror-flat film of water at dusk: a raymarched pyre, a ray-traced column of open sea with fish and caustics, a levitating monolith split around an amethyst geode, and a volumetric tornado under its own storm cloud, each lighting, reflecting in and rippling the same water, with camera flights, a tour and a procedural soundscape. This entry is a snapshot taken during its final polish round; the finished version will replace it.
+**Fable 5.2** ran as a team: one session orchestrating 28 subagents of itself through a build, a critique and polish round, a speed round and a whole-scene review, so its time is a team's wall-clock rather than one model working alone, and it leaves out 6h 37m overnight when the session sat idle after its usage credits ran out. Its credits ran out for good during the review's fixes, at 10h 33m: from there the same session continued on Opus 5.5, which completed, verified and polished the scene with 9 subagents of its own, so the last 3h 48m are Opus 5.5's work. It stands all four elements on one mirror-flat film of water at dusk: a raymarched pyre, a ray-traced column of open sea with fish and caustics, a levitating monolith split around an amethyst geode, and a volumetric tornado under its own storm cloud, each lighting, reflecting in and rippling the same water, with camera flights, a tour and a procedural soundscape.
 
 **GLM 5.2** raises the four elements on one stage, each from its own shader material and particle system, composited through an unreal bloom pass.
 

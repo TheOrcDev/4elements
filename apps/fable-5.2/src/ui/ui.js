@@ -288,11 +288,13 @@ export function createUI(app, root) {
   // ---------------------------------------------------------------- status line: hint and toasts
   let hintTimer = 0;
   let hintSince = 0;                                  // when it appeared; 0 while it is not showing
+  let hintScene = 0;                                  // the scene's clock then (automation can run it ahead)
   let hintDone = false;                               // set once it has shown, or is no longer needed
   function showHint() {
     if (hintDone) return;
     root.classList.add('has-hint');
     hintSince = performance.now();
+    hintScene = app.time || 0;
     hintTimer = later(() => dismissHint(true), HINT_LIFE);
   }
   /**
@@ -672,6 +674,8 @@ export function createUI(app, root) {
     root.classList.add('is-ready');
     if (instant && !still) win.requestAnimationFrame(() => win.requestAnimationFrame(() => root.classList.remove('is-still')));
     later(() => root.classList.add('is-settled'), instant ? 0 : INTRO);
+    // A moment asked for with "?t=" shows the interface as it is by then: past the hint's life, without it.
+    if ((app.time || 0) * 1000 > HINT_DELAY + HINT_LIFE) hintDone = true;
     later(showHint, instant ? 0 : HINT_DELAY);
     if (!still) later(nudgeSound, NUDGE_DELAY);
   }
@@ -687,6 +691,8 @@ export function createUI(app, root) {
   subscribe('hover', showHover);
   subscribe('fps', ({ fps, scale } = {}) => showStats(fps, scale));
   subscribe('contextlost', showLost);
+  // Automation can run the scene's clock ahead of the page's: the hint's life counts in either.
+  subscribe('advance', ({ time } = {}) => { if (hintSince && time - hintScene >= HINT_LIFE / 1000) dismissHint(true); });
 
   /**
    * The GPU context is gone and the canvas with it (the scene reloads the page if it comes

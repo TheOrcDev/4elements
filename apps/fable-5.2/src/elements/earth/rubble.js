@@ -46,11 +46,60 @@ function bedLumps(rng) {
 }
 
 /**
- * The gravel bed: a disc draped over the mound, its lumps and its shore relief, dipping under
- * the water at an uneven shore. lumps: from bedLumps. step: the spacing of its rings across
- * the shore, where the waterline has to be followed closely, in metres. sectors: vertices per ring.
+ * Tongues of gravel the heap has pushed out into the film: low bars along a few bearings,
+ * each running on 0.3-0.6 m beyond the shore, tapering and sinking as it goes. They break
+ * the round outline of the island; the film reaches back into the bays between them.
+ * rng: their own generator. base: the bed's height without them, (x, z) -> metres.
+ * Returns { lift(x, z): metres they add to the bed there, list: [{ angle, root, length, bend }] }.
  */
-function bedGeometry(lumps, step, sectors) {
+function shoreTongues(rng, base) {
+  const list = [];
+  const COUNT = 7;
+  for (let i = 0; i < COUNT; i++) {
+    const angle = ((i + 0.15 + 0.7 * rng()) / COUNT) * Math.PI * 2;
+    let root = 1.2;                                             // where the shore is on that bearing without the tongue
+    while (root < 3.0 && base(Math.cos(angle) * root, Math.sin(angle) * root) > 0) root += 0.01;
+    list.push({
+      angle, root,
+      length: 0.3 + 0.3 * rng(),
+      width: 0.14 + 0.08 * rng(),                               // half-width at the root, metres
+      bend: (rng() - 0.5) * 0.7,                                // radians the spine turns per metre out
+      height: 0.036 + 0.014 * rng(),                            // of the spine at the root, above the film
+      wobble: rng() * 6.283,
+    });
+  }
+  const ease = (t) => t * t * (3 - 2 * t);
+  const lift = (x, z) => {
+    const r = Math.hypot(x, z);
+    if (r < 1.2) return 0;
+    const a = Math.atan2(z, x);
+    let add = 0;
+    for (const t of list) {
+      const u = (r - t.root) / t.length;                        // 0 at the old shore, 1 where the spine goes under
+      if (u < -0.7 || u > 1.8) continue;
+      let da = a - t.angle - t.bend * (r - t.root);
+      da -= Math.PI * 2 * Math.round(da / (Math.PI * 2));
+      const half = t.width * (1 - 0.5 * ease(Math.min(1, Math.max(0, u))));
+      const side = (Math.abs(da) * r) / half;
+      if (side >= 1) continue;
+      const across = (1 - side * side) * (1 - side * side);     // a rounded bar, flush with the bed at its sides
+      const spine = t.height * Math.pow(Math.max(1 - u, 0), 1.2) - 0.03 * Math.max(u - 1, 0)
+                  + 0.004 * Math.sin(r * 21 + t.wobble);
+      const into = ease(Math.min(1, Math.max(0, (u + 0.7) / 0.6)));      // grows out of the heap
+      add = Math.max(add, Math.max(0, spine - base(x, z)) * across * into);
+    }
+    return add;
+  };
+  return { lift, list };
+}
+
+/**
+ * The gravel bed: a disc draped over the mound, its lumps, its shore relief and the tongues,
+ * dipping under the water at an uneven shore. height: (x, z, angle, radius) -> metres. step:
+ * the spacing of its rings across the shore, where the waterline has to be followed closely,
+ * in metres. sectors: vertices per ring.
+ */
+function bedGeometry(height, step, sectors) {
   const radii = [0.3, 0.6, 0.9];                                // under the heap, where little of it shows
   for (let r = 1.2; r < 2.75; r += step) radii.push(r);
   radii.push(2.95, BED_RADIUS);                                 // always under water
@@ -59,7 +108,7 @@ function bedGeometry(lumps, step, sectors) {
     for (let j = 0; j < sectors; j++) {
       const a = (j / sectors) * Math.PI * 2;
       const x = Math.cos(a) * r, z = Math.sin(a) * r;
-      position.push(x, moundHeight(x, z) + lumps(a, r) + shoreRelief(x, z), z);
+      position.push(x, height(x, z, a, r), z);
     }
   }
   for (let j = 0; j < sectors; j++) index.push(0, 1 + ((j + 1) % sectors), 1 + j);
@@ -126,22 +175,40 @@ function finishStatic(position, index, { seed, occlusion }) {
  * cone of sand that has built up on the pile. heart, mouth: the geode's heart and the
  * direction it opens toward, element-local (the fallen crystals lie out in front of it and
  * pulse in step with their distance from it).
- * Returns { group, beds, setFar(far), setPebbleDensity(fraction, share) }: beds are the two
- * meshes of the gravel bed, the main view's and the reflection's.
+ * Returns { group, beds, shoreAt(angle), setFar(far), setPebbleDensity(fraction, share, strayShare) }:
+ * beds are the three meshes of the gravel bed, the main view's close and from across the
+ * ring, and the reflection's.
  */
 export function buildRubble(ctx, shapes, materials, geode, landings, heart, mouth) {
   const { LAYERS } = ctx;
   const group = new THREE.Group();
   const rng = ctx.rng(1723);
 
-  // The bed: closely meshed across the shore for the main view, coarsely for its reflection.
+  // The bed: closely meshed across the shore for the main view (more lightly from across the
+  // ring), coarsely for its reflection.
   const lumps = bedLumps(rng);
-  const bed = new THREE.Mesh(bedGeometry(lumps, 0.06, 144), materials.gravel);
-  const bedMirrored = new THREE.Mesh(bedGeometry(lumps, 0.25, 72), materials.gravel);
+  const angleOf = (x, z) => { const a = Math.atan2(z, x); return a < 0 ? a + Math.PI * 2 : a; };
+  const baseHeight = (x, z) => moundHeight(x, z) + lumps(angleOf(x, z), Math.hypot(x, z)) + shoreRelief(x, z);
+  const tongues = shoreTongues(ctx.rng(2909), baseHeight);
+  const bedHeight = (x, z, a, r) => moundHeight(x, z) + lumps(a, r) + shoreRelief(x, z) + tongues.lift(x, z);
+  /** What the shore adds to the smooth mound at element-local x, z: the stones lie on it. */
+  const shoreLift = (x, z) => shoreRelief(x, z) + tongues.lift(x, z);
+  const bed = new THREE.Mesh(bedGeometry(bedHeight, 0.06, 144), materials.gravel);
+  const bedFar = new THREE.Mesh(bedGeometry(bedHeight, 0.12, 144), materials.gravel);
+  const bedMirrored = new THREE.Mesh(bedGeometry(bedHeight, 0.25, 72), materials.gravel);
   bed.layers.set(LAYERS.MAIN_ONLY);
+  bedFar.layers.set(LAYERS.MAIN_ONLY);
+  bedFar.visible = false;
   bedMirrored.layers.set(LAYERS.MIRROR_ONLY);
-  bed.receiveShadow = bedMirrored.receiveShadow = true;
-  group.add(bed, bedMirrored);
+  bed.receiveShadow = bedFar.receiveShadow = bedMirrored.receiveShadow = true;
+  group.add(bed, bedFar, bedMirrored);
+  /** How far out the island reaches on a bearing (radians, element-local): where the bed goes under the film. */
+  const shoreAt = (angle) => {
+    const c = Math.cos(angle), s = Math.sin(angle);
+    let r = 1.2;
+    while (r < 3.2 && bedHeight(c * r, s * r, angleOf(c * r, s * r), r) > 0) r += 0.01;
+    return r;
+  };
 
   // ---- stones, dropped largest first onto a height map of the pile so far: each comes to
   // rest on whatever is already under it, then raises the map with its own dome. The result
@@ -188,7 +255,7 @@ export function buildRubble(ctx, shapes, materials, geode, landings, heart, mout
       axis.set(rng() - 0.5, 0, rng() - 0.5).normalize();
       q.premultiply(tilt.setFromAxisAngle(axis, (rng() - 0.5) * 0.5));
       // (The pile is built on the smooth mound; the bed's shore relief then carries each stone with it.)
-      m.compose(lifted.set(x, p.y + shoreRelief(x, z), z), q, s.setScalar(size));
+      m.compose(lifted.set(x, p.y + shoreLift(x, z), z), q, s.setScalar(size));
       const set = perShape[n % perShape.length];
       set.rocks.push({
         seed: 3 + rng() * 80, size, wet: p.y < 0.1 ? 0.3 + 0.5 * rng() : 0, moss: cls.level === 'high' && rng() < 0.5 ? 0.45 : 0.06,
@@ -238,7 +305,7 @@ export function buildRubble(ctx, shapes, materials, geode, landings, heart, mout
   // ---- crystals among the stones: small clusters, and a few broken points that fell from the geode
   const crystals = new CrystalSet();
   const add = (x, z, lift, dir, length, glow) => {
-    p.set(x, Math.max(pileAt(x, z) + shoreRelief(x, z), 0) + lift, z);
+    p.set(x, Math.max(pileAt(x, z) + shoreLift(x, z), 0) + lift, z);
     crystals.add(p, dir, length * (0.22 + 0.1 * rng()), length, {
       seed: 1 + rng() * 97, heartDist: p.distanceTo(heart), glow, enclosed: 0, roll: rng() * Math.PI * 2,
     });
@@ -260,21 +327,61 @@ export function buildRubble(ctx, shapes, materials, geode, landings, heart, mout
   }
   group.add(crystals.build(geode.geometry, geode.material));
 
+  // ---- pebbles out in the film beyond the shore, sunk to half their height: most of them off
+  // the tips of the tongues, the rest anywhere along the shore. Close views only (too small
+  // to see from across the ring), and not reflected.
+  const scatterRng = ctx.rng(3301);
+  const strays = [];
+  const STRAYS = 44;
+  for (let n = 0; n < STRAYS; n++) {
+    let angle, r;
+    if (n % 3 !== 2) {
+      const t = tongues.list[n % tongues.list.length];
+      const out = t.length * (0.8 + 0.5 * scatterRng());
+      angle = t.angle + t.bend * out + ((scatterRng() - 0.5) * 0.5) / (t.root + out);
+      r = Math.max(t.root + out, shoreAt(angle) + 0.03);
+    } else {
+      angle = scatterRng() * Math.PI * 2;
+      r = shoreAt(angle) + 0.04 + 0.7 * scatterRng() * scatterRng();
+    }
+    const size = 0.028 + 0.05 * scatterRng() * scatterRng();
+    const flat = 0.5 + 0.3 * scatterRng();                      // pebbles lie on their broad faces
+    q.setFromAxisAngle(UP, scatterRng() * Math.PI * 2);
+    axis.set(scatterRng() - 0.5, 0, scatterRng() - 0.5).normalize();
+    q.premultiply(tilt.setFromAxisAngle(axis, (scatterRng() - 0.5) * 0.5));
+    const sunk = size * flat * (0.05 + 0.4 * scatterRng());     // of a stone about one size unit high above its centre
+    m.compose(lifted.set(Math.cos(angle) * r, -sunk, Math.sin(angle) * r), q, s.set(size, size * flat, size));
+    strays.push({ seed: 3 + scatterRng() * 80, size, wet: 0.8, moss: 0.04, matrix: m.toArray() });
+  }
+  strays.sort((a, b) => b.size - a.size);
+  const strayPair = createRockPair(LAYERS, shapes.tiny[1], shapes.tiny[1], materials.rubble, strays, { castShadow: false, mirrored: false });
+  strays.forEach((rock, i) => strayPair.near.instanceMatrix.array.set(rock.matrix, i * 16));
+  strayPair.near.computeBoundingSphere();
+  group.add(strayPair.near);
+
   return {
     group,
-    beds: [bed, bedMirrored],
-    /** far: true once the camera is across the ring: the stones are then drawn from their lighter shapes. */
-    setFar(far) { for (const pair of stones) pair.setFar(far); },
+    beds: [bed, bedFar, bedMirrored],
+    /** Element-local radius at which the island goes under the film on a bearing (radians). */
+    shoreAt,
+    /** far: true once the camera is across the ring: the stones and the bed are then drawn from their lighter shapes. */
+    setFar(far) {
+      for (const pair of stones) pair.setFar(far);
+      bed.visible = !far;
+      bedFar.visible = far;
+    },
     /**
      * fraction: how many of the pebbles the quality level allows. share: how many of those the
      * main view draws (fewer with distance). Both drop the smallest first; the film only ever
-     * reflects the larger ones.
+     * reflects the larger ones. strayShare: how many of the pebbles out in the film are drawn.
      */
-    setPebbleDensity(fraction, share = 1) {
+    setPebbleDensity(fraction, share = 1, strayShare = 1) {
       for (const pair of pebbles) {
         pair.near.count = Math.floor(pair.near.userData.full * fraction * share);
         pair.far.count = Math.floor(pair.far.userData.full * fraction * MIRRORED_PEBBLES);
       }
+      strayPair.near.count = Math.floor(strayPair.near.userData.full * fraction * strayShare);
+      strayPair.near.visible = strayPair.near.count > 0;
     },
   };
 }

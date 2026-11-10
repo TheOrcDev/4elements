@@ -360,8 +360,9 @@ const modelOptions: readonly ModelOption[] = [
     provider: "anthropic",
     effort: "Max",
     effortDetail: "Thinking effort: max",
-    duration: "13h 10m",
-    builtWith: "28 Fable 5.2 subagents, then Opus 5.5 for the last 2h 36m",
+    duration: "14h 22m",
+    builtWith:
+      "28 Fable 5.2 subagents, then Opus 5.5 with 9 for the last 3h 48m",
     summary:
       "One dusk scene on a mirror-flat film of water: a raymarched pyre, a ray-traced column of open sea, a levitating monolith split around an amethyst geode and a volumetric tornado under its own storm cloud, each lighting, reflecting in and rippling the same water, with camera flights, a tour and a procedural soundscape.",
     controls:

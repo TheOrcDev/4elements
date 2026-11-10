@@ -157,13 +157,25 @@ job and its own files:
 1. **Build** — one engineer per element, plus one each for the interface and the soundscape.
 2. **Critique and polish** — every part reviewed with fresh eyes and reworked, then a speed round
    that took a 1080p frame from 31 ms to about 9 ms.
-3. **Review** — three independent reviewers (art direction, motion, robustness), a redesign of the
-   vortex's cloud and fixes by five engineers. Fable 5.2's credits ran out as the fixes were being
-   finished (all five had done most of their work).
+3. **Review** — three independent reviewers (art direction, motion, robustness) with 31 findings,
+   a redesign of the vortex's storm cloud and fixes by five engineers. Fable 5.2's credits ran out
+   as the fixes were being finished (all five had done most of their work).
 4. **Finish (Opus 5.5)** — the session continued on Opus 5.5: one engineer checked and completed
    the camera and app work, another softened the film's glare at a lightning strike, and two
    adversarial verifiers re-checked every finding, measured every view and built the app.
+5. **Final polish (Opus 5.5)** — four engineers worked through what the verifiers left open (the
+   storm cloud and funnel, close-up framing, the resolution governor, the pyre seen through the
+   sea, the earth island's shore), and one more adversarial check approved the result.
 
-28 Fable 5.2 subagents and 4 Opus 5.5 subagents so far, and about 13 hours of working time from the
-brief to this state (Fable 5.2 led for the first 10½). That leaves out 6 h 37 m overnight, when the
-session sat idle after its usage credits ran out the first time.
+28 Fable 5.2 subagents and 9 Opus 5.5 subagents, and 14 h 22 m of working time from the brief to
+the finished scene: Fable 5.2 led the first 10 h 33 m, Opus 5.5 the last 3 h 48 m. That leaves out
+6 h 37 m overnight, when the session sat idle after its usage credits ran out the first time.
+
+### Known limitations
+
+- From 20–30 m the tornado's funnel still reads a little like a twisted rope; close up and from
+  below it reads as vapour.
+- Seen from straight above, the storm cloud is a heap of rounded lobes rather than a flat-topped
+  cell, and a faint horizontal seam can be found where the funnel meets the cloud base.
+- On a full-screen retina window the water close-up is the slowest view (about 15 ms a frame on
+  an M4); the governor trims its resolution slightly if the machine is busy.

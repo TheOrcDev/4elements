@@ -33,6 +33,7 @@ void main() {
 `;
 
 export const RUNNEL_COUNT = 10;
+export const PYRE_UP = 5;        // m: the second point of the pyre's axis handed over in uPyre
 
 export const WATER_FRAG = /* glsl */ `
 ${FRAG_PRELUDE}
@@ -56,6 +57,8 @@ uniform int uRunnelsLive;        // slots at or beyond this index hold nothing
 uniform vec2 uHub;               // the middle of the ring the four elements stand on (local xz)
 uniform float uBlend;            // 1 from far off: the column is blended over the frame instead of reading it (see main)
 uniform vec3 uMoonGlade;         // xy = where the frame shows the moon's image in the film (uv), z = 1 while it is in the picture
+uniform vec4 uPyre;              // where the frame shows the pyre's axis: xy = uv of its foot, zw = uv of the point PYRE_UP above it
+uniform vec2 uPyreScale;         // x = frame heights per metre at the pyre, y = 1 while the pyre is in front of the eye
 varying vec3 vWorldPos;
 
 float gDetail;      // 0..1 from uQuality: scales every step count (about 0.7 at 'high')
@@ -65,6 +68,8 @@ float gFar;         // 0 while gFoot is under 8 mm (the close-up), 1 from 14 mm 
 float gFrontZ;      // view-space depth of the first water hit; nearer scene pixels stand in front of the column
 float gJitter;      // per-pixel dither in [0, 1)
 float gThrough;     // far off: the share of what stands behind the pixel that comes straight through the column
+float gLens;        // how many times the column squeezes the world sideways at this pixel (see main)
+float gSqueezed;    // 0 where it hardly does, 1 where it squeezes a flame into a rod (see pyreThroughSea)
 vec3 gMoon;         // moonlight just under the surface
 vec3 gAmbient;      // sky light just under the surface
 
@@ -128,6 +133,66 @@ vec3 fireGlint(vec3 p, vec3 d) {
        * (0.06 * flame + 0.012 * exp(-sq((up - 0.35) / 0.8) - sq(aside / 3.0)));
 }
 
+// The pyre seen through the column. A cylinder of water squeezes what stands behind it
+// sideways (gLens times) and leaves it its height: read sharp out of the frame, the flame
+// comes out as a lit rod standing in the tank. But the light crosses two skins of moving sea
+// on its way, and what that does to a small bright light is to spread it into a glow that
+// wavers with the water. So the frame is read with the flame taken out of it (pyreErased)
+// and the flame's light is put back as that glow: SEA_SPREAD wide as the eye sees it, which
+// beyond the wall is gLens times wider sideways. It is the colour of the flame's skirts, not
+// of its heart: the water on the way takes the red first, and a glow the colour of the
+// light itself comes out of it khaki. Where the column does not squeeze the world (gLens
+// near 1, seen through its middle from close by) the flame keeps its own shape: it reads
+// as fire there, and is left as the frame shows it.
+const float SEA_SPREAD = 0.026;       // radians
+const float PYRE_UP = ${f(PYRE_UP)};
+vec3 pyreThroughSea(vec3 p, vec3 d) {
+  vec3 fire = uFireLightPos - uOrigin;
+  float a = dot(d.xz, d.xz);
+  float t = dot(fire.xz - p.xz, d.xz) / max(a, 1e-6);
+  vec3 q = p + d * max(t, 0.0);
+  vec2 across = vec2(-d.z, d.x) * inversesqrt(max(a, 1e-6));
+  vec2 spread = vec2(gLens * sqrt(a), 1.0) * (max(t, 0.0) * SEA_SPREAD);
+  vec2 size = sqrt(vec2(0.36, 2.25) + spread * spread);
+  float aside = dot(q.xz - fire.xz, across);
+  float rise = q.y - fire.y - 0.6;
+  float glow = 0.0;
+  for (int k = 0; k < (t > 0.0 && abs(aside) < 3.0 * size.x && abs(rise) < 3.0 * size.y ? 1 : 0); k++) {
+    // The skin of the wall heaves: the glow sways and breathes with it, slowly.
+    vec4 skin = noiseTexLod(vec3(atan(p.z, p.x) * RADIUS * 0.23, p.y * 0.45, uTime * 0.05), 0.0);
+    aside += (skin.r - 0.5) * size.x * 0.9;
+    rise += (skin.b - 0.5) * size.y * 0.5;
+    // The flame as the frame shows it is about 1.4 at its heart, 0.6 m to either side and
+    // 1.5 m up and down to 1/e. The glow carries a little more than that light: some of it
+    // is spread past the limb of the column and lost. Under the lip, where the swell breaks
+    // the wall's skin up most, it fades out instead of being cut off by the sea surface.
+    glow = 0.115 * (0.6 * 1.5) / (size.x * size.y) * exp(-sq(aside / size.x) - sq(rise / size.y)) * (0.8 + 0.4 * skin.g)
+         * smoothstep(-0.1, 1.4, surfaceY(p.xz) - p.y) * gSqueezed;
+  }
+  return uFireLightColor * vec3(1.0, 0.5, 0.28) * glow;
+}
+
+// The frame at uv with the flame taken out of it: where it shows the pyre (an upright band
+// round its axis, from the rim of the bowl to well above the tip) it is filled in from either
+// side of the band at the same height.
+vec3 pyreErased(vec3 frame, vec2 uv) {
+  vec2 aspect = vec2(uResolution.x / uResolution.y, 1.0);
+  vec2 axis = (uPyre.zw - uPyre.xy) * aspect;
+  vec2 rel = (uv - uPyre.xy) * aspect;
+  float len2 = max(dot(axis, axis), 1e-8);
+  float up = dot(rel, axis) / len2 * PYRE_UP;                                          // m above the film
+  float side = (rel.x * axis.y - rel.y * axis.x) * inversesqrt(len2) / max(uPyreScale.x, 1e-6);   // m beside the axis
+  float w = uPyreScale.y * gSqueezed * (1.0 - smoothstep(1.6, 2.1, abs(side))) * smoothstep(0.75, 1.05, up) * (1.0 - smoothstep(5.5, 7.5, up));
+  for (int k = 0; k < (w > 0.0 ? 1 : 0); k++) {
+    vec2 at = uPyre.xy + (uPyre.zw - uPyre.xy) * (up / PYRE_UP);
+    vec2 beside = vec2(axis.y, -axis.x) * inversesqrt(len2) / aspect * (2.2 * uPyreScale.x);
+    vec3 left = textureLod(uSceneColor, at - beside, 0.0).rgb;
+    vec3 right = textureLod(uSceneColor, at + beside, 0.0).rgb;
+    frame = mix(frame, mix(left, right, saturate(0.5 + side / 4.4)), w);
+  }
+  return frame;
+}
+
 // The frame at uv as it looks through metres of sea: a good third of it crisp, the rest spread
 // over a disc of the given radius (a fraction of the frame's height), which is what
 // scattering in water does to a picture, a sharp core inside a halo. All of it crisp, a
@@ -159,10 +224,10 @@ vec3 onScreen(vec3 x) {
 
 // The world outside as far as it can be known without looking: the sky cube, the moon, the
 // glow of the pyre, and below the horizon the film, a mirror at flat angles and dark stone
-// at steep ones. rough = blur of the sky (0 crisp .. 1).
-vec3 worldStandIn(vec3 p, vec3 d, float rough) {
+// at steep ones. rough = blur of the sky (0 crisp .. 1). pyre: how much of the pyre's glow to put in.
+vec3 worldStandIn(vec3 p, vec3 d, float rough, float pyre) {
   vec3 u = vec3(d.x, abs(d.y), d.z);
-  vec3 col = envColor(u, rough) + moonDisc(u) + fireGlint(vec3(p.x, p.y * sign(d.y), p.z), u);
+  vec3 col = envColor(u, rough) + moonDisc(u) + fireGlint(vec3(p.x, p.y * sign(d.y), p.z), u) * pyre;
   return d.y < 0.0 ? mix(vec3(0.004, 0.005, 0.007), col, 0.05 + 0.95 * pow(max(1.0 + d.y, 0.0), 4.2)) : col;
 }
 
@@ -191,8 +256,14 @@ vec3 world(vec3 p, vec3 d, float soft, bool behind) {
   // Nearly always it is all frame or all stand-in: the one that has no say is not worked
   // out (loop counts again, so that no compiler works it out regardless).
   vec3 standIn = vec3(0.0), frame = vec3(0.0);
-  for (int k = 0; k < (at.z < 1.0 ? 1 : 0); k++) standIn = worldStandIn(p, d, soft > 0.0 ? 0.22 : 0.0);
+  for (int k = 0; k < (at.z < 1.0 ? 1 : 0); k++) standIn = worldStandIn(p, d, soft > 0.0 ? 0.22 : 0.0, behind ? 1.0 - gSqueezed : 1.0);
   for (int k = 0; k < (at.z > 0.0 ? 1 : 0); k++) frame = frameSoft(at.xy, soft);
+  // Seen through the column, the pyre is the glow its light makes of it (see pyreThroughSea).
+  vec3 pyre = vec3(0.0);
+  for (int k = 0; k < (behind && gSqueezed > 0.0 ? 1 : 0); k++) {
+    frame = pyreErased(frame, at.xy);
+    pyre = pyreThroughSea(p, d);
+  }
   // The moon's image in the film stands where the eye finds it, which is not where a ray
   // bent by the column would: read by such a ray, the disc and the glitter over it turn up
   // inside the water as a white slash. A lookup that lands on them (an upright oval, in
@@ -200,7 +271,7 @@ vec3 world(vec3 p, vec3 d, float soft, bool behind) {
   vec2 off = (at.xy - uMoonGlade.xy) * vec2(uResolution.x / uResolution.y, 1.0) / vec2(0.055, 0.12);
   float glade = uMoonGlade.z * (1.0 - smoothstep(1.0, 1.5, length(off)));
   frame *= mix(1.0, min(0.07 / max(luma(frame), 1e-4), 1.0), glade);
-  return mix(standIn, frame, at.z);
+  return mix(standIn, frame, at.z) + pyre;
 }
 
 // The sky from below, through a window in the waves (a slope steep enough to let the eye
@@ -826,7 +897,7 @@ vec3 traceInside(vec3 p, vec3 d, float eyeDist, float jitter, bool fromSurface) 
       // stand-in will do, and it has none of the engraved rings of the film, which every
       // dimple of the sea's underside would otherwise show as a ring of its own.
       for (int j = 0; j < (fres < 0.999 && kind == 2 && !firstLeg ? 1 : 0); j++) {
-        seen = (1.0 - fres) * worldStandIn(hit, refract(d, n, IOR), 0.3) * exp(vec3(0.12, 0.015, 0.0) * tEnd);
+        seen = (1.0 - fres) * worldStandIn(hit, refract(d, n, IOR), 0.3, 1.0) * exp(vec3(0.12, 0.015, 0.0) * tEnd);
       }
       for (int j = 0; j < (fres < 0.999 && kind == 3 ? 1 : 0); j++) seen = (1.0 - fres) * skyThroughSea(refract(d, n, IOR));
       dNext = reflect(d, n);
@@ -975,6 +1046,13 @@ void main() {
   float cover = saturate(edge / (gPixel * max(tMid, 0.1)));
   gFoot = gPixel * tMid;
   gFar = smoothstep(0.008, 0.014, gFoot);
+  // How many times the column squeezes the world sideways at this pixel. A ray that passes
+  // the axis at b and crosses both sides of the wall is turned by 2 (asin(b / R) - asin(b / (IOR R))),
+  // so what the eye, L away, sees move by a pixel moves by |1 - L D'(b)| pixels beyond.
+  float bAxis = min(abs(ro.x * rd.z - ro.z * rd.x) * inversesqrt(a), RADIUS * 0.995);
+  float turn = 2.0 * (inversesqrt(RADIUS * RADIUS - bAxis * bAxis) - inversesqrt(IOR * IOR * RADIUS * RADIUS - bAxis * bAxis));
+  gLens = clamp(abs(1.0 - tMid * sqrt(a) * turn), 0.3, 40.0);
+  gSqueezed = smoothstep(1.6, 3.2, gLens);
 
   // Dither for every march in the column. It moves on with the frame, so the eye averages
   // it into the grain of the picture instead of reading it as a weave.
@@ -1037,7 +1115,7 @@ void main() {
     // What the outside of the wall mirrors: face on, two parts in a hundred of whatever
     // is behind the eye; on the flanks, where it turns into a mirror, the frame beyond.
     for (int j = 0; j < (uBlend < 0.5 ? 1 : 0); j++) mirrored = world(pw, reflect(rd, n), 0.0, false);
-    for (int j = 0; j < (uBlend < 0.5 ? 0 : 1); j++) mirrored = worldStandIn(pw, reflect(rd, n), 0.0);
+    for (int j = 0; j < (uBlend < 0.5 ? 0 : 1); j++) mirrored = worldStandIn(pw, reflect(rd, n), 0.0, 1.0);
     // A bead is a little lens: it gathers the moon, the afterglow and the pyre into a
     // glint, and its skin is never quite clean, so it holds a breath of sky light too.
     float wetness = min(wet.z, 1.0);

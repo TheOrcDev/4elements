@@ -4,10 +4,11 @@
 // rounded heads, each head crowded with smaller ones: a cauliflower. That is how this one is
 // built, out of a few hundred rounded solids joined smoothly:
 //
-//   base      a flat slab at the condensation level, lobed like the crown above it
+//   base      a flat slab at the condensation level, lobed like the crown above it, that runs
+//             out beyond the turrets as a thin shelf with a torn, wispy edge
 //   lowering  the wall cloud: lumps that hang from the base around the funnel
-//   crown     turrets of different height and girth, each covered with billows a metre or
-//             two across, each of those with heads half a metre across
+//   crown     one tall tower and lower turrets round it, each covered with billows of very
+//             different sizes (a few big ones among many small), each with heads half a metre across
 //   rim       billows along the edge of the base, and smaller ones wherever it lies bare
 //   wisps     scud under the edge of the base, and streamers torn off the lobes that trail
 //             behind them as the disc turns
@@ -39,19 +40,25 @@ const FULL = CLOUD_POS - SWELL + 0.01;                 // and where it is deep i
 const REACH = 0.02 - EMPTY;                            // how far outside a solid its field is written
 
 // The turrets of the crown: [x, z, height of the top (billows included), radius of the core].
+// One tower is the updraft itself; round it they fall away to low mounds on the shelf.
 const TURRETS = [
-  [0.9, -0.5, 13.45, 1.4],
-  [-2.0, 1.0, 12.75, 1.35],
-  [2.9, 1.9, 12.2, 1.2],
-  [1.6, -3.1, 12.45, 1.25],
-  [-1.5, -2.6, 12.0, 1.15],
-  [-4.2, -0.6, 11.75, 1.05],
-  [-0.4, 3.6, 11.95, 1.15],
-  [4.5, -0.9, 11.6, 1.0],
-  [-3.3, 3.2, 11.5, 0.95],
-  [3.45, -3.25, 11.4, 0.9],
-  [-3.5, -3.1, 11.3, 0.85],
+  [0.9, -0.5, 13.45, 1.75],
+  [-2.0, 1.0, 12.6, 1.3],
+  [2.9, 1.9, 11.95, 1.0],
+  [1.6, -3.1, 12.3, 1.15],
+  [-1.5, -2.6, 11.6, 0.8],
+  [-4.2, -0.6, 11.3, 0.65],
+  [-0.4, 3.6, 11.75, 0.95],
+  [4.5, -0.9, 11.2, 0.6],
+  [-3.3, 3.2, 11.15, 0.6],
+  [3.45, -3.25, 11.1, 0.55],
+  [-3.5, -3.1, 11.0, 0.5],
 ];
+// The flat base runs out this far beyond the turrets as a thin shelf with a torn edge (but
+// never beyond SHELF_R from the vertical), thickening inward from SHELF_EDGE to the full base.
+const SHELF = 1.35;
+const SHELF_R = 6.75;
+const SHELF_EDGE = 0.32;
 const CROWDING = 1.42;       // a turret with its billows and their heads is this many core radii high
 // The lowering: [x, z, radius, how far it hangs below the base]. It hangs lowest on one side.
 const LOWERING = [
@@ -66,6 +73,8 @@ const LOWERING = [
 // Where streamers leave the rim: [angle of the lobe they trail from, radius there, how many
 // metres they trail].
 const TAILS = [[0.3, 5.1, 4.4], [2.05, 4.9, 2.4], [3.45, 5.2, 5.2], [4.9, 5.0, 2.0]];
+
+const smooth01 = (x) => { const t = Math.min(Math.max(x, 0), 1); return t * t * (3 - 2 * t); };
 
 // Smooth maximum: the union of two solids, with a fillet of size k where they meet.
 function smax(a, b, k) {
@@ -233,18 +242,23 @@ export function buildCloudField(rng) {
   const hidden = (s, depth, parent) => unionField(big, s.x, s.y, s.z, parent) > depth * s.r
     || unionField(heads, s.x, s.y, s.z, parent) > depth * s.r;
 
+  // Nothing may reach the top of the grid (the field would be cut off flat there).
+  const ceiling = CLOUD_MIN[1] + CLOUD_SIZE[1] - 0.22;
   // ---- billows on the turrets ----
-  // (no two turrets alike: some are a few broad billows, some a crowd of small heads)
+  // (no two turrets alike: some are a few broad billows, some a crowd of small heads; and
+  // on each, a few big billows among many small ones, not a crowd of equal puffs)
   for (const t of big) {
     if (hanging.includes(t)) continue;
     const broad = rng();
     const count = Math.round((13 + 3 * t.r) * (1.1 - 0.35 * broad));
     for (const d of capDirections(count, 1.95, [0, 1, 0], rng)) {
-      const radius = t.r * rand(0.34, 0.5) * (0.9 + 0.3 * broad);
+      const u = rng();
+      let radius = Math.max(t.r * (0.2 + 0.52 * u * u) * (0.9 + 0.3 * broad), 0.24);
       const ry = d[1] > 0 ? t.up : t.down;
       const s = billow(t.x + d[0] * t.r, t.y + d[1] * ry, t.z + d[2] * t.r, d, radius, 0.3, 0.3 * radius);
+      if (s.y + radius > ceiling) { radius = s.r = Math.max(ceiling - s.y, 0.2); s.k = 0.3 * radius; }
       if (s.y - 0.75 * radius < CLOUD_BASE - 0.1) continue;          // (the base stays flat)
-      if (!hidden(s, 0.55, t)) { s.parent = t; s.heads = 1.25 - 0.9 * broad; heads.push(s); }
+      if (!hidden(s, 0.55, t)) { s.parent = t; s.heads = (1.25 - 0.9 * broad) * (radius > 0.7 ? 0.6 : 1.0); heads.push(s); }
     }
   }
   // ---- billows under the lowering (soft ones: they carry no heads) ----
@@ -262,20 +276,22 @@ export function buildCloudField(rng) {
     const c = Math.cos(a), sn = Math.sin(a);
     let edge = 7.0;
     while (edge > 2.5 && lateral(c * edge, -sn * edge) < 0) edge -= 0.05;
-    const radius = rand(0.45, 0.85);
+    const u = rng();
+    const radius = 0.32 + 0.68 * u * u;
     const rr = edge - 0.2 * radius + rand(-0.1, 0.15);
     const s = { x: c * rr, y: rand(CLOUD_BASE + 0.25, baseTop), z: -sn * rr, r: radius, k: 0.3 * radius };
     if (!hidden(s, 0.5, null)) { s.parent = { x: c * (rr - 1), y: s.y - 0.3, z: -sn * (rr - 1) }; heads.push(s); }
     a += (1.5 * radius + rand(0.05, 0.3)) / Math.max(edge, 1);
   }
-  // ---- and wherever the top of the base lies bare ----
-  for (let gx = -6; gx <= 6; gx += 1.15) {
-    for (let gz = -6; gz <= 6; gz += 1.15) {
-      const x = gx + rand(-0.4, 0.4), z = gz + rand(-0.4, 0.4);
-      if (lateral(x, z) < 0.5) continue;
-      const radius = rand(0.5, 0.9);
-      const s = { x, y: baseTop - 0.35 * radius + rand(0, 0.25), z, r: radius, k: 0.3 * radius };
-      if (!hidden(s, 0.35, null)) { s.parent = { x, y: s.y - 1, z }; heads.push(s); }
+  // ---- and here and there where the top of the base lies bare: low, flattened mounds ----
+  for (let gx = -6; gx <= 6; gx += 1.7) {
+    for (let gz = -6; gz <= 6; gz += 1.7) {
+      const x = gx + rand(-0.6, 0.6), z = gz + rand(-0.6, 0.6);
+      if (lateral(x, z) < 0.5 || rng() < 0.35) continue;
+      const u = rng();
+      const radius = 0.4 + 0.75 * u * u;
+      const s = { x, y: baseTop - 0.3 * radius + rand(0, 0.15), z, r: radius, up: 0.55 * radius, down: radius, k: 0.3 * radius };
+      if (!hidden(s, 0.35, null)) { s.parent = { x, y: s.y - 1, z }; s.heads = 0.35; heads.push(s); }
     }
   }
 
@@ -289,7 +305,7 @@ export function buildCloudField(rng) {
     for (const d of capDirections(count, 1.75, [ax / n, ay / n, az / n], rng)) {
       const radius = Math.max(b.r * rand(0.32, 0.52), 0.2);
       const s = billow(b.x + d[0] * b.r, b.y + d[1] * b.r, b.z + d[2] * b.r, d, radius, 0.3, 0.45 * radius);
-      if (s.y - 0.6 * radius < CLOUD_BASE - 0.12) continue;
+      if (s.y - 0.6 * radius < CLOUD_BASE - 0.12 || s.y + radius > ceiling) continue;
       if (unionField(big, s.x, s.y, s.z, null) > 0.3 * radius) continue;
       if (unionField(heads, s.x, s.y, s.z, b) > 0.45 * radius) continue;
       small.push(s);
@@ -338,24 +354,34 @@ export function buildCloudField(rng) {
 
   // ---- write everything into the grid ----
   for (const s of big) splat(F, s);
-  // the base
+  // the base, and the shelf it runs out into: the same flat underside, but thin, with an
+  // outline torn into tongues and bays, and wispy toward its edge
+  const tear = (a) => 0.42 * Math.sin(3 * a + 0.7) + 0.28 * Math.sin(5 * a + 2.1) + 0.18 * Math.sin(9 * a + 4.0) + 0.1 * Math.sin(17 * a + 1.3);
   const j0 = Math.max(0, Math.floor((CLOUD_BASE - 0.5 - Y0) / DY)), j1 = Math.min(NY - 1, Math.ceil((baseTop + 0.4 - Y0) / DY));
   for (let kk = 0; kk < NZ; kk++) {
     const z = Z0 + (kk + 0.5) * DZ;
     for (let i = 0; i < NX; i++) {
       const x = X0 + (i + 0.5) * DX;
-      if (x * x + z * z > 49) continue;
+      const r2 = x * x + z * z;
+      if (r2 > 49) continue;
       const lat = lateral(x, z);
-      if (lat < -REACH) continue;
+      const shelf = Math.min(lat + SHELF + tear(Math.atan2(z, x)), SHELF_R - Math.sqrt(r2));
+      if (Math.max(lat, shelf) < -REACH) continue;
       const bottom = CLOUD_BASE + 0.09 * Math.sin(1.3 * x + 0.5) * Math.sin(1.1 * z + 2.0);
+      const shelfTop = bottom + SHELF_EDGE + (baseTop - 0.12 - bottom - SHELF_EDGE) * smooth01(shelf / 1.8);
+      const wisp = 255 * (1 - smooth01((shelf + 0.1) / 1.1));
       for (let j = j0; j <= j1; j++) {
         const y = Y0 + (j + 0.5) * DY;
         const vertical = Math.min(y - bottom, baseTop - y);
         // (a rounded edge: the smooth minimum of the two distances)
         const h = Math.max(0.3 - Math.abs(lat - vertical), 0) / 0.3;
         const f = Math.min(lat, vertical) - h * h * 0.075;
+        const vs = Math.min(y - bottom, shelfTop - y);
+        const hs = Math.max(0.2 - Math.abs(shelf - vs), 0) / 0.2;
+        const fs = Math.min(shelf, vs) - hs * hs * 0.05;
         const idx = i + NX * (j + NY * kk);
-        F[idx] = smax(F[idx], f, 0.3);
+        F[idx] = smax(F[idx], Math.max(f, fs), 0.3);
+        if (fs > f && fs > -REACH && wisp > W[idx]) W[idx] = wisp;
       }
     }
   }

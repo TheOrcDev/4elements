@@ -51,6 +51,10 @@ const GOVERNOR = {
   recheck: 60,        // ...and before a level that frames dropped at is tried again: the cause may have been another
                       // program's load, which comes and goes (a trial then settles it, at the cost of two seconds);
                       // doubles with each further run of drops in the same view, up to `retry`
+  proven: 60,         // readings (30 s) without a dropped frame after which a level counts as proven in its view:
+                      // a step up to a proven level that fails is another program's doing, and is tried again
+                      // after `recheck` (doubling, up to `patience`) instead of after `retry`
+  patience: 240,
   stuck: 12,          // slow readings at the floor before a tier the visitor did not choose is stepped down
 };
 
@@ -576,9 +580,10 @@ export class App {
     const w = Math.max(1, this.container.clientWidth);
     const h = Math.max(1, this.container.clientHeight);
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    // A tier's full resolution: all of a 1x display, 3/4 of the backing store on a retina one,
-    // and never more than the tier's own ceiling. The governor works downward from there.
-    const full = Math.min(dpr > 1.25 ? 0.75 : 1, QUALITY[this.qualityName].maxScale);
+    // A tier's full resolution: its own share (maxScale) of a 1x display, or of 3/4 of the
+    // backing store on a retina one, so that every tier below the top draws fewer pixels on
+    // any screen. The governor works downward from there.
+    const full = (dpr > 1.25 ? 0.75 : 1) * QUALITY[this.qualityName].maxScale;
     const scale = this.autoScale ? full * this.renderScale : this.renderScale;
     // The canvas is drawn at the internal resolution and the browser stretches it to the page,
     // so no pass ever runs at more pixels than the scene was rendered with.
@@ -689,7 +694,7 @@ export class App {
     g.view.level = level;
     g.scale = this.renderScale;
     g.mean = g.target;
-    g.slow = 0; g.fast = 0; g.crawl = 0; g.sag = 0; g.stuck = 0;
+    g.slow = 0; g.fast = 0; g.crawl = 0; g.sag = 0; g.stuck = 0; g.steady = 0;
   }
 
   /** Forget what has been learnt (a new tier, a new window size): levels stay, verdicts go. */
@@ -699,6 +704,7 @@ export class App {
     g.slow = 0; g.fast = 0; g.crawl = 0;    // consecutive readings of each kind
     g.sag = 0;                              // consecutive readings with the running mean below par
     g.stuck = 0;                            // consecutive slow readings at the floor
+    g.steady = 0;                           // consecutive readings without a dropped frame at this level, in this view
     g.above = 0;                            // consecutive readings clearly above a lowered target
     g.mean = g.target;                      // running mean of the readings since the last change
     g.trial = null;                         // a step up on trial: { from, to, readings }
@@ -713,12 +719,14 @@ export class App {
 
   /**
    * What the governor knows about one view: the level it was left at; the lowest level known
-   * to be too much there, and when (after how long a wait) that may be tried again; and how
+   * to be too much there, and when (after how long a wait) that may be tried again; how
    * many runs of steps down it has seen, so that a view that keeps dropping frames is retried
-   * ever more rarely (`recheck` doubles with each run after the first).
+   * ever more rarely (`recheck` doubles with each run after the first); and the highest level
+   * it has held for half a minute (`proven`), with the wait before a failed step back up to
+   * such a level is tried again (`again`).
    */
   _governViewRecord(level) {
-    return { level, bad: Infinity, retry: 0, wait: GOVERNOR.retry, recheck: GOVERNOR.recheck, drops: 0 };
+    return { level, bad: Infinity, retry: 0, wait: GOVERNOR.retry, recheck: GOVERNOR.recheck, drops: 0, proven: 0, again: GOVERNOR.recheck };
   }
 
   /** The camera is off to another view: take up the level that view was last left at. */
@@ -734,6 +742,7 @@ export class App {
     g.view = view;
     g.trial = null;
     g.descent = null;
+    g.steady = 0;
     if (this.autoScale && view.level !== level) this._setLevel(view.level);
   }
 
@@ -771,21 +780,32 @@ export class App {
 
     if (g.trial) {
       // A step up is on trial for two seconds. Its first reading holds the resize itself and
-      // is not judged; after that a single dropped frame sends it back, for a long time.
+      // is not judged; after that a single dropped frame sends it back, for a long time, unless
+      // this view has held that level before: then whatever holds it back now (another
+      // program, most likely) comes and goes, and the step is tried again within minutes.
       const trial = g.trial;
       trial.readings++;
       if (trial.readings > 1 && !fast) {
         g.trial = null;
         view.bad = Math.min(view.bad, trial.to);
-        view.retry = g.time + view.wait;
-        view.wait *= 2;
+        if (trial.to <= view.proven) {
+          view.retry = g.time + view.again;
+          view.again = Math.min(view.again * 2, G.patience);
+        } else {
+          view.retry = g.time + view.wait;
+          view.wait *= 2;
+        }
         this._setLevel(trial.from);
       } else if (trial.readings >= 4) {
         g.trial = null;
         if (trial.to >= view.bad) { view.bad = Infinity; view.wait = G.retry; }
+        if (trial.to >= view.proven) view.again = G.recheck;
       }
       return;
     }
+
+    g.steady = fast ? g.steady + 1 : 0;
+    if (g.steady >= G.proven) view.proven = Math.max(view.proven, level);
 
     // Has giving up pixels helped at all? If half of them (or, at the floor, three quarters)
     // bought no frames, it is the display, or a browser saving power, that holds the frame
@@ -849,7 +869,11 @@ export class App {
       overview: () => app.overview({ immediate: false }),
       tour: (on = true) => app.setTour(on),
       /** Step the scene, the camera rig and a running tour forward by this many seconds, and draw. */
-      advance: (seconds) => { app._fade = 1; app.pipeline.settings.fade = 1; app._advance(seconds, true); app.render(); return app.time; },
+      advance: (seconds) => {
+        app._fade = 1; app.pipeline.settings.fade = 1; app._advance(seconds, true); app.render();
+        app.emit('advance', { time: app.time });        // the interface's timed parts follow the scene's clock
+        return app.time;
+      },
       render: () => app.render(),
       /**
        * Hold the whole clock (scene, camera, tour, idle clock, governor) so that only advance()
@@ -934,8 +958,9 @@ export class App {
     // The stage's own parts: their targets, then the passes, meshes and stand-in textures they keep beside them.
     this.pipeline.dispose();
     this.ripples.dispose();
-    for (const part of [this.pipeline, this.ripples, this.ground, this.sky, this.mist]) release(part);
-    // The sky's two environment maps live in render targets: it is the target that has to go.
+    this.sky.dispose();                       // its mesh and the environment cube's render target
+    for (const part of [this.pipeline, this.ripples, this.ground, this.mist]) release(part);
+    // The environment maps live in render targets: it is the target that has to go.
     for (const texture of [shared.uNoise3D.value, shared.uEnvCube.value, this.scene.environment]) if (texture) (texture.renderTarget || texture).dispose();
     shared.uNoise3D.value = null;
     shared.uEnvCube.value = null;

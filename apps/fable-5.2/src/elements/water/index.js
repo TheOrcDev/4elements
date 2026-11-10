@@ -3,7 +3,7 @@ import { shared } from '../../core/shared.js';
 import { LAYERS } from '../../core/layers.js';
 import { RADIUS, LEVEL, MAX_SWELL, waveHeight } from './waves.js';
 import { WaveField } from './wavefield.js';
-import { WATER_VERT, WATER_FRAG, RUNNEL_COUNT } from './waterShader.js';
+import { WATER_VERT, WATER_FRAG, RUNNEL_COUNT, PYRE_UP } from './waterShader.js';
 import { createSpray, Drips } from './spray.js';
 import { createMist } from './mist.js';
 import { createReflection } from './reflection.js';
@@ -42,6 +42,8 @@ export default class WaterElement {
       uHub: { value: hub },
       uBlend: { value: 0 },
       uMoonGlade: { value: new THREE.Vector3() },
+      uPyre: { value: new THREE.Vector4() },
+      uPyreScale: { value: new THREE.Vector2() },
       uRunnels: { value: Array.from({ length: RUNNEL_COUNT }, () => new THREE.Vector4(0, -1000, 1, 0)) },
       uRunnelsLive: { value: 0 },
       uFish: { value: this.shoal.positions },
@@ -83,6 +85,8 @@ export default class WaterElement {
     this.viewProjection = new THREE.Matrix4();
     this.blended = false;
     this.moonView = new THREE.Vector3();
+    this.pyreFoot = new THREE.Vector3();
+    this.pyreHead = new THREE.Vector3();
     const nothing = new THREE.BufferGeometry();
     nothing.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(9), 3));
     const probe = new THREE.Mesh(nothing, new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, depthTest: false }));
@@ -109,6 +113,21 @@ export default class WaterElement {
         glade.set(0.5 - 0.5 * p[0] * v.x / v.z, 0.5 - 0.5 * p[5] * v.y / v.z, 1);
       } else {
         glade.z = 0;
+      }
+      // Where this frame shows the pyre: its axis, at the film and PYRE_UP above it. The
+      // shader takes the flame out of what it reads through the column there and puts its
+      // light back as a glow (pyreThroughSea).
+      const fire = shared.uFireLightPos.value;
+      const foot = this.pyreFoot.set(fire.x, 0, fire.z).applyMatrix4(camera.matrixWorldInverse);
+      const head = this.pyreHead.set(fire.x, PYRE_UP, fire.z).applyMatrix4(camera.matrixWorldInverse);
+      const pyre = this.uniforms.uPyre.value, scale = this.uniforms.uPyreScale.value;
+      if (foot.z < -1 && head.z < -1 && shared.uFireLightColor.value.x > 0) {
+        const p = camera.projectionMatrix.elements;
+        pyre.set(0.5 - 0.5 * p[0] * foot.x / foot.z, 0.5 - 0.5 * p[5] * foot.y / foot.z,
+          0.5 - 0.5 * p[0] * head.x / head.z, 0.5 - 0.5 * p[5] * head.y / head.z);
+        scale.set(-0.5 * p[5] / foot.z, 1);
+      } else {
+        scale.y = 0;
       }
     };
     this.group.add(probe);
