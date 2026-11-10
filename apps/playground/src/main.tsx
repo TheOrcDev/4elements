@@ -36,7 +36,8 @@ type ModelName =
   | "sonnet-5.5"
   | "gpt-6.1-sol"
   | "haiku-5.5"
-  | "muse-wonder";
+  | "muse-wonder"
+  | "fable-5.2";
 
 type ModelProvider =
   | "openai"
@@ -351,6 +352,19 @@ const modelOptions: readonly ModelOption[] = [
       "Four shader orbs on glowing pedestals under one starfield: a plasma ball wrapped in flame particles, a fresnel wave shell with orbiting droplets, a low-poly planet with crystals and pines, and a glass core inside a tornado of wind particles, all through an unreal bloom pass.",
     controls:
       "Use the dock or press 1–5 to switch view (1 is all four), click an orb to focus it, Esc for the overview, Auto Tour to cycle, drag to orbit, scroll to zoom.",
+  },
+  {
+    label: "Fable 5.2",
+    value: "fable-5.2",
+    provider: "anthropic",
+    effort: "Max",
+    effortDetail: "Thinking effort: max",
+    duration: "10h 28m",
+    builtWith: "28 Fable 5.2 subagents",
+    summary:
+      "One dusk scene on a mirror-flat film of water: a raymarched pyre, a ray-traced column of open sea, a levitating monolith split around an amethyst geode and a volumetric tornado under its own storm cloud, each lighting, reflecting in and rippling the same water, with camera flights, a tour and a procedural soundscape.",
+    controls:
+      "Click an element or press 1–4 to fly to it, 0 or Esc for the overview, drag to orbit, scroll to zoom, T for the tour, M for sound, Q for quality, ? for every key.",
   },
 ] as const;
 

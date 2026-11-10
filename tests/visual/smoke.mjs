@@ -26,6 +26,7 @@ const models = [
   "gpt-6.1-sol",
   "haiku-5.5",
   "muse-wonder",
+  "fable-5.2",
 ];
 const viewports = [
   { name: "desktop", width: 1440, height: 960 },

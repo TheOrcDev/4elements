@@ -21,6 +21,7 @@
 | GLM 5.2 | Max | 8m 27s | [`apps/glm-5.2`](apps/glm-5.2) |
 | GPT 5.5 | Extra High | 9m 59s | [`apps/gpt-5.5`](apps/gpt-5.5) |
 | Fable 5.1 | Max | 39m 1s | [`apps/fable-5.1`](apps/fable-5.1) |
+| Fable 5.2 | Max | 10h 28m, with 28 Fable 5.2 subagents | [`apps/fable-5.2`](apps/fable-5.2) |
 | GPT-6 Sol | Extra High | 7m 6s | [`apps/gpt-6-sol`](apps/gpt-6-sol) |
 | GPT-6 Luna | Extra High | 10m 31s | [`apps/gpt-6-luna`](apps/gpt-6-luna) |
 | GPT-6.1 Sol | Ultra | 13m 22s | [`apps/gpt-6.1-sol`](apps/gpt-6.1-sol) |
@@ -30,7 +31,7 @@
 | Gemini 3.7 Flash | High | 28m 20s | [`apps/gemini-3.7-flash`](apps/gemini-3.7-flash) |
 | Muse Wonder | High | 3m 44s, one API call with no tools | [`apps/muse-wonder`](apps/muse-wonder) |
 
-Every model except Muse Wonder ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5, Opus 5.5, Fable 5, Fable 5.1, Sonnet 5 and Sonnet 5.5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Grok 4.7 ran at extra high, above that range. Terra Ultra, Sol Ultra, GPT-6.1 Sol Ultra, Haiku 5.5 Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. Both Gemini entries use [`thinking_level`](https://ai.google.dev/gemini-api/docs/gemini-3) at `high`, the top of their `low` / `high` range. Muse Wonder ran at reasoning effort `high`, one step below `xhigh`, the top of its `minimal` / `low` / `medium` / `high` / `xhigh` range. Time to build is wall-clock from the brief to a working app.
+Every model except Muse Wonder ran at the highest reasoning setting it offers, so the times are comparable as "best effort", not as like-for-like compute. For Opus 5, Opus 5.5, Fable 5, Fable 5.1, Fable 5.2, Sonnet 5 and Sonnet 5.5 that is thinking effort `max`. Kimi K3 uses [`reasoning_effort`](https://platform.kimi.ai/docs/guide/use-kimi-k2-thinking-model) at `max`, the top of its `low` / `high` / `max` range. Grok 4.5 uses [`reasoning_effort`](https://docs.x.ai/developers/grok-4-5) at `high`, the top of its `low` / `medium` / `high` range. Grok 4.7 ran at extra high, above that range. Terra Ultra, Sol Ultra, GPT-6.1 Sol Ultra, Haiku 5.5 Ultra, Luna Extra High and GLM 5.2 Max name their tier in the model name itself. Both Gemini entries use [`thinking_level`](https://ai.google.dev/gemini-api/docs/gemini-3) at `high`, the top of their `low` / `high` range. Muse Wonder ran at reasoning effort `high`, one step below `xhigh`, the top of its `minimal` / `low` / `medium` / `high` / `xhigh` range. Time to build is wall-clock from the brief to a working app.
 
 **Opus 5** puts all four elements on one stage, each on its own custom GLSL shader: a volumetric raymarched flame, a refracting swell, ridged terrain with magma in the cracks, and 50k particles integrating a curl field.
 
@@ -51,6 +52,8 @@ Every model except Muse Wonder ran at the highest reasoning setting it offers, s
 **Fable 5** stands the four elements on lit plinths in one scene, on custom GLSL shaders with GPU particles and bloom post-processing.
 
 **Fable 5.1** holds all four elements in one environment, each on its own shader module over a shared noise field, with an overview you can fly back out to.
+
+**Fable 5.2** ran as a team: one session orchestrating 28 subagents of itself through a build, a critique and polish round and a whole-scene review, so its time is a team's wall-clock rather than one model working alone, and it leaves out the hours the session sat idle overnight after its usage credits ran out. It stands all four elements on one mirror-flat film of water at dusk: a raymarched pyre, a ray-traced column of open sea with fish and caustics, a levitating monolith split around an amethyst geode, and a volumetric tornado under its own storm cloud, each lighting, reflecting in and rippling the same water, with camera flights, a tour and a procedural soundscape. This entry is a snapshot taken during its final review round; the finished version will replace it.
 
 **GLM 5.2** raises the four elements on one stage, each from its own shader material and particle system, composited through an unreal bloom pass.
 
@@ -156,6 +159,7 @@ apps/grok-4.6         Grok 4.6's Four Elements app
 apps/grok-4.7         Grok 4.7's Four Elements app
 apps/fable-5          Fable 5's Four Elements app
 apps/fable-5.1        Fable 5.1's Four Elements app
+apps/fable-5.2        Fable 5.2's Four Elements app
 apps/sonnet-5         Sonnet 5's Four Elements app
 apps/glm-5.2          GLM 5.2's Four Elements app
 apps/gemini-3.7-flash Gemini 3.7 Flash's Four Elements app
