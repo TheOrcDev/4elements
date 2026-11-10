@@ -10,7 +10,9 @@ import { buildCloudField, CLOUD_GRID, CLOUD_MIN, CLOUD_SIZE, CLOUD_NEG, CLOUD_PO
 //          a cone into the base of the cloud. The shader works with its inside-distance in
 //          metres, so a step can be as long as the vapour is far and short only in its skin.
 //          Its detail is the baked noise, looked up in flow coordinates (see flow.js), so
-//          every lump is carried round the funnel and up it by the helical wind.
+//          every lump is carried round the funnel and up it by the helical wind. Seen from
+//          close by, the outermost skin of the wall is haze, and the wind frays it into
+//          streamers: the limb is soft and ragged, and a little of what is behind shows through.
 // Cloud    a shape of its own, modelled once at start-up (cloud.js) and kept as a 3D texture
 //          of inside-distances that turns with the disc: a flat base with a lowering around
 //          the funnel, a crown of turrets crowded with billows, scud and torn streamers.
@@ -28,8 +30,9 @@ import { buildCloudField, CLOUD_GRID, CLOUD_MIN, CLOUD_SIZE, CLOUD_NEG, CLOUD_PO
 //          most of, from a handful of further fetches of the same two textures.
 // Light    sky ambient, the afterglow through a forward-scattering phase function, the moon,
 //          both again as reflected by the film, the pyre and the element's own lightning.
-//          The funnel is lit like a soft surface (wrapped diffuse, a silver lining where the
-//          eye grazes it) and shadowed analytically by the rest of itself. In the cloud every
+//          The funnel is lit like a soft surface (wrapped diffuse, and where the eye grazes
+//          it against a light, a lining let through by its thin edge) and shadowed
+//          analytically, with a soft edge, by the rest of itself. In the cloud every
 //          sample asks how much cloud each light has to cross to reach it: the field a short
 //          way toward the afterglow and a short way up gives the slope of the surface in the
 //          plane that all the lights of this scene lie close to, and with the depth of the
@@ -154,6 +157,7 @@ const float WRAP = 0.45;          // how far light creeps round the terminator o
 const float SEEP = 0.14;          // share of the light that soaks through a body's skin whatever way it faces
 const float LINING = 0.8;         // light let through by the thin edge of a body that stands against it, relative to its lit face
 const float HAZE = 0.45;          // density of the outermost skin of the funnel's wall, relative to its depths
+const float HAZE_DEPTH = 0.16;    // how deep that skin is, in wall radii: the limb is seen through, the body is not
 const float FRAY = ${f(FRAY)};
 const float FRAY_OUT = ${f(FRAY_OUT)};
 const vec3 ALBEDO = vec3(0.86, 0.91, 1.0);     // of the funnel's vapour (the cloud's light is used as it comes)
@@ -574,9 +578,11 @@ void main() {
       // The cloud is firm right up to its surface. The funnel's wall is not: its outermost
       // skin is haze that thickens inward, so the eye sees a little way into it, and through
       // its limb to whatever is behind.
-      float deep = smoothstep(soft, 3.0 * soft, field);
-      float hazy = inHorn ? s.fade * (1.0 - share) * ragged : 0.0;
-      dens = smoothstep(0.0, soft, field) * inner * (1.0 - hazy * (1.0 - HAZE) * (1.0 - deep));
+      dens = smoothstep(0.0, soft, field) * inner;
+      if (inHorn) {
+        float skinDeep = HAZE_DEPTH * s.Rw;
+        dens *= 1.0 - s.fade * (1.0 - share) * ragged * (1.0 - HAZE) * (1.0 - smoothstep(0.3 * skinDeep, skinDeep, field));
+      }
       sigma = max(dens, thin) * sigmaBody + spray;
 
       // ---- next step: as far as the surface is away, short inside its skin, longer once past it ----
@@ -598,6 +604,7 @@ void main() {
       // the straight line said, it is felt for in a few short steps rather than aimed at again)
       if (field >= 0.0) seek = 0; else if (seek > 0) seek--; else locked = false;
       fieldLast = field;
+      float deep = smoothstep(soft, 3.0 * soft, field);
       skin = 1.0 - deep;
       if (inHorn) {
         // Which way the funnel's wall faces here.

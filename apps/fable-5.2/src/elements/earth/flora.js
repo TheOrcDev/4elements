@@ -28,7 +28,7 @@ vec3 floraLight(vec3 p, vec3 n, vec3 viewDir, float sky, float glowVis, float th
   vec3 d = uEarthLightPos[0] - p;
   light += uEarthLightColor[0] * (0.45 + 0.85 * heartbeat(0.0)) * spill * 0.32 / (dot(d, d) + 0.2);
   vec3 toFlash = uFlash.xyz - p;                               // lightning over the air element
-  light += vec3(0.60, 0.74, 1.0) * uFlash.w * 50.0 / (dot(toFlash, toFlash) + 1.0);
+  light += flashIntensity() * 0.32 / (dot(toFlash, toFlash) + 1.0) * (0.4 + 0.6 * abs(dot(n, normalize(toFlash))));
   return light;
 }
 `;

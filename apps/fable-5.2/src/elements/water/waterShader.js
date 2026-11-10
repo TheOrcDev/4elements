@@ -55,6 +55,7 @@ uniform vec4 uRunnels[RUNNEL_COUNT];   // x = angle on the wall, y = time it spi
 uniform int uRunnelsLive;        // slots at or beyond this index hold nothing
 uniform vec2 uHub;               // the middle of the ring the four elements stand on (local xz)
 uniform float uBlend;            // 1 from far off: the column is blended over the frame instead of reading it (see main)
+uniform vec3 uMoonGlade;         // xy = where the frame shows the moon's image in the film (uv), z = 1 while it is in the picture
 varying vec3 vWorldPos;
 
 float gDetail;      // 0..1 from uQuality: scales every step count (about 0.7 at 'high')
@@ -187,7 +188,19 @@ vec3 world(vec3 p, vec3 d, float soft, bool behind) {
   if (d.y < 0.0) reach = min(reach, -p.y / d.y);
   vec3 at = onScreen(p + d * reach);
   if (behind) at.z *= step(gFrontZ, viewZFromDepth(textureLod(uSceneDepth, at.xy, 0.0).r));
-  return mix(worldStandIn(p, d, soft > 0.0 ? 0.22 : 0.0), frameSoft(at.xy, soft), at.z);
+  // Nearly always it is all frame or all stand-in: the one that has no say is not worked
+  // out (loop counts again, so that no compiler works it out regardless).
+  vec3 standIn = vec3(0.0), frame = vec3(0.0);
+  for (int k = 0; k < (at.z < 1.0 ? 1 : 0); k++) standIn = worldStandIn(p, d, soft > 0.0 ? 0.22 : 0.0);
+  for (int k = 0; k < (at.z > 0.0 ? 1 : 0); k++) frame = frameSoft(at.xy, soft);
+  // The moon's image in the film stands where the eye finds it, which is not where a ray
+  // bent by the column would: read by such a ray, the disc and the glitter over it turn up
+  // inside the water as a white slash. A lookup that lands on them (an upright oval, in
+  // frame heights) keeps the film's own brightness and no more.
+  vec2 off = (at.xy - uMoonGlade.xy) * vec2(uResolution.x / uResolution.y, 1.0) / vec2(0.055, 0.12);
+  float glade = uMoonGlade.z * (1.0 - smoothstep(1.0, 1.5, length(off)));
+  frame *= mix(1.0, min(0.07 / max(luma(frame), 1e-4), 1.0), glade);
+  return mix(standIn, frame, at.z);
 }
 
 // The sky from below, through a window in the waves (a slope steep enough to let the eye
@@ -374,13 +387,16 @@ float surfaceFromBelow(vec3 p, vec3 d, float tMax, int steps) {
 
 // ---------------------------------------------------------------- the seabed
 // Jittered-grid pebbles: distance to the nearest stone centre (x), its hash (y) and the
-// vector to it (to).
+// vector to it (to). Only the cell p is in and the three it is nearest to are searched: a
+// centre in any other cell is at least 0.65 away (a stone keeps 0.15 clear of its cell's
+// edge), which is beyond every stone and all of its shadow but the last faint fringe.
 vec2 pebbles(vec2 p, out vec2 to) {
   vec2 cell = floor(p), fr = fract(p);
   float best = 8.0, id = 0.0;
   to = vec2(0.0);
-  for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++) {
-    vec2 o = vec2(float(i), float(j));
+  vec2 side = step(0.5, fr) * 2.0 - 1.0;
+  for (int j = 0; j <= 1; j++) for (int i = 0; i <= 1; i++) {
+    vec2 o = vec2(float(i), float(j)) * side;
     vec2 h = hash22(cell + o);
     vec2 r = o + 0.15 + 0.7 * h - fr;
     float dd = dot(r, r);

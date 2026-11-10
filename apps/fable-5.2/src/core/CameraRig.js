@@ -9,8 +9,10 @@ import { ELEMENTS } from './layout.js';
 //   fit    the distance from which the subject just fills the width of a 3:2 window; narrower
 //          windows stand further back in proportion, so that it still fits (default: distance)
 //   limit  the furthest the camera may stand, whatever the window (default: none)
-//   drop   upright windows carry a caption across the bottom of a close-up: the camera looks
-//          this share of the frame's height below the target, so the subject clears the words
+//   top    the height (m above the film) of the tallest part of the subject: the camera looks
+//          at the height that keeps it in frame with a strip of sky above (target[1] is ignored)
+//   upright  { azimuth, distance, sway } used instead on windows taller than wide (where the
+//          caption runs across the bottom); the camera is kept clear of the other elements
 
 const DEG = Math.PI / 180;
 
@@ -22,10 +24,15 @@ export const VIEWS = {
   // right), so the scene has a front and no flight between views crosses an element.
   // Each is shot from low over the film and far enough back to hold the element's
   // reflection, which is half the picture.
-  // Fire is seen from inside the ring against the open dusk, from the whole flame down to
-  // the bright foot of its reflection. The sea stands two and a half metres behind the
-  // camera, so this view never backs off, and its swing is kept short.
-  fire: { target: [0, 2.2, -10], azimuth: 6 * DEG, elevation: 2.5 * DEG, distance: 15.5, limit: 15.5, drop: 0.08, sway: 0.22 },
+  // Fire is seen from inside the ring against the open dusk, from the tip of the flame down
+  // to the bright foot of its reflection. The sea stands a few metres behind the camera, so
+  // this view cannot back off along its line. An upright window needs more height than
+  // 15.5 m give above a caption: there the camera turns into the gap between the sea and the
+  // vortex, where the ring leaves 19 m, and its swing is kept short (the sea is near).
+  fire: {
+    target: [0, 2.5, -10], azimuth: 6 * DEG, elevation: 2.5 * DEG, distance: 15.5, limit: 15.5, sway: 0.22,
+    top: 7.6, upright: { azimuth: 16 * DEG, distance: 19, sway: 0.035 },
+  },
   // Water from outside, low enough to look into it, the pyre glowing through it.
   water: { target: [0, 1.4, 10], azimuth: 18 * DEG, elevation: 2.5 * DEG, distance: 12.5, fit: 10.5, sway: 0.3 },
   // Earth from the same side, the moon over the camera's shoulder, the pyre small beyond it.
@@ -47,7 +54,10 @@ const FLIGHT_MIN = 2.5, FLIGHT_MAX = 4.2, FLIGHT_SPEED = 30, FLIGHT_TURN = 0.9;
 const SAMPLES = 48;             // how finely a flight is looked over when it is planned
 
 const SWAY_SPEED = 0.021;       // rad/s, the idle swing of a close-up at its fastest (mid-swing)
+const SWAY_PERIOD = 45;         // s, the shortest time a swing takes there and back (a short swing goes slower)
 const SWAY_BOB = 0.016;         // rad, how far the idle camera also rises and sinks
+const HEADROOM = 0.04;          // share of the frame's height left as sky above a tall subject (see `top`)
+const STAND_CLEAR = -0.3;       // m: a framing may stand this much inside a neighbour's KEEP_OUT radius
 
 const { lerp, smoothstep } = THREE.MathUtils;
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -75,7 +85,10 @@ export class CameraRig {
     c.maxDistance = 64;
     c.minPolarAngle = 0.35;
     c.maxPolarAngle = Math.PI / 2 - 0.012;
-    c.autoRotateSpeed = 0.32;
+    // The overview's idle orbit, about three minutes a turn. It runs the way the opening move
+    // drifts (azimuth increasing), which carries the camera round toward the moon, low over
+    // the far horizon, within the first minute and a half instead of near the end of the turn.
+    c.autoRotateSpeed = -0.32;
 
     this.autoOrbit = true;
     this.viewId = 'overview';
@@ -95,6 +108,7 @@ export class CameraRig {
     // Idle swing of a close-up: an offset added to wherever the camera stands, so that the
     // visitor's own moves and the swing never fight. `rate` eases it in and out.
     this.sway = { phase: 0, rate: 0, turn: 0, rise: 0 };
+    this.swayReach = 0.3;          // radians either side, for the view being shown (see _resolve)
     this._grab = new THREE.Spherical();
     c.addEventListener('start', () => {
       this.flight = null; this.idle = 0; this.userMoved = true;
@@ -128,12 +142,56 @@ export class CameraRig {
   _resolve(id) {
     const v = VIEWS[id] || VIEWS.overview;
     if (id === 'overview' || !VIEWS[id]) return { ...v, distance: v.distance * this.overviewDistance };
+    const half = Math.tan(this.camera.fov * DEG / 2);
+    if (v.top !== undefined) return this._resolveTall(id, v, half);
     const distance = Math.min(Math.max(v.distance, (v.fit ?? v.distance) * this.aspectDistance), v.limit ?? Infinity);
     if (this.aspect >= 1) return { ...v, distance };
     // Upright screens carry a caption across the bottom of a close-up: look a little below
     // the subject (never below the film) so that it stands clear of the words.
-    const drop = (v.drop ?? 0.13) * 2 * distance * Math.tan(this.camera.fov * DEG / 2);
+    const drop = 0.13 * 2 * distance * half;
     return { ...v, distance, target: [v.target[0], Math.max(0.3, v.target[1] - drop), v.target[2]] };
+  }
+
+  /**
+   * A view framed by its subject's height (see `top` and `upright` above). The frame's upper
+   * edge, where it passes the subject, is put a strip of sky (HEADROOM of the frame) above
+   * `top`; on an upright window that also lifts the subject's foot clear of the caption.
+   */
+  _resolveTall(id, v, half) {
+    const up = this.aspect < 1 && v.upright;
+    const view = { ...v, ...(up || {}) };
+    view.distance = Math.min(view.distance, up ? Infinity : v.limit ?? Infinity);
+    view.sway = view.sway ?? 0.3;
+    // Where the camera would stand at distance d, with a target height that does not matter
+    // here (the camera stays below every keep-out top at these heights).
+    const at = (d, azimuth) => this._c.set(
+      v.target[0] + Math.sin(azimuth) * Math.cos(v.elevation) * d, 2,
+      v.target[2] + Math.cos(azimuth) * Math.cos(v.elevation) * d);
+    // A framing may stand nearer a neighbour than a flight passes it (STAND_CLEAR), but not
+    // in it: step in until clear, then shorten the swing until its whole arc stays clear too.
+    for (let i = 0; i < 60 && !this._clearOf(at(view.distance, view.azimuth), id, STAND_CLEAR); i++) view.distance -= 0.1;
+    for (let i = 0; i < 40; i++) {
+      let clear = true;
+      for (let k = -4; k <= 4 && clear; k++) clear = this._clearOf(at(view.distance, view.azimuth + view.sway * k / 4), id, STAND_CLEAR);
+      if (clear) break;
+      view.sway *= 0.85;
+    }
+    // The upper edge of the frame meets the subject's axis at camera height + d cos(el) tan(fov/2 - el).
+    const d = view.distance, el = v.elevation;
+    const edge = d * Math.sin(el) + d * Math.cos(el) * Math.tan(Math.atan(half) - el);
+    const y = v.top + HEADROOM * 2 * d * half - edge;
+    view.target = [v.target[0], Math.max(0.3, y), v.target[2]];
+    return view;
+  }
+
+  /** Is a camera at `p` outside the keep-out cylinder of every element but `own` (with a margin)? */
+  _clearOf(p, own, margin = 0) {
+    for (const e of ELEMENTS) {
+      const keep = KEEP_OUT[e.id];
+      if (!keep || e.id === own || p.y >= keep[1]) continue;
+      if (Math.hypot(p.x - e.position[0], p.z - e.position[2]) < keep[0] + margin) return false;
+    }
+    return true;
   }
 
   /** Opening move: start high and wide, already drifting in, and settle into the overview. */
@@ -152,6 +210,7 @@ export class CameraRig {
   jump(id) {
     const view = this._resolve(id);
     this.viewId = VIEWS[id] ? id : 'overview';
+    this.swayReach = view.sway ?? 0.3;
     this.controls.target.fromArray(view.target);
     this.camera.position.copy(viewToOffset(view, this._a)).add(this.controls.target);
     this.camera.lookAt(this.controls.target);
@@ -168,6 +227,7 @@ export class CameraRig {
   flyTo(id, { duration, lift = 0.12, ease = easeInOut } = {}) {
     const view = this._resolve(id);
     this.viewId = VIEWS[id] ? id : 'overview';
+    this.swayReach = view.sway ?? 0.3;
     const fromTarget = this.controls.target.clone();
     const fromOffset = this.camera.position.clone().sub(fromTarget);
     const toTarget = new THREE.Vector3().fromArray(view.target);
@@ -211,28 +271,40 @@ export class CameraRig {
    * arc, rather than squeezed round it at the last moment: overview to fire crosses the sea.
    */
   _planOver(f) {
-    const p = this._c, target = this._d;
-    let middle = 0.4;                                   // of the keep-out radius
+    const p = this._c, before = this._d, target = this._a;
+    // An element the flight starts or ends beside is being left or reached, not crossed.
+    const beside = (e, at) => {
+      const keep = KEEP_OUT[e.id];
+      this._flightPoint(f, at, p, target, false);
+      return p.y < keep[1] && Math.hypot(p.x - e.position[0], p.z - e.position[2]) < keep[0];
+    };
+    const crossable = ELEMENTS.filter((e) => KEEP_OUT[e.id] && !beside(e, 0) && !beside(e, 1));
+    let middle = 0.5;                                   // of the keep-out radius
     let over = null;
-    for (let i = 1; i < SAMPLES; i++) {
+    this._flightPoint(f, 0, before, target, false);
+    for (let i = 1; i <= SAMPLES; i++) {
       this._flightPoint(f, i / SAMPLES, p, target, false);
-      for (const e of ELEMENTS) {
+      for (const e of crossable) {
         const keep = KEEP_OUT[e.id];
-        if (!keep || p.y >= keep[1]) continue;
-        const d = Math.hypot(p.x - e.position[0], p.z - e.position[2]) / keep[0];
+        if (Math.min(p.y, before.y) >= keep[1]) continue;
+        // How near this stretch of the path comes to the element's axis, seen from above.
+        const ax = e.position[0] - before.x, az = e.position[2] - before.z, sx = p.x - before.x, sz = p.z - before.z;
+        const along = THREE.MathUtils.clamp((ax * sx + az * sz) / (sx * sx + sz * sz || 1), 0, 1);
+        const d = Math.hypot(ax - along * sx, az - along * sz) / keep[0];
         if (d < middle) { middle = d; over = e; }
       }
+      before.copy(p);
     }
     if (!over) return;
     // Lift the path by enough to clear the element's own footprint, most where it needs it most.
     const [radius, height] = KEEP_OUT[over.id];
     const inside = [];
     let at = 0.5, rise = 0;
-    for (let i = 1; i < SAMPLES; i++) {
-      this._flightPoint(f, i / SAMPLES, p, target, false);
+    for (let i = 1, n = SAMPLES * 4; i < n; i++) {
+      this._flightPoint(f, i / n, p, target, false);
       if (Math.hypot(p.x - over.position[0], p.z - over.position[2]) > 0.7 * radius || p.y >= height) continue;
-      inside.push(i / SAMPLES, height - p.y);
-      if (height - p.y > rise) { rise = height - p.y; at = i / SAMPLES; }
+      inside.push(i / n, height - p.y);
+      if (height - p.y > rise) { rise = height - p.y; at = i / n; }
     }
     for (let i = 0; i < inside.length; i += 2) rise = Math.max(rise, inside[i + 1] / Math.max(bump(inside[i], at), 0.2));
     f.over = { id: over.id, at, rise: Math.min(rise, 10) };
@@ -285,8 +357,8 @@ export class CameraRig {
     const s = this.sway;
     s.rate += ((on ? 1 : 0) - s.rate) * (1 - Math.exp(-dt / (on ? 1.5 : 0.35)));
     if (s.rate < 1e-4) { s.rate = 0; return; }
-    const reach = VIEWS[this.viewId].sway ?? 0.3;
-    s.phase += (SWAY_SPEED / reach) * s.rate * dt;
+    const reach = this.swayReach;
+    s.phase += Math.min(SWAY_SPEED / reach, 2 * Math.PI / SWAY_PERIOD) * s.rate * dt;
     const turn = reach * Math.sin(s.phase);
     const rise = SWAY_BOB * Math.sin(s.phase * 0.618);
     const c = this.controls;

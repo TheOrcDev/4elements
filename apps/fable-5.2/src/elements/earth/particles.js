@@ -74,7 +74,7 @@ vec3 dustLight(vec3 p, vec3 viewDir, float fine) {
     light += uEarthLightColor[i] * (0.45 + 0.85 * heartbeat(float(i) * 0.9)) * spill * 0.32 / (dot(d, d) + 1.2);
   }
   vec3 toFlash = uFlash.xyz - p;                               // lightning over the air element
-  light += vec3(0.60, 0.74, 1.0) * uFlash.w * 50.0 / (dot(toFlash, toFlash) + 1.0);
+  light += flashIntensity() * 0.32 / (dot(toFlash, toFlash) + 1.0);
   return light;
 }
 `;
@@ -270,6 +270,7 @@ varying vec3 vColor;
 varying float vAlpha;
 varying float vViewZ;
 varying float vSoft;
+varying float vSizePx;
 
 void main() {
   vec3 p;
@@ -337,7 +338,10 @@ void main() {
   // the way, or the air would look empty from across the ring).
   float minPx = 1.3 * uResolution.y / 720.0;
   alpha *= min(1.0, px * px / (minPx * minPx) + 0.1);
-  gl_PointSize = clamp(px, minPx, 160.0);
+  vSizePx = clamp(px, minPx, 160.0);
+  // The sprite is a pixel larger than the speck: the fragment shader weighs every pixel the
+  // speck touches by the share of it that the speck covers.
+  gl_PointSize = vSizePx + 1.0;
   vColor = tone * dustLight(p, normalize(p - cameraPosition), 1.0) * sparkle;
   vAlpha = alpha * smoothstep(0.3, 1.2, vViewZ);
   // The film reflects nothing that is under it, and the motes are too faint to show in it at all.
@@ -351,9 +355,16 @@ varying vec3 vColor;
 varying float vAlpha;
 varying float vViewZ;
 varying float vSoft;
+varying float vSizePx;
 void main() {
-  float d = length(gl_PointCoord - 0.5) * 2.0;
-  float a = vAlpha * smoothstep(1.0, mix(0.4, 0.0, vSoft), d);
+  vec2 offset = abs(gl_PointCoord - 0.5) * (vSizePx + 1.0);     // this pixel's centre, in pixels from the speck's
+  // A speck a pixel or two across is a square that lights each pixel by the share of it that
+  // it covers. Wherever it sits on the pixel grid it sends the same light to the screen, so
+  // it drifts across the grid without twinkling (a hard dot one pixel wide would flare each
+  // time it crossed a pixel's centre and fade between). Larger ones are discs with soft rims.
+  vec2 cover = clamp(0.5 * vSizePx + 0.5 - offset, 0.0, 1.0);
+  float disc = smoothstep(1.0, mix(0.4, 0.0, vSoft), length(offset) / (0.5 * vSizePx));
+  float a = vAlpha * mix(0.45 * cover.x * cover.y, disc, smoothstep(2.0, 4.0, vSizePx));
   a *= mix(1.0, softFade(vViewZ, 0.25), vSoft);
   if (a < 0.002) discard;
   gl_FragColor = vec4(vColor * a, 0.0);              // dust only adds light: thin, forward-scattering

@@ -87,10 +87,13 @@ void main() {
   float worn = smoothstep(0.34, 0.60, 0.6 * tileNoise(p * 0.3 + 5.0, CELLS * 0.3) + 0.4 * tileNoise(p * 1.3 + 9.0, CELLS * 1.3));
   float salt = max(ridge, skirt * 0.3) * mix(0.35, 1.0, worn);
 
+  // Each plate has a tone of its own on top of slow lighter and darker patches; in about
+  // half of them a finer net of hairline cracks shows as darker threads.
   float tone = 0.5 + (hash12(home + 17.0) - 0.5) * 0.62 + (tileNoise(p * 0.2 + 3.0, CELLS * 0.2) - 0.5) * 0.7;
   float hairline = 1.0 - smoothstep(0.0, 0.045, borderDistance(q * 3.0 + 7.0, CELLS * 3.0));
   tone -= hairline * step(0.45, hash12(home + 41.0)) * 0.2;
 
+  // One texel in fifty-five carries a speck; cubing its brightness leaves a few bright ones.
   vec2 texel = floor(gl_FragCoord.xy);
   float speck = step(0.982, hash12(texel)) * mix(0.12, 1.0, pow(hash12(texel + 191.0), 3.0));
   gl_FragColor = vec4(salt, clamp(tone, 0.0, 1.0), speck, 1.0);
@@ -169,6 +172,13 @@ float sdGlyph(vec2 p, int index, float r) {
 float line(float d, float w) {
   float aa = fwidth(d) * 1.2 + 1e-4;
   return 1.0 - smoothstep(w - aa, w + aa, d);
+}
+// A soft shoulder: unchanged up to the knee; above it only the logarithm of the excess is added
+// (same slope at the knee, so no visible edge), which keeps a flicker but never reaches white.
+const float FLASH_KNEE = 2.5;
+const float FLASH_SOFT = 1.5;
+float shoulder(float x, float knee, float soft) {
+  return min(x, knee) + soft * log(1.0 + max(x - knee, 0.0) / soft);
 }
 
 void main() {
@@ -271,9 +281,16 @@ void main() {
   vec3 toFire = uFireLightPos - vec3(bp.x, 0.0, bp.y);
   float fd2 = dot(toFire, toFire);
   bedLight += uFireLightColor * max(toFire.y, 0.0) / (sqrt(fd2) * (fd2 + 1.0)) * 1.3;
-  // Lightning from the vortex throws a cold flash across the stone.
-  vec3 toFlash = uFlash.xyz - vec3(bp.x, 0.0, bp.y);
-  bedLight += vec3(0.75, 0.85, 1.0) * uFlash.w * 260.0 * max(toFlash.y, 0.0) / (pow(dot(toFlash, toFlash), 1.5) + 40.0);
+  // Lightning from the vortex throws a cold flash across the stone. Under the strike itself the
+  // stone takes it through a soft shoulder, as film and eye do: at the peak of a strike that
+  // touches down the bed stays lit stone (about a third of the linear answer) instead of
+  // turning into a white sheet. Below the knee, which is everything more than about 12 m
+  // from the foot of a strike, the answer is the linear one. The sky is dark between strikes.
+  if (uFlash.w > 0.0) {
+    vec3 toFlash = uFlash.xyz - vec3(bp.x, 0.0, bp.y);
+    float flashE = uFlash.w * 260.0 * max(toFlash.y, 0.0) / (pow(dot(toFlash, toFlash), 1.5) + 40.0);
+    bedLight += vec3(0.75, 0.85, 1.0) * shoulder(flashE, FLASH_KNEE, FLASH_SOFT);
+  }
   vec3 bed = albedo * bedLight * focusing;
 
   // ---- the seal ----

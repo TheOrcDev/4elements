@@ -24,6 +24,13 @@ float airlight(vec3 ro, vec3 rd, vec3 c, float t0, float t1, float soft) {
   float s = sqrt(max(dot(oc, oc) - b * b, 0.0) + soft);
   return (atan((t1 + b) / s) - atan((t0 + b) / s)) / s;
 }
+// A soft shoulder: unchanged up to the knee; above it only the logarithm of the excess is added
+// (same slope at the knee, so no visible edge), which keeps a flicker but never reaches white.
+const float FLASH_KNEE = 0.05;
+const float FLASH_SOFT = 0.03;
+float shoulder(float x, float knee, float soft) {
+  return min(x, knee) + soft * log(1.0 + max(x - knee, 0.0) / soft);
+}
 
 void main() {
   vec3 ro = cameraPosition;
@@ -85,9 +92,15 @@ void main() {
   // Point sources: the pyre and the lightning, both scattered with the same generosity (a
   // physical haze this thin would return 1 / 4 PI of their intensity; the mist stands for
   // a deeper one). The sky is dark between strikes, so the second integral is seldom needed.
-  vec3 glow = uFireLightColor * airlight(ro, rd, uFireLightPos, t0, t1, 1.2);
-  if (uFlash.w > 0.0) glow += flashIntensity() * airlight(ro, rd, uFlash.xyz, t0, t1, 6.0);
-  col += glow * (meanRho * 0.42);
+  col += uFireLightColor * airlight(ro, rd, uFireLightPos, t0, t1, 1.2) * (meanRho * 0.42);
+  if (uFlash.w > 0.0) {
+    // Mist the strike stands in would turn into a white wall at its peak, so what it returns
+    // passes a soft shoulder (the blue channel is compressed, the colour kept): the haze
+    // around the foot glows without burying what lies behind it, and mist farther from the
+    // strike, which returns less than the knee, answers exactly as before.
+    vec3 flash = flashIntensity() * (airlight(ro, rd, uFlash.xyz, t0, t1, 6.0) * meanRho * 0.42);
+    col += flash * (shoulder(flash.b, FLASH_KNEE, FLASH_SOFT) / max(flash.b, 1e-6));
+  }
 
   gl_FragColor = vec4(col, alpha);
 }

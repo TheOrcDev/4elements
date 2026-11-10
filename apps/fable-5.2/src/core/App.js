@@ -47,8 +47,25 @@ const GOVERNOR = {
   down: 0.86,         // a step down when frames are badly late,
   ease: 0.93,         // when a few are,
   trim: 0.96,         // and when the average sags for seconds on end; a step up undoes one trim
-  retry: 600,         // seconds before a level that proved too much is tried again in the same view
+  retry: 600,         // seconds before a step up that failed its trial is tried again in the same view; doubles each time it fails
+  recheck: 60,        // ...and before a level that frames dropped at is tried again: the cause may have been another
+                      // program's load, which comes and goes (a trial then settles it, at the cost of two seconds);
+                      // doubles with each further run of drops in the same view, up to `retry`
+  stuck: 12,          // slow readings at the floor before a tier the visitor did not choose is stepped down
 };
+
+/** Free the GPU objects something keeps in its own fields: textures, targets, materials, and meshes with all they carry. */
+function release(owner) {
+  for (const part of Object.values(owner || {})) {
+    const mesh = part && (part.isMesh ? part : part.mesh);
+    if (mesh && mesh.isMesh) {
+      mesh.geometry.dispose();
+      for (const material of [].concat(mesh.material)) material.dispose();
+    } else if (part && (part.isTexture || part.isMaterial || part.isBufferGeometry || part.isWebGLRenderTarget)) {
+      part.dispose();
+    }
+  }
+}
 
 export class App {
   constructor(container, params = new URLSearchParams()) {
@@ -65,15 +82,16 @@ export class App {
     this.contextLost = false;
     this.focusId = null;
     this.focusWeights = Object.fromEntries(ELEMENTS.map((e) => [e.id, 0]));
-    // A parameter that should name an element is ignored, with a word in the console, when it names none.
-    const element = (key) => {
+    // A parameter that should name an element is ignored, with a word in the console, when it
+    // names none. ?solo=none is the one exception: it loads no elements at all, the stage alone.
+    const element = (key, ...extra) => {
       const id = params.get(key);
-      if (!id || ELEMENTS.some((e) => e.id === id)) return id || null;
-      console.warn(`[elementa] ?${key}=${id}: there is no such element (${ELEMENTS.map((e) => e.id).join(', ')})`);
+      if (!id || extra.includes(id) || ELEMENTS.some((e) => e.id === id)) return id || null;
+      console.warn(`[elementa] ?${key}=${id}: there is no such element (${[...ELEMENTS.map((e) => e.id), ...extra].join(', ')})`);
       return null;
     };
-    this.solo = element('solo');
-    this.startView = this.solo || element('focus');
+    this.solo = element('solo', 'none');
+    this.startView = (this.solo !== 'none' && this.solo) || element('focus');
     // Phones and small tablets start one tier down; the governor then manages resolution.
     const handheld = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches && Math.min(window.innerWidth, window.innerHeight) < 820;
     // A tier the visitor asked for (here, or later from the menu) is theirs: the governor never changes it.
@@ -83,6 +101,7 @@ export class App {
     // ?scale= fixes the internal render scale and switches the governor off.
     const scale = Number.parseFloat(params.get('scale'));
     if (params.has('scale') && !Number.isFinite(scale)) console.warn(`[elementa] ?scale=${params.get('scale')}: expected a number from 0.25 to 1; the scale stays automatic`);
+    else if (scale < 0.25 || scale > 1) console.warn(`[elementa] ?scale=${params.get('scale')}: expected a number from 0.25 to 1; using ${Math.min(1, Math.max(0.25, scale))}`);
     this.autoScale = !Number.isFinite(scale);
     // With the governor: the share of the tier's full resolution being drawn. Fixed: the share of the backing store.
     this.renderScale = this.autoScale ? 1 : Math.min(1, Math.max(0.25, scale));
@@ -116,7 +135,7 @@ export class App {
   on(event, fn) {
     if (!this.listeners.has(event)) this.listeners.set(event, new Set());
     this.listeners.get(event).add(fn);
-    return () => this.listeners.get(event).delete(fn);
+    return () => { const set = this.listeners.get(event); if (set) set.delete(fn); };
   }
 
   emit(event, payload) {
@@ -538,13 +557,15 @@ export class App {
 
   /**
    * Count the seconds nobody has touched anything, and start the tour when there have been
-   * enough: 80 on an untouched screen, about twice that once the visitor has picked a view
-   * themselves (they may simply be looking), and never while they hold time paused.
+   * enough: 110 on an untouched screen, by when the overview's orbit has carried the moon
+   * across the frame (it rises into view at about 80 s and leaves at about 110 s), 170 once
+   * the visitor has picked a view themselves (they may simply be looking), and never while
+   * they hold time paused.
    */
   _updateIdle(real) {
     if (this.tour.on || this.paused || this.reducedMotion || this.params.has('noui') || this.solo) return;
     this._idle += real;
-    if (this._idle > (this._chosen ? 170 : 80)) this.setTour(true, true);
+    if (this._idle > (this._chosen ? 170 : 110)) this.setTour(true, true);
   }
 
   setPaused(paused) { this.paused = !!paused; this.emit('pause', { paused: this.paused }); }
@@ -649,8 +670,11 @@ export class App {
   // never the scene itself. A frame rate says when frames are late but not how much room is
   // left, so the level that holds is found by trying: down in coarse steps while frames drop,
   // back up in fine ones, and the first step that drops frames again is undone and remembered
-  // as too much for that view. From then on the level stays where it is. Each view keeps its
-  // own level, so coming back to a heavy close-up does not stutter a second time.
+  // as too much for that view. From then on the level stays where it is, except that a level
+  // frames dropped at (rather than one that failed a trial step up) is tried again after a
+  // minute, then after ever longer waits: another program's load comes and goes, and should
+  // not cost the picture for good. Each view keeps its own level, so coming back to a heavy
+  // close-up does not stutter a second time.
   // On a machine that cannot hold the target even at the floor, a tier the visitor did not
   // choose is stepped down, one way only.
 
@@ -664,7 +688,6 @@ export class App {
     this._resize();
     g.view.level = level;
     g.scale = this.renderScale;
-    g.since = g.time;
     g.mean = g.target;
     g.slow = 0; g.fast = 0; g.crawl = 0; g.sag = 0; g.stuck = 0;
   }
@@ -676,14 +699,26 @@ export class App {
     g.slow = 0; g.fast = 0; g.crawl = 0;    // consecutive readings of each kind
     g.sag = 0;                              // consecutive readings with the running mean below par
     g.stuck = 0;                            // consecutive slow readings at the floor
+    g.above = 0;                            // consecutive readings clearly above a lowered target
     g.mean = g.target;                      // running mean of the readings since the last change
-    g.since = g.time;                       // when the level last changed
     g.trial = null;                         // a step up on trial: { from, to, readings }
     g.descent = null;                       // where the current run of steps down began: { level, fps }
     g.views.clear();
-    g.view = { level: this._level(), bad: Infinity, retry: 0 };
+    // Per view: the level it was left at, the lowest level known to be too much there, and
+    // when, and after how long a wait, that verdict may be tested again.
+    g.view = this._governViewRecord(this._level());
     g.views.set(this.focusId || 'overview', g.view);
     g.scale = this.renderScale;
+  }
+
+  /**
+   * What the governor knows about one view: the level it was left at; the lowest level known
+   * to be too much there, and when (after how long a wait) that may be tried again; and how
+   * many runs of steps down it has seen, so that a view that keeps dropping frames is retried
+   * ever more rarely (`recheck` doubles with each run after the first).
+   */
+  _governViewRecord(level) {
+    return { level, bad: Infinity, retry: 0, wait: GOVERNOR.retry, recheck: GOVERNOR.recheck, drops: 0 };
   }
 
   /** The camera is off to another view: take up the level that view was last left at. */
@@ -695,7 +730,7 @@ export class App {
     if (view === g.view) return;
     // A step on trial belongs to the view it was tried in: it has not proved itself, undo it.
     g.view.level = g.trial ? g.trial.from : level;
-    if (!view) { view = { level: g.view.level, bad: Infinity, retry: 0 }; g.views.set(key, view); }
+    if (!view) { view = this._governViewRecord(g.view.level); g.views.set(key, view); }
     g.view = view;
     g.trial = null;
     g.descent = null;
@@ -717,8 +752,11 @@ export class App {
     // Someone set the scale by hand (the console, a test): start afresh from there.
     if (this.renderScale !== g.scale) this._governReset();
 
-    // A display that turns out to refresh faster than was thought raises the target again.
-    if (g.target < G.target && fps > g.target * 1.1) g.target = Math.min(G.target, fps);
+    // A display that turns out to refresh faster than was thought raises the target again, at
+    // once when the gap is wide, after five seconds when it is narrow (the target was lowered
+    // while another program held the machine back, say).
+    g.above = fps > g.target + 1.5 ? g.above + 1 : 0;
+    if (g.target < G.target && (fps > g.target * 1.1 || g.above >= 10)) { g.target = Math.min(G.target, fps); g.above = 0; }
     const slow = fps < G.slow * g.target, fast = fps >= G.fast * g.target;
     g.slow = slow ? g.slow + 1 : 0;
     g.fast = fast ? g.fast + 1 : 0;
@@ -739,44 +777,53 @@ export class App {
       if (trial.readings > 1 && !fast) {
         g.trial = null;
         view.bad = Math.min(view.bad, trial.to);
-        view.retry = g.time + G.retry;
+        view.retry = g.time + view.wait;
+        view.wait *= 2;
         this._setLevel(trial.from);
       } else if (trial.readings >= 4) {
         g.trial = null;
-        if (trial.to >= view.bad) view.bad = Infinity;
+        if (trial.to >= view.bad) { view.bad = Infinity; view.wait = G.retry; }
       }
       return;
     }
+
+    // Has giving up pixels helped at all? If half of them (or, at the floor, three quarters)
+    // bought no frames, it is the display, or a browser saving power, that holds the frame
+    // rate and not the GPU: give the pixels back and defend the rate this machine does reach.
+    const futile = () => {
+      if (!g.descent || fps >= g.descent.fps * 1.15) return false;
+      const back = g.descent.level;
+      g.target = Math.min(g.target, fps);
+      g.descent = null;
+      view.bad = Infinity;
+      this._setLevel(back);
+      return true;
+    };
 
     if (level > G.floor && (g.crawl >= 3 || g.slow >= 3 || g.sag >= 12)) {
       // Frames are late. Far below the target: straight to the floor. Below it: a coarse step,
       // a finer one when only a few frames are late, the finest when the mean has merely sagged.
+      if (g.descent && level <= 0.71 * Math.min(g.descent.level, 1) && futile()) return;
       let next = G.floor;
       if (g.crawl < 3) next = level > 1 ? 1 : Math.max(G.floor, level * (g.slow < 3 ? G.trim : fps < 0.8 * g.target ? G.down : G.ease));
-      if (!g.descent) g.descent = { level, fps: g.slow < 3 && g.crawl < 3 ? g.mean : fps };
+      if (!g.descent) {
+        g.descent = { level, fps: g.slow < 3 && g.crawl < 3 ? g.mean : fps };
+        // Frames dropping again in this view is not a passing load: each further run waits twice as long.
+        if (view.drops++ > 0) view.recheck = Math.min(view.recheck * 2, G.retry);
+      }
       view.bad = Math.min(view.bad, level);
-      view.retry = g.time + G.retry;
+      view.retry = Math.max(view.retry, g.time + view.recheck);
       this._setLevel(next);
       return;
     }
 
-    // At the floor: three seconds below the target there and something else has to give.
+    // At the floor: six seconds below the target there (longer than another program's passing
+    // load usually lasts) and something else has to give.
     g.stuck = level <= G.floor && slow ? g.stuck + 1 : 0;
-    if (g.stuck >= 6) {
+    if (g.stuck >= G.stuck) {
       g.stuck = 0;
       const tier = TIERS.indexOf(this.qualityName);
-      if (g.descent && fps < g.descent.fps * 1.15) {
-        // A quarter of the pixels bought nothing: it is the display (or a browser saving
-        // power) that holds the frame rate, not the GPU. Give the pixels back and defend
-        // the rate this machine does reach.
-        g.target = Math.min(g.target, fps);
-        const back = g.descent.level;
-        view.bad = Infinity;
-        g.descent = null;
-        this._setLevel(back);
-      } else if (!this.tierChosen && tier > 0) {
-        this.setQuality(TIERS[tier - 1], { chosen: false });
-      }
+      if (!futile() && !this.tierChosen && tier > 0) this.setQuality(TIERS[tier - 1], { chosen: false });
       return;
     }
 
@@ -804,8 +851,12 @@ export class App {
       /** Step the scene, the camera rig and a running tour forward by this many seconds, and draw. */
       advance: (seconds) => { app._fade = 1; app.pipeline.settings.fade = 1; app._advance(seconds, true); app.render(); return app.time; },
       render: () => app.render(),
-      /** Hold the whole clock (scene, camera, tour, governor) so that only advance() moves anything; false lets go. */
-      setPaused: (p) => { app.held = !!p; app.setPaused(p); },
+      /**
+       * Hold the whole clock (scene, camera, tour, idle clock, governor) so that only advance()
+       * moves anything; false lets go. Unlike the visitor's pause it shows nothing on screen, so
+       * held frames can be captured with the interface as a visitor sees it.
+       */
+      setPaused: (p) => { app.held = !!p; app._resync(); },
       setQuality: (q) => app.setQuality(q),
       setCamera: (px, py, pz, tx, ty, tz) => {
         app.rig.flight = null; app.rig.autoOrbit = false; app.rig.userMoved = true;
@@ -854,7 +905,7 @@ export class App {
         app._resync();
         return { id, costMs: +(withIt - without).toFixed(2), frameMs: +withIt.toFixed(2), withoutMs: +without.toFixed(2), internal: `${app.pipeline.width}x${app.pipeline.height}` };
       },
-      get state() { return { time: app.time, focus: app.focusId, quality: app.qualityName, scale: app.renderScale, extras: app.extras, fps: app.fps, paused: app.paused }; },
+      get state() { return { time: app.time, focus: app.focusId, quality: app.qualityName, scale: app.renderScale, extras: app.extras, fps: app.fps, paused: app.paused, held: app.held }; },
     };
   }
 
@@ -867,21 +918,25 @@ export class App {
     this.listeners.clear();
     if (!this.renderer) return;               // never started
     this.rig.dispose();
-    // Whatever is still in the scene: the sky, the ground, the mist and anything an element left behind.
+    // Whatever is still in the scene: the sky, the ground, the mist and anything an element left
+    // behind, with the textures their materials hold (a texture baked at start-up, such as the
+    // ground's crust, belongs to nobody else). Disposing a texture twice is harmless.
+    const textures = new Set();
     this.scene.traverse((o) => {
       if (o.geometry) o.geometry.dispose();
-      for (const m of [].concat(o.material || [])) m.dispose();
+      for (const m of [].concat(o.material || [], o.customDepthMaterial || [], o.customDistanceMaterial || [])) {
+        for (const u of Object.values(m.uniforms || {})) if (u && u.value && u.value.isTexture) textures.add(u.value);
+        m.dispose();
+      }
       if (o.isLight && o.shadow && o.shadow.map) o.shadow.dispose();
     });
-    // The pipeline's targets, then the full-screen passes and stand-in textures it keeps beside them.
+    for (const texture of textures) (texture.renderTarget || texture).dispose();
+    // The stage's own parts: their targets, then the passes, meshes and stand-in textures they keep beside them.
     this.pipeline.dispose();
-    for (const part of Object.values(this.pipeline)) {
-      if (part && part.isTexture) part.dispose();
-      else if (part && part.material && part.material.isMaterial) { part.material.dispose(); if (part.mesh) part.mesh.geometry.dispose(); }
-    }
     this.ripples.dispose();
-    if (this.ground.crust) this.ground.crust.dispose();
-    for (const texture of [shared.uNoise3D.value, shared.uEnvCube.value, this.scene.environment]) if (texture && texture.dispose) texture.dispose();
+    for (const part of [this.pipeline, this.ripples, this.ground, this.sky, this.mist]) release(part);
+    // The sky's two environment maps live in render targets: it is the target that has to go.
+    for (const texture of [shared.uNoise3D.value, shared.uEnvCube.value, this.scene.environment]) if (texture) (texture.renderTarget || texture).dispose();
     shared.uNoise3D.value = null;
     shared.uEnvCube.value = null;
     this.scene.environment = null;

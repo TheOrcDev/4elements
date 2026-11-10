@@ -312,7 +312,7 @@ export function createUI(app, root) {
   let toastStands = false;                            // a sticky message is up: it stays until the page goes
   /** A line of feedback at the top; silent before the scene is up and while the interface is hidden. */
   function announce(text, { sticky = false, always = false, life = TOAST_LIFE } = {}) {
-    if (toastStands || (!always && (!shown.ready || shown.hidden))) return;
+    if (toastStands || shown.lost || (!always && (!shown.ready || shown.hidden))) return;
     toastStands = sticky;
     dismissHint(true);                                // they share the same line
     el.sound.classList.remove('is-nudged');

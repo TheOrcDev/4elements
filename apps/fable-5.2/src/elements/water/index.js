@@ -41,6 +41,7 @@ export default class WaterElement {
       uOrigin: { value: ctx.origin.clone() },
       uHub: { value: hub },
       uBlend: { value: 0 },
+      uMoonGlade: { value: new THREE.Vector3() },
       uRunnels: { value: Array.from({ length: RUNNEL_COUNT }, () => new THREE.Vector4(0, -1000, 1, 0)) },
       uRunnelsLive: { value: 0 },
       uFish: { value: this.shoal.positions },
@@ -81,6 +82,7 @@ export default class WaterElement {
     this.frustum = new THREE.Frustum();
     this.viewProjection = new THREE.Matrix4();
     this.blended = false;
+    this.moonView = new THREE.Vector3();
     const nothing = new THREE.BufferGeometry();
     nothing.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(9), 3));
     const probe = new THREE.Mesh(nothing, new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, depthTest: false }));
@@ -95,6 +97,19 @@ export default class WaterElement {
       if (away > FAR + 0.5) this.blended = true; else if (away < FAR - 0.5) this.blended = false;
       this.uniforms.uBlend.value = this.blended ? 1 : 0;
       this.body.layers.set(this.blended ? LAYERS.FX : LAYERS.REFRACT);
+      // Where this frame shows the moon's image in the film, if it does: the shader keeps
+      // the rays it bends through the column from reading it (see world() there). The sky
+      // says where it draws the disc; without that there is no image to keep clear of.
+      const glade = this.uniforms.uMoonGlade.value;
+      const disc = shared.uMoonDiscDir ? shared.uMoonDiscDir.value : null;
+      const v = this.moonView;
+      if (disc) v.set(disc.x, -disc.y, disc.z).transformDirection(camera.matrixWorldInverse);
+      if (disc && v.z < -1e-3) {
+        const p = camera.projectionMatrix.elements;
+        glade.set(0.5 - 0.5 * p[0] * v.x / v.z, 0.5 - 0.5 * p[5] * v.y / v.z, 1);
+      } else {
+        glade.z = 0;
+      }
     };
     this.group.add(probe);
     // The column together with its image in the film: while that is out of the picture the
@@ -222,7 +237,8 @@ export default class WaterElement {
     }
     this.uniforms.uRunnelsLive.value = live;      // the shader only walks the slots that hold something
 
-    // The column itself: the swell heaving against the wall sends faint ripples out all round.
+    // The column itself: the swell heaving against the wall keeps the film alive all round it
+    // (the rings that leave with each crest are started in _watchRim).
     this.rippleClock -= dt;
     if (this.rippleClock <= 0) {
       this.rippleClock = 0.07 + random() * 0.09;

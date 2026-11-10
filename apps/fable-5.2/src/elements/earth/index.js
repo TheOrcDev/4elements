@@ -222,16 +222,18 @@ export default class EarthElement {
         if (s.landing.radius > 0) continue;
         const flow = streamFlow(s.seed, t - 0.6);
         if (flow > 0.15) {
-          this.ctx.ripples.drop(origin.x + s.landing.x + Math.sin(t * 31.7 + s.seed * 9) * 0.03, origin.z + s.landing.z + Math.cos(t * 27.3) * 0.03, 0.11, 0.005 * flow);
+          this.ctx.ripples.drop(origin.x + s.landing.x + Math.sin(t * 31.7 + s.seed * 9) * 0.03, origin.z + s.landing.z + Math.cos(t * 27.3) * 0.03, 0.16, 0.012 * flow);
         }
       }
     }
-    // Grains trickle off the heap into the water all round its shore.
+    // Grains trickle off the heap into the water all round its shore, and now and then a
+    // handful slumps in: slow rings leave the island one at a time. (The film's grid is some
+    // nine centimetres to the cell: a ring has to start a few cells wide to travel at all.)
     if (t >= this._nextShoreRipple) {
       const rng = this._rng;
       this._nextShoreRipple = t + 0.5 + 1.6 * rng();
       const a = rng() * Math.PI * 2, r = 1.9 + 0.9 * rng();
-      this.ctx.ripples.drop(origin.x + Math.cos(a) * r, origin.z + Math.sin(a) * r, 0.1 + 0.08 * rng(), 0.004 + 0.008 * rng());
+      this.ctx.ripples.drop(origin.x + Math.cos(a) * r, origin.z + Math.sin(a) * r, 0.26 + 0.16 * rng(), 0.012 + 0.008 * rng());
     }
   }
 

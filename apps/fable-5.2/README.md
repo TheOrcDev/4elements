@@ -40,7 +40,7 @@ Requires a browser with WebGL 2 (any current Chrome, Edge, Firefox or Safari).
 | Click an element, or `1` `2` `3` `4` | Fly to fire, water, earth, air |
 | `0` or `Esc` | Back to the overview (`Esc` first brings back a hidden interface) |
 | `←` `→` | Previous / next element |
-| `T` | Tour: visit each element in turn (also starts by itself after 80 s without input) |
+| `T` | Tour: visit each element in turn (also starts by itself after 110 s without input) |
 | `Space` | Pause time |
 | `O` | Idle auto-orbit on / off |
 | `M` | Sound on / off (off by default) |
@@ -104,9 +104,12 @@ the fire writes its flickering light, the vortex writes its lightning, and every
 ### Quality and speed
 
 Four tiers (`low`, `medium`, `high`, `ultra`) set raymarch step counts and buffer sizes; `ultra`
-adds 4× multisampling. On top of that a governor watches the frame rate and trades internal
-resolution — never scene content — to stay smooth. The canvas is drawn at that internal resolution
-and stretched to the page by the browser, so no pass ever touches more pixels than were rendered.
+is `high` plus extras (finer raymarching, larger mirror and volume buffers, 4× multisampling). On
+top of that a governor watches the frame rate: it drops ultra's extras first, then trades internal
+resolution — never scene content — and on a very slow machine steps down a tier it chose itself.
+Each view remembers its own level, and a level lost to another program's load is retried later.
+The canvas is drawn at that internal resolution and stretched to the page by the browser, so no
+pass ever touches more pixels than were rendered.
 
 Things that turned out to matter on a tile-based GPU: multisampled HDR targets cost several
 milliseconds of memory traffic on their own (hence FXAA); anything procedural that is evaluated per
@@ -119,9 +122,9 @@ frame (shadow map, mirror, main view) wants a light stand-in for two of them.
 | Parameter | Effect |
 | --- | --- |
 | `focus=fire\|water\|earth\|air` | Start on that element |
-| `solo=<id>` | Load only that element |
+| `solo=<id>` | Load only that element (`solo=none`: the stage alone) |
 | `quality=low\|medium\|high\|ultra` | Start in that tier |
-| `scale=0.5…1` | Fix the internal render scale (disables the governor) |
+| `scale=0.25…1` | Fix the internal render scale (disables the governor) |
 | `t=<seconds>` | Simulate that long before the first frame |
 | `cam=px,py,pz,tx,ty,tz` | Explicit camera position and target |
 | `orbit=0` `mirror=0` `mist=0` `noui` | Switch a feature off |
@@ -146,16 +149,21 @@ true once the first real frame is on screen.
 ## How it was built
 
 Built by Claude Fable 5.2 at thinking effort `max` in one Claude Code session, working as a small
-team. The session first wrote the shared stage (renderer and frame pipeline, sky, water film,
-camera, the screenshot tool) and a written contract for the element modules, then directed
-subagents of itself, each with one job and its own files:
+team, and finished by Claude Opus 5.5 after Fable 5.2's usage credits ran out. The session first
+wrote the shared stage (renderer and frame pipeline, sky, water film, camera, the screenshot tool)
+and a written contract for the element modules, then directed subagents of itself, each with one
+job and its own files:
 
 1. **Build** — one engineer per element, plus one each for the interface and the soundscape.
 2. **Critique and polish** — every part reviewed with fresh eyes and reworked, then a speed round
    that took a 1080p frame from 31 ms to about 9 ms.
 3. **Review** — three independent reviewers (art direction, motion, robustness), a redesign of the
-   vortex's cloud, fixes by five engineers and an adversarial re-check. *This snapshot was taken
-   while those fixes were still being applied.*
+   vortex's cloud and fixes by five engineers. Fable 5.2's credits ran out as the fixes were being
+   finished (all five had done most of their work).
+4. **Finish (Opus 5.5)** — the session continued on Opus 5.5: one engineer checked and completed
+   the camera and app work, another softened the film's glare at a lightning strike, and two
+   adversarial verifiers re-checked every finding, measured every view and built the app.
 
-28 subagents so far, and about 10½ hours of working time from the brief to this snapshot. That
-leaves out 6 h 37 m overnight, when the session sat idle after its usage credits ran out.
+28 Fable 5.2 subagents and 4 Opus 5.5 subagents so far, and about 13 hours of working time from the
+brief to this state (Fable 5.2 led for the first 10½). That leaves out 6 h 37 m overnight, when the
+session sat idle after its usage credits ran out the first time.
