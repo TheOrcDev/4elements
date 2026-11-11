@@ -376,9 +376,9 @@ const modelOptions: readonly ModelOption[] = [
     effortDetail: "thinking_level: high",
     duration: "5m",
     summary:
-      "All four elements on one polished stage: shader flames with rising embers, a wavy blue water orb with bubbles and ripple rings, a crystal earth cluster in dust, and spiral wind ribbons with mist particles, composited through unreal bloom.",
+      "Four shrines — a ridged magma core, a Gerstner water orb, a crystal-veined monolith and nested tornado funnels — channel shader energy and GPU particles into a central aether merkaba, through an unreal bloom pass.",
     controls:
-      "Click an element name to focus it, drag to orbit, scroll to zoom.",
+      "Use the dock or press 1–6 to focus a shrine, click a label to fly to it, drag to orbit, scroll to zoom, Space to trigger a surge.",
   },
 ] as const;
 

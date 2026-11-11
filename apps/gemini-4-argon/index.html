@@ -1,40 +1,212 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Four Elements</title>
+    <title>AETHERIA — Three.js Sanctuary of the Four Elements</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Instrument+Sans:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <div id="app">
-      <canvas id="scene"></canvas>
-      <header class="brand">
-        <p class="brand__name">Four Elements</p>
-        <p class="brand__line">Fire · Water · Earth · Air</p>
-      </header>
-      <nav class="legend" aria-label="Elements">
-        <button type="button" data-element="fire" class="legend__item legend__item--fire">
-          Fire
-        </button>
-        <button type="button" data-element="water" class="legend__item legend__item--water">
-          Water
-        </button>
-        <button type="button" data-element="earth" class="legend__item legend__item--earth">
-          Earth
-        </button>
-        <button type="button" data-element="air" class="legend__item legend__item--air">
-          Air
-        </button>
-      </nav>
-      <p class="hint">Drag to orbit · Scroll to zoom</p>
+    <div id="canvas-container"></div>
+
+    <!-- 3D Projected World Labels -->
+    <div id="world-labels" class="world-labels">
+      <button class="world-tag tag-fire" data-target="fire">
+        <span class="tag-sigil">🜂</span>
+        <span class="tag-name">IGNIS</span>
+        <span class="tag-sub">FIRE</span>
+      </button>
+      <button class="world-tag tag-water" data-target="water">
+        <span class="tag-sigil">🜄</span>
+        <span class="tag-name">AQUA</span>
+        <span class="tag-sub">WATER</span>
+      </button>
+      <button class="world-tag tag-earth" data-target="earth">
+        <span class="tag-sigil">🜃</span>
+        <span class="tag-name">TERRA</span>
+        <span class="tag-sub">EARTH</span>
+      </button>
+      <button class="world-tag tag-air" data-target="air">
+        <span class="tag-sigil">🜁</span>
+        <span class="tag-name">VENTUS</span>
+        <span class="tag-sub">AIR</span>
+      </button>
+      <button class="world-tag tag-nexus" data-target="nexus">
+        <span class="tag-sigil">✦</span>
+        <span class="tag-name">AETHER</span>
+        <span class="tag-sub">NEXUS</span>
+      </button>
     </div>
+
+    <!-- HUD Overlay -->
+    <header class="hud-header">
+      <div class="brand-block">
+        <div class="brand-eyebrow">THREE.JS WEBGL2 • PROCEDURAL GLSL SHADERS</div>
+        <h1 class="brand-title">SANCTUARY OF THE FOUR ELEMENTS</h1>
+      </div>
+
+      <div class="telemetry-bar">
+        <div class="telemetry-pill">
+          <span class="pill-label">PARTICLES</span>
+          <span class="pill-value" id="stat-particles">10,200</span>
+        </div>
+        <div class="telemetry-pill">
+          <span class="pill-label">STATE</span>
+          <span class="pill-value status-live" id="stat-state">HARMONIC</span>
+        </div>
+        <div class="telemetry-pill">
+          <span class="pill-label">FPS</span>
+          <span class="pill-value" id="stat-fps">60</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Elemental Lore & Shader Controls Panel -->
+    <aside class="hud-panel" id="hud-panel">
+      <div class="panel-header">
+        <div class="element-badge" id="info-sigil">✦</div>
+        <div>
+          <div class="info-subtitle" id="info-latin">QUINTA ESSENTIA</div>
+          <h2 class="info-title" id="info-title">The Elemental Sanctuary</h2>
+        </div>
+      </div>
+
+      <p class="info-desc" id="info-desc">
+        Four primordial shrines—Ignis, Aqua, Terra, and Ventus—channel procedural 3D Simplex FBM shader energy and GPU particle streams into the central Aether Merkaba.
+      </p>
+
+      <div class="shader-specs" id="info-specs">
+        <div class="spec-item">
+          <span class="spec-label">CORE SHADER</span>
+          <span class="spec-val" id="spec-shader">4x Custom GLSL + FBM Ridged</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">PARTICLE FIELD</span>
+          <span class="spec-val" id="spec-particles">Convective, Hydro, Spore &amp; Vortex</span>
+        </div>
+      </div>
+
+      <div class="controls-divider"></div>
+
+      <div class="controls-group">
+        <div class="control-row">
+          <label for="slider-intensity">Elemental Intensity</label>
+          <span class="control-readout" id="val-intensity">1.00x</span>
+        </div>
+        <input
+          type="range"
+          id="slider-intensity"
+          min="0.3"
+          max="2.2"
+          step="0.05"
+          value="1.0"
+        />
+
+        <div class="control-row">
+          <label for="slider-bloom">Bloom Luminance</label>
+          <span class="control-readout" id="val-bloom">0.85</span>
+        </div>
+        <input
+          type="range"
+          id="slider-bloom"
+          min="0.0"
+          max="1.8"
+          step="0.05"
+          value="0.85"
+        />
+
+        <div class="control-row">
+          <label for="slider-speed">Time Flow Speed</label>
+          <span class="control-readout" id="val-speed">1.00x</span>
+        </div>
+        <input
+          type="range"
+          id="slider-speed"
+          min="0.0"
+          max="2.2"
+          step="0.05"
+          value="1.0"
+        />
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-surge" id="btn-surge">
+          <span class="surge-icon">⚡</span> Trigger Elemental Surge
+        </button>
+        <div class="toggle-row">
+          <button class="btn-toggle active" id="btn-orbit" title="Toggle slow cinematic camera orbit">
+            Auto-Orbit: ON
+          </button>
+          <button class="btn-toggle active" id="btn-labels" title="Toggle 3D floating shrine labels">
+            Labels: ON
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Bottom Elemental Shrine Selector Dock -->
+    <nav class="element-dock" aria-label="Element Camera Focus">
+      <button class="dock-btn active" data-target="overview">
+        <span class="dock-icon">❖</span>
+        <span class="dock-text">
+          <span class="dock-main">Sanctuary</span>
+          <span class="dock-sub">All Elements [1]</span>
+        </span>
+      </button>
+
+      <button class="dock-btn dock-fire" data-target="fire">
+        <span class="dock-icon">🜂</span>
+        <span class="dock-text">
+          <span class="dock-main">Ignis</span>
+          <span class="dock-sub">Fire [2]</span>
+        </span>
+      </button>
+
+      <button class="dock-btn dock-water" data-target="water">
+        <span class="dock-icon">🜄</span>
+        <span class="dock-text">
+          <span class="dock-main">Aqua</span>
+          <span class="dock-sub">Water [3]</span>
+        </span>
+      </span>
+      </button>
+
+      <button class="dock-btn dock-earth" data-target="earth">
+        <span class="dock-icon">🜃</span>
+        <span class="dock-text">
+          <span class="dock-main">Terra</span>
+          <span class="dock-sub">Earth [4]</span>
+        </span>
+      </button>
+
+      <button class="dock-btn dock-air" data-target="air">
+        <span class="dock-icon">🜁</span>
+        <span class="dock-text">
+          <span class="dock-main">Ventus</span>
+          <span class="dock-sub">Air [5]</span>
+        </span>
+      </button>
+
+      <button class="dock-btn dock-nexus" data-target="nexus">
+        <span class="dock-icon">✦</span>
+        <span class="dock-text">
+          <span class="dock-main">Aether</span>
+          <span class="dock-sub">Nexus [6]</span>
+        </span>
+      </button>
+    </nav>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

@@ -104,12 +104,12 @@ importers:
   apps/gemini-4-argon:
     dependencies:
       three:
-        specifier: ^0.187.0
-        version: 0.187.0
+        specifier: ^0.170.0
+        version: 0.170.0
     devDependencies:
       '@types/three':
-        specifier: ^0.187.0
-        version: 0.187.0
+        specifier: ^0.170.0
+        version: 0.170.0
       vite:
         specifier: ^8.3.6
         version: 8.3.7(@types/node@25.6.0)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.8.3)
@@ -3276,9 +3276,6 @@ packages:
   '@types/three@0.185.4':
     resolution: {integrity: sha512-gAsBIC07NIFrxjbf7tH2t71c38uulFfk/RFoC7FNBSjMRAQ8J1x/RBvusX0N5PJouaYFJawXQqfCQ0RKUx/1nA==}
 
-  '@types/three@0.187.0':
-    resolution: {integrity: sha512-v+vKNarUtk4n2QRZ4+CN5ygMM0ARUjXjIQl0R/unMUfmStFeVqGbgqarbrpoGTXRZoulSH16ePrVJVxPJEbMUA==}
-
   '@types/use-sync-external-store@0.0.6':
     resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
 
@@ -5066,9 +5063,6 @@ packages:
 
   three@0.186.1:
     resolution: {integrity: sha512-blFeqb49wRCSGUGj7gtpfnSGHy2lwDk94RhUmS1c/hTby70kvChbWpkJ4Pm1390LqzzvTmzgXKHPEafJwCb8jA==}
-
-  three@0.187.0:
-    resolution: {integrity: sha512-Qiu7R+Cmh8CstZsY1uJOSWnVlfo7ZtNLV7mF8Jltk3LB3AtDu9cRZlcnRKkAk8Y4z6KKw35z7Y7Urd7jWY8etA==}
 
   tiny-invariant@1.3.3:
     resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
@@ -8076,15 +8070,6 @@ snapshots:
       fflate: 0.8.3
       meshoptimizer: 1.1.1
 
-  '@types/three@0.187.0':
-    dependencies:
-      '@dimforge/rapier3d-compat': 0.12.0
-      '@tweenjs/tween.js': 23.1.3
-      '@types/stats.js': 0.17.4
-      '@types/webxr': 0.5.24
-      fflate: 0.8.3
-      meshoptimizer: 1.1.1
-
   '@types/use-sync-external-store@0.0.6': {}
 
   '@types/validate-npm-package-name@4.0.2': {}
@@ -9969,8 +9954,6 @@ snapshots:
   three@0.186.0: {}
 
   three@0.186.1: {}
-
-  three@0.187.0: {}
 
   tiny-invariant@1.3.3: {}
 

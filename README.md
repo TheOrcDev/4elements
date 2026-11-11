@@ -70,7 +70,7 @@ Every model except Muse Wonder ran at the highest reasoning setting it offers, s
 
 **Gemini 3.7 Flash** builds a nexus holding the four elements plus a fifth fusion form, each on its own TypeScript shader module, with a camera controller, post-processing chain and generated audio.
 
-**Gemini 4 Argon** puts all four elements on one polished stage: shader flames with rising embers, a wavy blue water orb with bubbles and ripple rings, a crystal earth cluster in dust, and spiral wind ribbons with mist particles, composited through unreal bloom.
+**Gemini 4 Argon** rings four shrines around a central aether merkaba: a ridged magma core in volumetric flame, a Gerstner water orb with caustics, a split granite monolith veined with crystal, and nested tornado funnels around a storm eye, with ley-line streams into the nexus and an unreal bloom pass.
 
 **GPT-6 Sol** lays the four forces out as an editorial collection under their Latin names, each card holding its own live 3D form to drag, opening into a detail view of its qualities.
 
