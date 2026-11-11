@@ -1,0 +1,187 @@
+:root {
+  --ink: #e8efe8;
+  --muted: rgba(212, 224, 216, 0.62);
+  --deep: #050806;
+  --fire: #ff6a2a;
+  --water: #3db8ff;
+  --earth: #8fbf4a;
+  --air: #d7f3ff;
+  --panel: rgba(8, 14, 10, 0.42);
+  --line: rgba(220, 235, 225, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--deep);
+  color: var(--ink);
+  font-family: "Outfit", sans-serif;
+}
+
+#scene {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.veil {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 18%, rgba(18, 34, 24, 0.18), transparent 62%),
+    linear-gradient(180deg, rgba(5, 8, 6, 0.55) 0%, transparent 28%, transparent 72%, rgba(5, 8, 6, 0.72) 100%);
+  z-index: 1;
+}
+
+.brand {
+  position: absolute;
+  top: clamp(1.25rem, 4vw, 2.75rem);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 2;
+  animation: rise 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 400;
+  margin-bottom: 0.55rem;
+}
+
+.brand h1 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 500;
+  font-size: clamp(2.8rem, 8vw, 5.4rem);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  text-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+.tagline {
+  margin-top: 0.85rem;
+  font-size: clamp(0.85rem, 1.6vw, 1rem);
+  color: var(--muted);
+  font-weight: 300;
+  letter-spacing: 0.04em;
+}
+
+.legend {
+  position: absolute;
+  left: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1.25rem, 4vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  z-index: 2;
+  animation: rise 1.4s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.legend button {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.84rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.65rem 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+}
+
+.legend button:hover,
+.legend button:focus-visible {
+  outline: none;
+  border-color: rgba(232, 239, 232, 0.35);
+  background: rgba(12, 20, 14, 0.62);
+  transform: translateX(4px);
+}
+
+.dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  box-shadow: 0 0 12px currentColor;
+}
+
+.dot.fire { background: var(--fire); color: var(--fire); }
+.dot.water { background: var(--water); color: var(--water); }
+.dot.earth { background: var(--earth); color: var(--earth); }
+.dot.air { background: var(--air); color: var(--air); }
+
+.hint {
+  position: absolute;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1.25rem, 4vw, 2.5rem);
+  z-index: 2;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(212, 224, 216, 0.45);
+  animation: rise 1.4s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 18px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.legend,
+.hint {
+  animation-name: fade-up;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 720px) {
+  .brand {
+    top: 1rem;
+    width: min(92vw, 28rem);
+  }
+
+  .legend {
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: calc(100% - 2rem);
+  }
+
+  .hint {
+    display: none;
+  }
+}
