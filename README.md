@@ -30,7 +30,6 @@
 | Gemini 3.8 Flash | High | 35m 56s | [`apps/gemini-3.8-flash`](apps/gemini-3.8-flash) |
 | Gemini 3.7 Flash | High | 28m 20s | [`apps/gemini-3.7-flash`](apps/gemini-3.7-flash) |
 | Gemini 4 Argon | High | 5m | [`apps/gemini-4-argon`](apps/gemini-4-argon) |
-| Gemini 4 Carbon | High | 9m | [`apps/gemini-4-carbon`](apps/gemini-4-carbon) |
 | Gemini 4 Carbon High | High | 29m | [`apps/gemini-4-carbon-high`](apps/gemini-4-carbon-high) |
 | Muse Wonder | High | 3m 44s, one API call with no tools | [`apps/muse-wonder`](apps/muse-wonder) |
 
@@ -73,8 +72,6 @@ Every model except Muse Wonder ran at the highest reasoning setting it offers, s
 **Gemini 3.7 Flash** builds a nexus holding the four elements plus a fifth fusion form, each on its own TypeScript shader module, with a camera controller, post-processing chain and generated audio.
 
 **Gemini 4 Argon** rings four shrines around a central aether merkaba: a ridged magma core in volumetric flame, a Gerstner water orb with caustics, a split granite monolith veined with crystal, and nested tornado funnels around a storm eye, with ley-line streams into the nexus and an unreal bloom pass.
-
-**Gemini 4 Carbon** holds all four elements on one dark stage around a central nexus: a shader flame with rising sparks, a deformable water orb with caustics and droplets, a floating rock cluster with glowing vines, and an air vortex of ribbons and particles, with legend buttons to focus each force.
 
 **Gemini 4 Carbon High** opens onto four outdoor realms in a 2×2 view: a volcanic lava canyon, a coastal waterfall cove, a sunlit alpine meadow, and a high mountain summit above a cloud sea, with a guided tour, nature audio and an unreal bloom pass.
 
@@ -174,7 +171,6 @@ apps/glm-5.2          GLM 5.2's Four Elements app
 apps/gemini-3.7-flash Gemini 3.7 Flash's Four Elements app
 apps/gemini-3.8-flash Gemini 3.8 Flash's Four Elements app
 apps/gemini-4-argon   Gemini 4 Argon's Four Elements app
-apps/gemini-4-carbon  Gemini 4 Carbon's Four Elements app
 apps/gemini-4-carbon-high Gemini 4 Carbon High's Four Elements app
 apps/sol-ultra        Sol Ultra's Four Elements app
 apps/terra-ultra      Terra Ultra's Four Elements app

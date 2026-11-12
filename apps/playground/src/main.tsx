@@ -39,7 +39,6 @@ type ModelName =
   | "muse-wonder"
   | "fable-5.2"
   | "gemini-4-argon"
-  | "gemini-4-carbon"
   | "gemini-4-carbon-high";
 
 type ModelProvider =
@@ -381,18 +380,6 @@ const modelOptions: readonly ModelOption[] = [
       "Four shrines — a ridged magma core, a Gerstner water orb, a crystal-veined monolith and nested tornado funnels — channel shader energy and GPU particles into a central aether merkaba, through an unreal bloom pass.",
     controls:
       "Use the dock or press 1–6 to focus a shrine, click a label to fly to it, drag to orbit, scroll to zoom, Space to trigger a surge.",
-  },
-  {
-    label: "Gemini 4 Carbon",
-    value: "gemini-4-carbon",
-    provider: "google",
-    effort: "High",
-    effortDetail: "thinking_level: high",
-    duration: "9m",
-    summary:
-      "All four elements share one dark stage around a central nexus — a shader flame with rising sparks, a deformable water orb with caustics and droplets, a floating rock cluster with glowing vines, and an air vortex of ribbons and particles.",
-    controls:
-      "Drag to orbit, scroll to zoom, click an element in the legend to focus it.",
   },
   {
     label: "Gemini 4 Carbon High",

@@ -28,7 +28,6 @@ const models = [
   "muse-wonder",
   "fable-5.2",
   "gemini-4-argon",
-  "gemini-4-carbon",
   "gemini-4-carbon-high",
 ];
 const viewports = [
