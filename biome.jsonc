@@ -29,6 +29,7 @@
       "!apps/gemini-3.8-flash",
       "!apps/gemini-4-argon",
       "!apps/gemini-4-carbon",
+      "!apps/gemini-4-carbon-high",
       "!apps/grok-4.6",
       "!apps/grok-4.7",
       "!apps/playground/public/models"

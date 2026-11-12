@@ -39,7 +39,8 @@ type ModelName =
   | "muse-wonder"
   | "fable-5.2"
   | "gemini-4-argon"
-  | "gemini-4-carbon";
+  | "gemini-4-carbon"
+  | "gemini-4-carbon-high";
 
 type ModelProvider =
   | "openai"
@@ -392,6 +393,18 @@ const modelOptions: readonly ModelOption[] = [
       "All four elements share one dark stage around a central nexus — a shader flame with rising sparks, a deformable water orb with caustics and droplets, a floating rock cluster with glowing vines, and an air vortex of ribbons and particles.",
     controls:
       "Drag to orbit, scroll to zoom, click an element in the legend to focus it.",
+  },
+  {
+    label: "Gemini 4 Carbon High",
+    value: "gemini-4-carbon-high",
+    provider: "google",
+    effort: "High",
+    effortDetail: "thinking_level: high",
+    duration: "29m",
+    summary:
+      "Four outdoor realms in a 2×2 view: a volcanic lava canyon, a coastal waterfall cove, a sunlit alpine meadow, and a high mountain summit above a cloud sea, with a guided tour, nature audio and an unreal bloom pass.",
+    controls:
+      "Click a realm or press 1–4 to enter it, 0 or Esc for all realms, drag to orbit, scroll to zoom, T for the tour, M for audio, H to hide the UI, Q for quality, Space for a surge.",
   },
 ] as const;
 

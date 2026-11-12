@@ -1,0 +1,12 @@
+{
+  "name": "@4elements/gemini-4-carbon-high",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Gemini 4 Carbon High — Four Elements outdoor realms",
+  "scripts": {
+    "build": "node ./copy-to-playground.mjs",
+    "dev": "node ./copy-to-playground.mjs --serve",
+    "preview": "node ./copy-to-playground.mjs --serve --port 4190"
+  }
+}
